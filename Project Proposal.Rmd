@@ -1,0 +1,20 @@
+---
+title: "Project Proposal"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## The group members
+
+## The tentative project title
+
+## The motivation for this project
+
+## The intended final products
+
+## The planned analyses / visualizations / coding challenges
+
+## The planned timeline
