@@ -59,8 +59,8 @@ the following criteria:
     airports (ANOVA)
 -   Find rankings of airports according to the above criteria
 -   Create our own grading scale index and find the airport with the
-    highest overall grading, rank airports according to all criteria.
--   Find the best airport according to the user’s own preference.
+    highest overall grading, rank airports according to all criteria
+-   Find the best airport according to the user’s own preference
 
 ## Visualizations and EDA
 
@@ -77,7 +77,7 @@ the following criteria:
 -   Density plot showing the volume of passengers in each airport (as
     applicable)
 
-## Coding challenges
+## Coding Challenges
 
 -   Scraping airport basic information from airport official websites
 -   Data cleaning, data wrangling
@@ -86,4 +86,15 @@ the following criteria:
 -   Building models to calculate grading for each airport, creating
     Shiny App (as applicable)
 
-## The planned timeline
+## Planned Timeline
+
+| Date           | Deliverable                                             |
+|----------------|---------------------------------------------------------|
+| November 12    | Form a team and submit a proposal                       |
+| November 15-18 | Project review meeting                                  |
+| November 22    | Finish data import, cleaning, get ready for analyses    |
+| November 27    | Finish visualization, build a draft webpage             |
+| December 4     | Finish analyses and webpage and start write-up          |
+| December 9     | Finalize everything and finish screencast               |
+| December 10    | Report, webpage and screencast, and peer assessment due |
+| December 15    | “In class” discussion of projects                       |

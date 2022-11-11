@@ -21,9 +21,12 @@ Yeque Sun (ys3508)
 
 
 ## Tentative Project Title
+
 Reviews on New York City's Airports during Winter Vacation Season
 
+
 ## Motivation for This Project
+
 As the holiday season is approaching, the demand for departure flights from NYC is booming. We would like to predict which airport among JFK, EWR, and LGA could potentially provide the most satisfying experience based on previous datasets. In this project, we proposed to review on the following criteria:  
 
 *   Airport Accessibility—public transit
@@ -37,6 +40,7 @@ As the holiday season is approaching, the demand for departure flights from NYC 
 
 
 ## Intended Final Products
+
 *   A report summarizing the analysis of the airport datasets
 *   A web page including analyses and visualizations
 *   A screencast showcasing the user journey of the website
@@ -44,16 +48,19 @@ As the holiday season is approaching, the demand for departure flights from NYC 
 
 
 ## Anticipated Data Sources
+
 *   [Airport On-Time Arrival Performance](https://www.transtats.bts.gov/OT_Delay/OT_DelayCause1.asp) (Source: Department of Transportation)
 *   [Airport Average Domestic Air Fares](https://transtats.bts.gov/AIRFARES/)) (Source: Department of Transportation)
 *   [Airline industry data sets](https://jblevins.org/notes/airline-data)
+
 
 ## Planned analyses 
 
 *   Test the difference in various rating criteria among the three airports (ANOVA)
 *   Find rankings of airports according to the above criteria
-*   Create our own grading scale index and find the airport with the highest overall grading, rank airports according to all criteria.
-*   Find the best airport according to the user's own preference.
+*   Create our own grading scale index and find the airport with the highest overall grading, rank airports according to all criteria
+*   Find the best airport according to the user's own preference
+
 
 ## Visualizations and EDA
 
@@ -65,7 +72,8 @@ As the holiday season is approaching, the demand for departure flights from NYC 
 *   Interactive map showing available transit to those airports (as applicable)
 *   Density plot showing the volume of passengers in each airport (as applicable)
 
-## Coding challenges
+
+## Coding Challenges
 
 *   Scraping airport basic information from airport official websites
 *   Data cleaning, data wrangling
@@ -73,7 +81,18 @@ As the holiday season is approaching, the demand for departure flights from NYC 
 *   Writing functions, conducting hypothesis testing
 *   Building models to calculate grading for each airport, creating Shiny App (as applicable)
 
-## The planned timeline
 
+## Planned Timeline
+
+Date  | Deliverable
+------------- | -------------
+November 12  | Form a team and submit a proposal
+November 15-18  | Project review meeting
+November 22  | Finish data import, cleaning, get ready for analyses
+November 27  | Finish visualization, build a draft webpage
+December 4  | Finish analyses and webpage and start write-up
+December 9  | Finalize everything and finish screencast
+December 10  | Report, webpage and screencast, and peer assessment due
+December 15  | “In class” discussion of projects
  
 
