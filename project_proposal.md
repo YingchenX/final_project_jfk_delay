@@ -25,66 +25,64 @@ EWR, and LGA could potentially provide the most satisfying experience
 based on previous datasets. In this project, we proposed to review on
 the following criteria:
 
--   Airport Accessibility—public transit
--   Timeliness of flights (flight delays and cancellations)
--   Check-In/Baggage Check (as applicable)
--   Security Check
--   Food, Beverage and Retail
--   Terminal Facilities (Concourses, lounges, signage, restrooms, gate
-    areas, WiFi)
--   Baggage Claim (as applicable)
--   Airfare
+- Airport Accessibility—public transit
+- Timeliness of flights (flight delays and cancellations)
+- Check-In/Baggage Check (as applicable)
+- Security Check
+- Food, Beverage and Retail
+- Terminal Facilities (Concourses, lounges, signage, restrooms, gate
+  areas, WiFi)
+- Baggage Claim (as applicable)
+- Airfare
 
 ## Intended Final Products
 
--   A report summarizing the analysis of the airport datasets
--   A web page including analyses and visualizations
--   A screencast showcasing the user journey of the website
--   A Github repo recording all the collaboration processes
+- A report summarizing the analysis of the airport datasets
+- A web page including analyses and visualizations
+- A screencast showcasing the user journey of the website
+- A Github repo recording all the collaboration processes
 
 ## Anticipated Data Sources
 
--   [Airport On-Time Arrival
-    Performance](https://www.transtats.bts.gov/OT_Delay/OT_DelayCause1.asp)
-    (Source: Department of Transportation)
--   [Airport Average Domestic Air
-    Fares](https://transtats.bts.gov/AIRFARES/)) (Source: Department of
-    Transportation)
--   [Airline industry data
-    sets](https://jblevins.org/notes/airline-data)
+- [Airport On-Time Arrival
+  Performance](https://www.transtats.bts.gov/OT_Delay/OT_DelayCause1.asp)
+  (Source: Department of Transportation)
+- [Airport Average Domestic Air
+  Fares](https://transtats.bts.gov/AIRFARES/) (Source: Department of
+  Transportation)
+- [Airline industry data sets](https://jblevins.org/notes/airline-data)
 
-## Planned analyses
+## Planned Analyses
 
--   Test the difference in various rating criteria among the three
-    airports (ANOVA)
--   Find rankings of airports according to the above criteria
--   Create our own grading scale index and find the airport with the
-    highest overall grading, rank airports according to all criteria
--   Find the best airport according to the user’s own preference
+- Test the difference in various rating criteria among the three
+  airports (ANOVA)
+- Find rankings of airports according to the above criteria
+- Create our own grading scale index and find the airport with the
+  highest overall grading, rank airports according to all criteria
+- Find the best airport according to the user’s own preference
 
 ## Visualizations and EDA
 
--   Descriptive table summarizing the data characteristics of each
-    criteria
--   Descriptive table summarizing the data characteristics of each
-    airport
--   Line plot showing criteria’s distribution by time
--   Histogram showing criteria’s distribution by airport
--   Interactive map showing available flight route departure from the
-    three airports
--   Interactive map showing available transit to those airports (as
-    applicable)
--   Density plot showing the volume of passengers in each airport (as
-    applicable)
+- Descriptive table summarizing the data characteristics of each
+  criteria
+- Descriptive table summarizing the data characteristics of each airport
+- Line plot showing criteria’s distribution by time
+- Histogram showing criteria’s distribution by airport
+- Interactive map showing available flight route departure from the
+  three airports
+- Interactive map showing available transit to those airports (as
+  applicable)
+- Density plot showing the volume of passengers in each airport (as
+  applicable)
 
 ## Coding Challenges
 
--   Scraping airport basic information from airport official websites
--   Data cleaning, data wrangling
--   Visualization
--   Writing functions, conducting hypothesis testing
--   Building models to calculate grading for each airport, creating
-    Shiny App (as applicable)
+- Scraping airport basic information from airport official websites
+- Data cleaning, data wrangling
+- Visualization
+- Writing functions, conducting hypothesis testing
+- Building models to calculate grading for each airport, creating Shiny
+  App (as applicable)
 
 ## Planned Timeline
 

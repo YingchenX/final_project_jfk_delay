@@ -50,11 +50,11 @@ As the holiday season is approaching, the demand for departure flights from NYC 
 ## Anticipated Data Sources
 
 *   [Airport On-Time Arrival Performance](https://www.transtats.bts.gov/OT_Delay/OT_DelayCause1.asp) (Source: Department of Transportation)
-*   [Airport Average Domestic Air Fares](https://transtats.bts.gov/AIRFARES/)) (Source: Department of Transportation)
+*   [Airport Average Domestic Air Fares](https://transtats.bts.gov/AIRFARES/) (Source: Department of Transportation)
 *   [Airline industry data sets](https://jblevins.org/notes/airline-data)
 
 
-## Planned analyses 
+## Planned Analyses 
 
 *   Test the difference in various rating criteria among the three airports (ANOVA)
 *   Find rankings of airports according to the above criteria
