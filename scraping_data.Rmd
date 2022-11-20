@@ -123,3 +123,13 @@ rest_df %>%
     fill = "Airport"
   )
 ```
+
+## Shops and Stores
+
+[EWR](https://www.airport-ewr.com/newark-shops-and-stores.php)
+
+## Lounges
+
+[EWR](https://www.airport-ewr.com/newark-lounge-night-club.php)
+
+## Other Services
