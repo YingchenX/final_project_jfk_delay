@@ -29,3 +29,15 @@ noaa_df = noaa %>%
   filter(minute == "51") 
 ```
 
+```{r}
+covid = 
+  GET("https://data.cityofnewyork.us/resource/rc75-m7u3.csv") %>% 
+  content("parsed") 
+
+covid_df = covid %>% 
+  select(date_of_interest, case_count) %>% 
+  filter(date_of_interest < "2022-02-01" & date_of_interest >= "2021-11-01") %>% 
+  separate(date_of_interest, c("year", "month", "day"))
+
+```
+
