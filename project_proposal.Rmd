@@ -47,9 +47,9 @@ As the holiday season approaches, the demand for departure flights from NYC is b
 
 ## Planned Analyses 
 
-*   [Contributing factors] Figure out contributing factors to flight delay by heatmap 
-*   [Regression analysis] Test for the association between contributing factors and flight delay using regression analysis, also test for the difference in various rating criteria among the different levels of factors using stratified analysis (ANOVA)
-*   [Predictive analysis] Build a model to predict the estimated flight delay time of JFK in the upcoming holiday season, given carrier, weather, and COVID conditions.
+*   **Contributing factors** - Figure out contributing factors to flight delay by heatmap 
+*   **Regression analysis** - Test for the association between contributing factors and flight delay using regression analysis, also test for the difference in various rating criteria among the different levels of factors using stratified analysis (ANOVA)
+*   **Predictive analysis** - Build a model to predict the estimated flight delay time of JFK in the upcoming holiday season, given carrier, weather, and COVID conditions.
 
 
 ## Visualizations and EDA
