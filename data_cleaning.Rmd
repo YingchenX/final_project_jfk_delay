@@ -4,13 +4,16 @@ output: github_document
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE)
 
 library(tidyverse)
 library(readxl)
 library(stringr)
 library(rvest)
 library(httr)
+library(forstringr)
 ```
 
 ### Weather Condition
@@ -25,7 +28,8 @@ noaa_df = noaa %>%
     date = str_replace_all(date, "T", "-")
   ) %>% 
   separate(date, c("year", "month", "day", "hour", "minute", "second")) %>% 
-  filter(minute == "51") 
+  filter(minute == "51") %>% 
+  select(-minute, -second)
 ```
 
 ### COVID
@@ -40,4 +44,3 @@ covid_df = covid %>%
   filter(date_of_interest < "2022-02-01" & date_of_interest >= "2021-11-01") %>% 
   separate(date_of_interest, c("year", "month", "day"))
 ```
-
