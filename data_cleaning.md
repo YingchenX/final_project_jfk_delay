@@ -1,21 +1,9 @@
----
-title: "Data Cleaning"
-output: github_document
----
-
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
-library(tidyverse)
-library(readxl)
-library(stringr)
-library(rvest)
-library(httr)
-```
+Data Cleaning
+================
 
 ### Weather Condition
 
-```{r}
+``` r
 noaa = read.csv("data/weather.csv")
 
 noaa_df = noaa %>%
@@ -30,14 +18,24 @@ noaa_df = noaa %>%
 
 ### COVID
 
-```{r}
+``` r
 covid = 
   GET("https://data.cityofnewyork.us/resource/rc75-m7u3.csv") %>% 
   content("parsed") 
+```
 
+    ## Rows: 996 Columns: 67
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## dbl  (66): case_count, probable_case_count, hospitalized_count, death_count,...
+    ## dttm  (1): date_of_interest
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
 covid_df = covid %>% 
   select(date_of_interest, case_count) %>% 
   filter(date_of_interest < "2022-02-01" & date_of_interest >= "2021-11-01") %>% 
   separate(date_of_interest, c("year", "month", "day"))
 ```
-
