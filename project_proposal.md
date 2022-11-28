@@ -15,65 +15,54 @@ Yeque Sun (ys3508)
 
 ## Tentative Project Title
 
-Reviews on New York City’s Airports during Winter Vacation Season
+Reviews on JFK Flight Delay Conditions During Winter Vacation Season
 
 ## Motivation for This Project
 
-As the holiday season is approaching, the demand for departure flights
-from NYC is booming. We would like to predict which airport among JFK,
-EWR, and LGA could potentially provide the most satisfying experience
-based on previous datasets. In this project, we proposed to review on
-the following criteria:
-
-- Airport Accessibility—public transit
-- Timeliness of flights (flight delays and cancellations)
-- Check-In/Baggage Check (as applicable)
-- Security Check
-- Food, Beverage and Retail
-- Terminal Facilities (Concourses, lounges, signage, restrooms, gate
-  areas, WiFi)
-- Baggage Claim (as applicable)
-- Airfare
+As the holiday season approaches, the demand for departure flights from
+NYC is booming. However, trip planning is always accompanied by the
+issue of potential flight delay, especially in busy metropolitan
+airports like JFK. Using JFK departed flights as an example, we’re
+interested in exploring the factors that are potentially related with
+flight delay (e.g., carrier, weather, and COVID conditions), in order to
+give the holiday travelers a better sense of what to expect regarding
+flight delay for this holiday season.
 
 ## Intended Final Products
 
-- A report summarizing the analysis of the airport datasets
+- A report summarizing the analysis of the JFK delay datasets
 - A web page including analyses and visualizations
 - A screencast showcasing the user journey of the website
 - A Github repo recording all the collaboration processes
 
 ## Anticipated Data Sources
 
-- [Airport On-Time Arrival
-  Performance](https://www.transtats.bts.gov/OT_Delay/OT_DelayCause1.asp)
-  (Source: Department of Transportation)
-- [Airport Average Domestic Air
-  Fares](https://transtats.bts.gov/AIRFARES/) (Source: Department of
-  Transportation)
-- [Airline industry data sets](https://jblevins.org/notes/airline-data)
+- \[Flight delay and cancellation data\] The Bureau of Transportation
+  Statistics (BTS) <https://www.transtats.bts.gov/ONTIME/>
+- \[Weather condition data\] The National Oceanic and Atmospheric
+  Administration (NOAA)
+  <https://www.ncdc.noaa.gov/cdo-web/datatools/lcd>
+- \[COVID data\] NYC OpenData
+  <https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3>
 
 ## Planned Analyses
 
-- Test the difference in various rating criteria among the three
-  airports (ANOVA)
-- Find rankings of airports according to the above criteria
-- Create our own grading scale index and find the airport with the
-  highest overall grading, rank airports according to all criteria
-- Find the best airport according to the user’s own preference
+- \[Contributing factors\] Figure out contributing factors to flight
+  delay by heatmap
+- \[Regression analysis\] Test for the association between contributing
+  factors and flight delay using regression analysis, also test for the
+  difference in various rating criteria among the different levels of
+  factors using ANOVA
+- \[Predictive analysis\] Build a model to predict the estimated flight
+  delay time of JFK in the upcoming holiday season, given carrier,
+  weather, and COVID conditions.
 
 ## Visualizations and EDA
 
-- Descriptive table summarizing the data characteristics of each
-  criteria
-- Descriptive table summarizing the data characteristics of each airport
-- Line plot showing criteria’s distribution by time
-- Histogram showing criteria’s distribution by airport
-- Interactive map showing available flight route departure from the
-  three airports
-- Interactive map showing available transit to those airports (as
-  applicable)
-- Density plot showing the volume of passengers in each airport (as
-  applicable)
+- Trends: Descriptive table or histogram showing criteria’s distribution
+  by categories or by time
+- Map: Interactive map showing the analyzed flight routes departed from
+  JFK
 
 ## Coding Challenges
 
