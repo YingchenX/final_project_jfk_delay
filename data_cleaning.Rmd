@@ -85,3 +85,28 @@ full_delay_df =
   relocate(scheduled_hour, .before = scheduled_departure_time)
 ```
 
+### Cancelation
+
+```{r}
+full_cancelation_df = 
+  tibble(
+    files = list.files("data/cancelation/"),
+    path = str_c("data/cancelation/", files)
+  ) %>% 
+  mutate(data = map(path, read_csv_function)) %>% 
+  unnest(data) %>% 
+  select(-files, -path) %>%
+  mutate(
+    airline_name = case_when(
+      carrier_code == "9E" ~ "Endeavor Air",
+      carrier_code == "AA" ~ "American Airlines",
+      carrier_code == "AS" ~ "Alaska Airlines",
+      carrier_code == "B6" ~ "JetBlue Airways",
+      carrier_code == "DL" ~ "Delta Air Lines",
+      carrier_code == "UA" ~ "United Air Lines",
+      carrier_code == "YX" ~ "Republic Airways",
+      TRUE      ~ ""
+    )
+  ) %>% 
+  separate(date_mm_dd_yyyy, into = c("month", "date", "year"), sep = "/")
+```
