@@ -40,15 +40,15 @@ As the holiday season approaches, the demand for departure flights from NYC is b
 
 ## Anticipated Data Sources
 
-*   [Flight delay and cancellation data] The Bureau of Transportation Statistics (BTS) https://www.transtats.bts.gov/ONTIME/
-*   [Weather condition data] The National Oceanic and Atmospheric Administration (NOAA) https://www.ncdc.noaa.gov/cdo-web/datatools/lcd
-*   [COVID data] NYC OpenData https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3
+*   [Flight delay and cancellation data](https://www.transtats.bts.gov/ONTIME/) - The Bureau of Transportation Statistics (BTS) 
+*   [Weather condition data](https://www.ncdc.noaa.gov/cdo-web/datatools/lcd) - The National Oceanic and Atmospheric Administration (NOAA) 
+*   [COVID data](https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3) - NYC OpenData
 
 
 ## Planned Analyses 
 
 *   [Contributing factors] Figure out contributing factors to flight delay by heatmap 
-*   [Regression analysis] Test for the association between contributing factors and flight delay using regression analysis, also test for the difference in various rating criteria among the different levels of factors using ANOVA
+*   [Regression analysis] Test for the association between contributing factors and flight delay using regression analysis, also test for the difference in various rating criteria among the different levels of factors using stratified analysis (ANOVA)
 *   [Predictive analysis] Build a model to predict the estimated flight delay time of JFK in the upcoming holiday season, given carrier, weather, and COVID conditions.
 
 
