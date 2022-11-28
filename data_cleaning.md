@@ -4,7 +4,7 @@ Data Cleaning
 ### Weather Condition
 
 ``` r
-noaa = read.csv("data/weather.csv")
+noaa = read.csv("data/weather.csv", na.strings = c("","NA"))
 
 noaa_df = noaa %>%
   janitor::clean_names() %>% 
@@ -15,6 +15,18 @@ noaa_df = noaa %>%
   separate(date, c("year", "month", "day", "hour", "minute", "second")) %>% 
   filter(minute == "51") %>% 
   select(-minute, -second)
+
+daily_weather = noaa %>%
+  janitor::clean_names() %>% 
+  select(date, daily_weather) %>% 
+  filter(!is.na(daily_weather)) %>% 
+  mutate(
+    date = str_replace_all(date, "T", "-")
+  ) %>% 
+  separate(date, c("year", "month", "day", "hour", "minute", "second")) %>%
+  select(-c(hour:second))
+
+noaa_df = left_join(noaa_df, daily_weather, by = c("year", "month", "day"))
 ```
 
 ### COVID
