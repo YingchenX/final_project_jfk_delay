@@ -1,0 +1,78 @@
+---
+title: "Visualization and EDA"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggridges)
+library(patchwork)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+
+cancelation = read_csv("tidied_data/cancelation.csv")
+covid = read_csv("tidied_data/covid.csv")
+delay = read_csv("tidied_data/delay.csv")
+weather = read_csv("tidied_data/weather.csv")
+
+```
+
+
+```{r}
+delay %>% 
+  mutate(
+    date = as.numeric(date),
+    month = as.numeric(month),
+    month_date = str_c(year, month, date, sep = "-"),
+    dayofyear = as.Date(month_date)
+  ) %>% 
+  group_by(dayofyear, airline_name) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  ggplot(aes(x = dayofyear, y = count, color = airline_name)) +
+  geom_line()
+
+
+```
+
+```{r}
+cancel_line = cancelation %>% 
+    mutate(
+    date = as.numeric(date),
+    month = as.numeric(month),
+    month_date = str_c(year, month, date, sep = "-"),
+    dayofyear = as.Date(month_date)
+  ) %>% 
+  group_by(dayofyear, airline_name) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  ggplot(aes(x = dayofyear, y = count, color = airline_name)) +
+  geom_line()
+
+
+covid_line = covid %>% 
+  mutate(
+    day = as.numeric(day),
+    month = as.numeric(month),
+    month_date = str_c(year, month, day, sep = "-"),
+    dayofyear = as.Date(month_date)
+  ) %>% 
+  ggplot(aes(x = dayofyear, y = case_count)) +
+  geom_line()
+
+cancel_line + covid_line
+  
+  
+```
+
