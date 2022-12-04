@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
 
-cancelation = read_csv("tidied_data/cancelation.csv")
+cancel = read_csv("tidied_data/cancel.csv")
 covid = read_csv("tidied_data/covid.csv")
 delay = read_csv("tidied_data/delay.csv")
 weather = read_csv("tidied_data/weather.csv")
@@ -29,50 +29,41 @@ weather = read_csv("tidied_data/weather.csv")
 
 ```{r}
 delay %>% 
-  mutate(
-    date = as.numeric(date),
-    month = as.numeric(month),
-    month_date = str_c(year, month, date, sep = "-"),
-    dayofyear = as.Date(month_date)
-  ) %>% 
-  group_by(dayofyear, airline_name) %>% 
+  group_by(date, airline_name) %>% 
   summarize(
     count = n()
   ) %>% 
-  ggplot(aes(x = dayofyear, y = count, color = airline_name)) +
+  ggplot(aes(x = date, y = count, color = airline_name)) +
   geom_line()
 
+
+delay %>% 
+  filter(delay_minutes < 120, airline_name == "JetBlue Airways") %>% 
+  ggplot(aes(x = as.factor(month), y = delay_minutes)) +
+  geom_boxplot()
+
+delay %>% 
+  filter(delay_minutes < 0) %>% 
+  ggplot(aes(x = as.factor(month), y = delay_minutes)) +
+  geom_boxplot()
 
 ```
 
 ```{r}
-cancel_line = cancelation %>% 
-    mutate(
-    date = as.numeric(date),
-    month = as.numeric(month),
-    month_date = str_c(year, month, date, sep = "-"),
-    dayofyear = as.Date(month_date)
-  ) %>% 
-  group_by(dayofyear, airline_name) %>% 
+cancel_line = cancel %>% 
+  group_by(date, airline_name) %>% 
   summarize(
     count = n()
   ) %>% 
-  ggplot(aes(x = dayofyear, y = count, color = airline_name)) +
+  ggplot(aes(x = date, y = count, color = airline_name)) +
   geom_line()
 
 
 covid_line = covid %>% 
-  mutate(
-    day = as.numeric(day),
-    month = as.numeric(month),
-    month_date = str_c(year, month, day, sep = "-"),
-    dayofyear = as.Date(month_date)
-  ) %>% 
-  ggplot(aes(x = dayofyear, y = case_count)) +
+  ggplot(aes(x = date, y = case_count)) +
   geom_line()
 
 cancel_line + covid_line
-  
-  
+
 ```
 
