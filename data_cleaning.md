@@ -103,6 +103,14 @@ full_delay_df =
   select(carrier_code, date = date_mm_dd_yyyy, everything(),) %>% 
   arrange(date) %>% 
   relocate(scheduled_hour, .before = scheduled_departure_time)
+
+full_delay_df = 
+  full_delay_df %>% 
+  mutate(
+    delay_minutes = as.numeric(as.POSIXct(actual_departure_time, format = "%H:%M") - as.POSIXct(scheduled_departure_time, format = "%H:%M")) / 60
+  ) %>% 
+  select(-departure_delay_minutes) %>% 
+  relocate(delay_minutes, .after = actual_departure_time)
 ```
 
 ### Cancelation
