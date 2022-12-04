@@ -1,10 +1,12 @@
 Data Cleaning
 ================
 
+## Data Cleaning
+
 ### Weather Condition
 
 ``` r
-noaa = read.csv("data/weather.csv", na.strings = c("","NA"))
+noaa = read_csv("data/weather.csv", na = c("","NA"))
 
 noaa_df = noaa %>%
   janitor::clean_names() %>% 
@@ -106,4 +108,13 @@ full_cancelation_df =
     )
   ) %>% 
   separate(date_mm_dd_yyyy, into = c("month", "date", "year"), sep = "/")
+```
+
+## Export
+
+``` r
+write_csv(noaa_df, "tidied_data/weather.csv")
+write_csv(covid_df, "tidied_data/covid.csv")
+write_csv(full_delay_df, "tidied_data/delay.csv")
+write_csv(full_cancelation_df, "tidied_data/cancelation.csv")
 ```
