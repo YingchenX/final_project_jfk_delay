@@ -1,0 +1,68 @@
+airport,name,lat,long,region_name,local_region,municipality
+ABQ,Albuquerque International Sunport,35.040199,-106.609001,New Mexico,NM,Albuquerque
+ATL,Hartsfield Jackson Atlanta International Airport,33.6367,-84.428101,Georgia,GA,Atlanta
+AUS,Austin Bergstrom International Airport,30.197535,-97.662015,Texas,TX,Austin
+BGR,Bangor International Airport,44.8074,-68.828102,Maine,ME,Bangor
+BNA,Nashville International Airport,36.1245002746582,-86.6781997680664,Tennessee,TN,Nashville
+BOS,Logan International Airport,42.3643,-71.005203,Massachusetts,MA,Boston
+BQN,NA,NA,NA,NA,NA,NA
+BTV,Burlington International Airport,44.471901,-73.153297,Vermont,VT,South Burlington
+BUF,Buffalo Niagara International Airport,42.94049835,-78.73220062,New York,NY,Buffalo
+BUR,Bob Hope Airport,34.197703,-118.356378,California,CA,Burbank
+BWI,Baltimore/Washington International Thurgood Marshall Airport,39.1754,-76.668297,Maryland,MD,Baltimore
+BZN,Gallatin Field,45.77750015,-111.1529999,Montana,MT,Bozeman
+CHS,Charleston International Airport,32.898602,-80.040497,South Carolina,SC,Charleston
+CLE,Cleveland Hopkins International Airport,41.4117012024,-81.8498001099,Ohio,OH,Cleveland
+CLT,Charlotte Douglas International Airport,35.2140007019043,-80.94309997558594,North Carolina,NC,Charlotte
+CMH,John Glenn Columbus International Airport,39.998001,-82.891899,Ohio,OH,Columbus
+CVG,Cincinnati Northern Kentucky International Airport,39.048801,-84.667801,Kentucky,KY,Cincinnati / Covington
+DCA,Ronald Reagan Washington National Airport,38.8521,-77.037697,District of Columbia,DC,Washington
+DEN,Denver International Airport,39.861698150635,-104.672996521,Colorado,CO,Denver
+DFW,Dallas Fort Worth International Airport,32.896801,-97.038002,Texas,TX,Dallas-Fort Worth
+DTW,Detroit Metropolitan Wayne County Airport,42.212398529052734,-83.35340118408203,Michigan,MI,Detroit
+EGE,Eagle County Regional Airport,39.64260101,-106.9179993,Colorado,CO,Eagle
+EYW,Key West International Airport,24.556101,-81.759598,Florida,FL,Key West
+FLL,Fort Lauderdale Hollywood International Airport,26.072599,-80.152702,Florida,FL,Fort Lauderdale
+IAD,Washington Dulles International Airport,38.9445,-77.455803,Virginia,VA,Dulles
+IAH,George Bush Intercontinental Houston Airport,29.984399795532227,-95.34140014648438,Texas,TX,Houston
+IND,Indianapolis International Airport,39.7173,-86.294403,Indiana,IN,Indianapolis
+JAC,Jackson Hole Airport,43.6072998046875,-110.73799896240234,Wyoming,WY,Jackson
+JAX,Jacksonville International Airport,30.49410057067871,-81.68789672851562,Florida,FL,Jacksonville
+JFK,John F Kennedy International Airport,40.639447,-73.779317,New York,NY,New York
+LAS,Harry Reid International Airport,36.083361,-115.151817,Nevada,NV,Las Vegas
+LAX,Los Angeles International Airport,33.942501,-118.407997,California,CA,Los Angeles
+MCO,Orlando International Airport,28.429399490356445,-81.30899810791016,Florida,FL,Orlando
+MIA,Miami International Airport,25.79319953918457,-80.29060363769531,Florida,FL,Miami
+MSP,Minneapolis–Saint Paul International Airport / Wold–Chamberlain Field,44.882,-93.221802,Minnesota,MN,Minneapolis
+MSY,Louis Armstrong New Orleans International Airport,29.99340057373047,-90.25800323486328,Louisiana,LA,New Orleans
+ONT,Ontario International Airport,34.055999755859375,-117.60099792480469,California,CA,Ontario
+ORD,Chicago O'Hare International Airport,41.9786,-87.9048,Illinois,IL,Chicago
+ORF,Norfolk International Airport,36.8946,-76.201202,Virginia,VA,Norfolk
+ORH,Worcester Regional Airport,42.2673,-71.875702,Massachusetts,MA,Worcester
+PBI,Palm Beach International Airport,26.68320083618164,-80.09559631347656,Florida,FL,West Palm Beach
+PDX,Portland International Airport,45.58869934,-122.5979996,Oregon,OR,Portland
+PHL,Philadelphia International Airport,39.87189865112305,-75.24109649658203,Pennsylvania,PA,Philadelphia
+PHX,Phoenix Sky Harbor International Airport,33.435302,-112.005905,Arizona,AZ,Phoenix
+PIT,Pittsburgh International Airport,40.49150085,-80.23290253,Pennsylvania,PA,Pittsburgh
+PSE,NA,NA,NA,NA,NA,NA
+PSP,Palm Springs International Airport,33.8297,-116.507004,California,CA,Palm Springs
+PWM,Portland International Jetport,43.646198,-70.309303,Maine,ME,Portland
+RDU,Raleigh Durham International Airport,35.877601623535156,-78.7874984741211,North Carolina,NC,Raleigh/Durham
+RIC,Richmond International Airport,37.50519943237305,-77.3197021484375,Virginia,VA,Richmond
+RNO,Reno Tahoe International Airport,39.49909973144531,-119.76799774169922,Nevada,NV,Reno
+ROC,Frederick Douglass Greater Rochester International Airport,43.1189,-77.672401,New York,NY,Rochester
+RSW,Southwest Florida International Airport,26.53619956970215,-81.75520324707031,Florida,FL,Fort Myers
+SAN,San Diego International Airport,32.7336006165,-117.190002441,California,CA,San Diego
+SAT,San Antonio International Airport,29.533701,-98.469803,Texas,TX,San Antonio
+SAV,Savannah Hilton Head International Airport,32.12760162,-81.20210266,Georgia,GA,Savannah
+SEA,Seattle–Tacoma International Airport,47.449162,-122.311134,Washington,WA,Seattle
+SFO,San Francisco International Airport,37.61899948120117,-122.375,California,CA,San Francisco
+SJC,Norman Y. Mineta San Jose International Airport,37.362452,-121.929188,California,CA,San Jose
+SJU,NA,NA,NA,NA,NA,NA
+SLC,Salt Lake City International Airport,40.785749,-111.979746,Utah,UT,Salt Lake City
+SMF,Sacramento International Airport,38.69540023803711,-121.59100341796875,California,CA,Sacramento
+SNA,John Wayne Airport-Orange County Airport,33.675701,-117.867996,California,CA,Santa Ana
+SRQ,Sarasota Bradenton International Airport,27.395399,-82.554398,Florida,FL,Sarasota/Bradenton
+STT,NA,NA,NA,NA,NA,NA
+SYR,Syracuse Hancock International Airport,43.11119842529297,-76.1063003540039,New York,NY,Syracuse
+TPA,Tampa International Airport,27.975500106811523,-82.533203125,Florida,FL,Tampa

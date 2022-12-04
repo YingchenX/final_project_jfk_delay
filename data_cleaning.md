@@ -127,6 +127,23 @@ full_cancel_df =
   select(airline_name:scheduled_departure_time, scheduled_elapsed_time_minutes)
 ```
 
+### Airport Info
+
+``` r
+airport = read_csv("data/us-airports.csv") %>% 
+  slice(-1) %>% 
+  select(airport = iata_code, name, lat = latitude_deg, long = longitude_deg, region_name, local_region, municipality)
+
+airport_info =
+  delay_cancel %>% 
+  distinct(destination_airport) %>% 
+  rename(airport = destination_airport) %>% 
+  rbind("JFK") %>% 
+  arrange(airport)
+
+airport_info = left_join(airport_info, airport, by = "airport")
+```
+
 ## Export
 
 ``` r
@@ -134,4 +151,5 @@ write_csv(noaa_df, "tidied_data/weather.csv")
 write_csv(covid_df, "tidied_data/covid.csv")
 write_csv(full_delay_df, "tidied_data/delay.csv")
 write_csv(full_cancel_df, "tidied_data/cancel.csv")
+write_csv(airport_info, "tidied_data/airport.csv")
 ```
