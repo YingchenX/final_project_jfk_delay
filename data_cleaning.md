@@ -14,9 +14,16 @@ noaa_df = noaa %>%
   mutate(
     date = str_replace_all(date, "T", "-")
   ) %>% 
-  separate(date, c("year", "month", "day", "hour", "minute", "second")) %>% 
+  separate(date, c("year", "month", "day", "hour", "minute", "second"), remove = FALSE) %>% 
   filter(minute == "51") %>% 
-  select(-minute, -second)
+  select(-minute, -second) %>% 
+  mutate(
+    date = as.POSIXct(str_left(date, n = 10), format = "%Y-%m-%d"),
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day),
+    hour = as.numeric(hour)
+  )
 
 daily_weather = noaa %>%
   janitor::clean_names() %>% 
@@ -25,8 +32,13 @@ daily_weather = noaa %>%
   mutate(
     date = str_replace_all(date, "T", "-")
   ) %>% 
-  separate(date, c("year", "month", "day", "hour", "minute", "second")) %>%
-  select(-c(hour:second))
+  separate(date, c("year", "month", "day", "hour", "minute", "second")) %>% 
+  select(-c(hour:second)) %>% 
+  mutate(
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day)
+  )
 
 noaa_df = left_join(noaa_df, daily_weather, by = c("year", "month", "day"))
 ```
@@ -39,9 +51,10 @@ covid =
   content("parsed") 
 
 covid_df = covid %>% 
-  select(date_of_interest, case_count) %>% 
-  filter(date_of_interest < "2022-02-01" & date_of_interest >= "2021-11-01") %>% 
-  separate(date_of_interest, c("year", "month", "day"))
+  select(date = date_of_interest, case_count) %>%
+  filter(date < "2022-01-31" & date >= "2021-10-31") %>% 
+  separate(date, c("year", "month", "day"), remove = FALSE) %>% 
+  mutate_if(is.character, as.numeric)
 ```
 
 ### Delay
@@ -80,7 +93,15 @@ full_delay_df =
     ),
     scheduled_hour = str_left(scheduled_departure_time, 2)
   ) %>% 
-  separate(date_mm_dd_yyyy, into = c("month", "date", "year"), sep = "/") %>% 
+  separate(date_mm_dd_yyyy, into = c("month", "day", "year"), sep = "/", remove = FALSE) %>%
+  mutate(
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day),
+    date_mm_dd_yyyy = as.POSIXct(date_mm_dd_yyyy, format = "%m/%d/%Y")
+  ) %>%
+  select(carrier_code, date = date_mm_dd_yyyy, everything(),) %>% 
+  arrange(date) %>% 
   relocate(scheduled_hour, .before = scheduled_departure_time)
 ```
 
@@ -107,7 +128,15 @@ full_cancelation_df =
       TRUE      ~ ""
     )
   ) %>% 
-  separate(date_mm_dd_yyyy, into = c("month", "date", "year"), sep = "/")
+  separate(date_mm_dd_yyyy, into = c("month", "day", "year"), sep = "/", remove = FALSE) %>% 
+  mutate(
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day),
+    date_mm_dd_yyyy = as.POSIXct(date_mm_dd_yyyy, format = "%m/%d/%Y")
+  ) %>%
+  select(carrier_code, date = date_mm_dd_yyyy, everything(),) %>% 
+  arrange(date)
 ```
 
 ## Export
