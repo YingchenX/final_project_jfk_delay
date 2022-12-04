@@ -43,6 +43,7 @@ As the holiday season approaches, the demand for departure flights from NYC is b
 *   [Flight delay and cancellation data](https://www.transtats.bts.gov/ONTIME/) - The Bureau of Transportation Statistics (BTS) 
 *   [Weather condition data](https://www.ncdc.noaa.gov/cdo-web/datatools/lcd) - The National Oceanic and Atmospheric Administration (NOAA) 
 *   [COVID data](https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3) - NYC OpenData
+*   [Airport location information](https://data.humdata.org/dataset/ourairports-usa) - The Humanitarian Data Exchange
 
 
 ## Planned Analyses 
