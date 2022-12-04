@@ -2,7 +2,7 @@
 title: "Home"
 ---
 
-## A screencast walking you through this website
+## Screencast Walking You through the Website
 
 Insert the video here
 
@@ -25,7 +25,7 @@ Our analysis focuses on the flight delay data from the Bureau of Transportation 
   *  Stratified analyses of flight delay data to test the difference among categories for each factor
   
   
-**3. Are there significant associations of multiple factors with JFK flight delays during last holiday season**
+**3. Are there significant associations of multiple factors with JFK flight delays during last holiday season?**
 
   *  Regression analysis
 
