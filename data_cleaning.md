@@ -18,7 +18,7 @@ noaa_df = noaa %>%
   filter(minute == "51") %>% 
   select(-minute, -second) %>% 
   mutate(
-    date = as.POSIXct(str_left(date, n = 10), format = "%Y-%m-%d"),
+    date = as.Date(str_left(date, n = 10), format = "%Y-%m-%d"),
     year = as.numeric(year),
     month = as.numeric(month),
     day = as.numeric(day),
@@ -54,6 +54,9 @@ covid_df = covid %>%
   select(date = date_of_interest, case_count) %>%
   filter(date < "2022-01-31" & date >= "2021-10-31") %>% 
   separate(date, c("year", "month", "day"), remove = FALSE) %>% 
+  mutate(
+    date = as.Date(date, format = "%Y-%m-%d")
+  ) %>% 
   mutate_if(is.character, as.numeric)
 ```
 
@@ -72,7 +75,7 @@ read_csv_function = function(path) {
   
 }
 
-full_delay_df = 
+delay_cancel = 
   tibble(
     files = list.files("data/delay/"),
     path = str_c("data/delay/", files)
@@ -98,16 +101,18 @@ full_delay_df =
     year = as.numeric(year),
     month = as.numeric(month),
     day = as.numeric(day),
-    date_mm_dd_yyyy = as.POSIXct(date_mm_dd_yyyy, format = "%m/%d/%Y")
+    date_mm_dd_yyyy = as.Date(date_mm_dd_yyyy, format = "%m/%d/%Y")
   ) %>%
-  select(carrier_code, date = date_mm_dd_yyyy, everything(),) %>% 
+  select(airline_name, date = date_mm_dd_yyyy, everything(), -carrier_code, -tail_number, -wheels_off_time) %>% 
   arrange(date) %>% 
   relocate(scheduled_hour, .before = scheduled_departure_time)
 
 full_delay_df = 
-  full_delay_df %>% 
+  delay_cancel %>% 
+  filter(actual_elapsed_time_minutes != 0) %>% 
   mutate(
-    delay_minutes = as.numeric(as.POSIXct(actual_departure_time, format = "%H:%M") - as.POSIXct(scheduled_departure_time, format = "%H:%M")) / 60
+    delay_minutes = as.numeric(as.POSIXct(actual_departure_time, format = "%H:%M") - as.POSIXct(scheduled_departure_time, format = "%H:%M")) / 60,
+    delay_minutes = ifelse(delay_minutes < -100, delay_minutes + 1440, delay_minutes)
   ) %>% 
   select(-departure_delay_minutes) %>% 
   relocate(delay_minutes, .after = actual_departure_time)
@@ -116,35 +121,10 @@ full_delay_df =
 ### Cancelation
 
 ``` r
-full_cancelation_df = 
-  tibble(
-    files = list.files("data/cancelation/"),
-    path = str_c("data/cancelation/", files)
-  ) %>% 
-  mutate(data = map(path, read_csv_function)) %>% 
-  unnest(data) %>% 
-  select(-files, -path) %>%
-  mutate(
-    airline_name = case_when(
-      carrier_code == "9E" ~ "Endeavor Air",
-      carrier_code == "AA" ~ "American Airlines",
-      carrier_code == "AS" ~ "Alaska Airlines",
-      carrier_code == "B6" ~ "JetBlue Airways",
-      carrier_code == "DL" ~ "Delta Air Lines",
-      carrier_code == "UA" ~ "United Air Lines",
-      carrier_code == "YX" ~ "Republic Airways",
-      TRUE      ~ ""
-    )
-  ) %>% 
-  separate(date_mm_dd_yyyy, into = c("month", "day", "year"), sep = "/", remove = FALSE) %>% 
-  mutate(
-    year = as.numeric(year),
-    month = as.numeric(month),
-    day = as.numeric(day),
-    date_mm_dd_yyyy = as.POSIXct(date_mm_dd_yyyy, format = "%m/%d/%Y")
-  ) %>%
-  select(carrier_code, date = date_mm_dd_yyyy, everything(),) %>% 
-  arrange(date)
+full_cancel_df = 
+  delay_cancel %>% 
+  filter(actual_elapsed_time_minutes == 0) %>% 
+  select(airline_name:scheduled_departure_time, scheduled_elapsed_time_minutes)
 ```
 
 ## Export
@@ -153,5 +133,5 @@ full_cancelation_df =
 write_csv(noaa_df, "tidied_data/weather.csv")
 write_csv(covid_df, "tidied_data/covid.csv")
 write_csv(full_delay_df, "tidied_data/delay.csv")
-write_csv(full_cancelation_df, "tidied_data/cancelation.csv")
+write_csv(full_cancel_df, "tidied_data/cancel.csv")
 ```
