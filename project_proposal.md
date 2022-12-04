@@ -3,19 +3,20 @@ Project Proposal
 
 ## Group Members
 
-Yingchen Xu (yx2711)
-
-Siyue Gao (sg3889)
+Fengyi Ma (fm2751)
 
 Jialu Cheng (jc5457)
 
-Fengyi Ma (fm2751)
+Siyue Gao (sg3889)
 
 Yeque Sun (ys3508)
 
+Yingchen Xu (yx2711)
+
 ## Tentative Project Title
 
-Reviews on JFK Flight Delay Conditions During Winter Vacation Season
+Reviews on John F. Kennedy International Airport (JFK) Flight Delay
+Conditions During Winter Vacation Season
 
 ## Motivation for This Project
 
@@ -49,13 +50,13 @@ flight delay for this holiday season.
 
 ## Planned Analyses
 
-- **Contributing factors** - Figure out contributing factors to flight
+- **Contributing Factors** - Figure out contributing factors to flight
   delay by heatmap
-- **Regression analysis** - Test for the association between
+- **Regression Analysis** - Test for the association between
   contributing factors and flight delay using regression analysis, also
   test for the difference in various rating criteria among the different
   levels of factors using stratified analysis (ANOVA)
-- **Predictive analysis** - Build a model to predict the estimated
+- **Predictive Analysis** - Build a model to predict the estimated
   flight delay time of JFK in the upcoming holiday season, given
   carrier, weather, and COVID conditions.
 
