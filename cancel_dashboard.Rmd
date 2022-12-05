@@ -59,6 +59,7 @@ renderPlotly({
     ) %>% 
     plot_ly(x = ~date, y = ~count, color = "rgb(255, 65, 54)",
             size = ~count, sizes = c(10, 100), text = ~text_label,
+            hoverinfo = "text",
             type = "scatter", mode = "markers", opacity = .7
             )
 })
@@ -77,7 +78,7 @@ renderPlotly({
       text_label = str_c("Date: ", date, "\nCase Count: ", case_count)
     ) %>% 
     plot_ly(x = ~date, y = ~case_count, color = "rgb(255, 65, 54)",
-            text = ~text_label,
+            text = ~text_label, hoverinfo = "text",
             type = "scatter", mode = "lines", opacity = .7
             )
 })
