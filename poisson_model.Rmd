@@ -34,7 +34,7 @@ cancel_date <- cancel_raw %>%
   mutate(number = as.numeric(number)) %>% 
   select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes) %>% 
   group_by(date) %>% 
-  mutate(cancel_by_date = sum(number)) %>% 
+  mutate(cancel_count = sum(number)) %>% 
   distinct
 
 ```
@@ -78,15 +78,40 @@ merge dataset
 weather_covid <- weather %>% left_join(covid, by = c("date", "month", "day", "year"))
 
 # merge cancel and weather_covid dataset
-cancel_weather_covid <- weather_covid %>% 
+cancel_tidy <- weather_covid %>% 
   left_join(cancel, by = c("date", "month", "day", "year")) %>% 
   mutate(
     temperature = as.numeric(temperature),
     humidity = as.numeric(humidity),
     windspeed = as.numeric(windspeed),
     case_count = as.numeric(case_count),
-    airline_name = as_factor(airline_name)
-  )  
+    airline_name = as_factor(airline_name),
+    month = ifelse(month == 11, "November", 
+                        ifelse(month == 12, "December", "January"))) 
  
+```
+
+# Poisson model
+```{r}
+poisson = glm(cancel_count ~ temperature + humidity + windspeed + case_count + airline_name,family = "poisson",data=cancel_tidy)
+
+summary(poisson)
+```
+
+# Poisson model Nested by month
+```{r}
+cancel_tidy %>% 
+  nest(df = -month) %>%
+  mutate(
+    models = map(.x = df, ~ glm(cancel_count ~ temperature + humidity + windspeed + case_count + airline_name,family = "poisson", data = .x)),
+    results = map(models, broom::tidy)
+  ) %>% 
+  unnest(results) %>% 
+  select(month, term, estimate) %>% 
+  mutate(term = fct_inorder(term)) %>% 
+  pivot_wider(
+    names_from = term, 
+    values_from = estimate) %>% 
+  knitr::kable(digits = 3)
 ```
 
