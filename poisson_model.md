@@ -102,3 +102,15 @@ weather = read_csv("tidied_data/weather.csv")
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+Count numbers of cancellation by date
+
+``` r
+cancel_date <- cancelation %>% 
+  mutate(number = 1)%>% 
+  mutate(number = as.numeric(number)) %>% 
+  select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes, -airline_name) %>% 
+  group_by(date) %>% 
+  mutate(cancel_by_date = sum(number)) %>% 
+  distinct
+```
