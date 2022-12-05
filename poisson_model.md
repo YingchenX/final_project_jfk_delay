@@ -2,6 +2,8 @@ Poisson model
 ================
 
 ``` r
+# install.packages("zoo")
+
 library(dplyr)
 ```
 
@@ -35,7 +37,36 @@ library(tidyverse)
 ``` r
 library(ggridges)
 library(patchwork)
+library(zoo)
+```
 
+    ## 
+    ## Attaching package: 'zoo'
+    ## 
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     as.Date, as.Date.numeric
+
+``` r
+library(plotly)
+```
+
+    ## 
+    ## Attaching package: 'plotly'
+    ## 
+    ## The following object is masked from 'package:ggplot2':
+    ## 
+    ##     last_plot
+    ## 
+    ## The following object is masked from 'package:stats':
+    ## 
+    ##     filter
+    ## 
+    ## The following object is masked from 'package:graphics':
+    ## 
+    ##     layout
+
+``` r
 knitr::opts_chunk$set(
     echo = TRUE,
     warning = FALSE,
@@ -81,9 +112,8 @@ daily_weather = read_csv("tidied_data/daily_weather.csv")
     ## Rows: 92 Columns: 24
     ## ── Column specification ────────────────────────────────────────────────────────
     ## Delimiter: ","
-    ## chr   (5): daily_peak_wind_direction, daily_precipitation, daily_snowfall, d...
-    ## dbl  (18): year, month, day, daily_average_dew_point_temperature, daily_aver...
-    ## date  (1): date
+    ## chr  (4): date, daily_precipitation, daily_snowfall, daily_weather
+    ## dbl (20): year, month, day, daily_average_dew_point_temperature, daily_avera...
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -93,31 +123,13 @@ daily_weather = read_csv("tidied_data/daily_weather.csv")
 Count numbers of cancellation by date
 
 ``` r
-cancel_date <- cancel_raw %>% 
+cancel <- cancel_raw %>% 
   mutate(number = 1)%>% 
   mutate(number = as.numeric(number)) %>% 
-  select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes) %>% 
   group_by(date) %>% 
   mutate(cancel_count = sum(number)) %>% 
+  select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes, -number) %>%
   distinct
-```
-
-Count numbers of cancellation by airline and date
-
-``` r
-cancel_airline <- cancel_raw %>% 
-  mutate(number = 1)%>% 
-  mutate(number = as.numeric(number)) %>% 
-  select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes) %>% 
-  group_by(date, airline_name) %>% 
-  mutate(cancel_by_airline = sum(number)) %>% 
-  distinct
-```
-
-``` r
-cancel <- cancel_date %>%
- inner_join(cancel_airline, by = c("airline_name", "date", "month", "day", "year", "number")) %>% 
- select(-number) 
 ```
 
 # Merge outcome and predictors:
@@ -139,11 +151,15 @@ merge dataset
 
 ``` r
 # merge weather and covid dataset
-weather_covid <- weather %>% left_join(covid, by = c("date", "month", "day", "year"))
+weather_covid <- weather %>% left_join(covid, by = c("month", "day", "year"))
+```
 
+``` r
 # merge cancel and weather_covid dataset
 cancel_tidy <- weather_covid %>% 
-  left_join(cancel, by = c("date", "month", "day", "year")) %>% 
+  left_join(cancel, by = c("month", "day", "year")) 
+
+cancel_tidy <- cancel_tidy%>% 
   mutate(
     temperature = as.numeric(temperature),
     humidity = as.numeric(humidity),
@@ -151,13 +167,14 @@ cancel_tidy <- weather_covid %>%
     case_count = as.numeric(case_count),
     airline_name = as_factor(airline_name),
     month = ifelse(month == 11, "November", 
-                        ifelse(month == 12, "December", "January"))) 
+                        ifelse(month == 12, "December", "January"))) %>% 
+    filter(!is.na(cancel_count))  
 ```
 
 # Poisson model
 
 ``` r
-poisson = glm(cancel_count ~ temperature + humidity + windspeed + case_count + airline_name,family = "poisson",data=cancel_tidy)
+poisson = glm(cancel_count ~ temperature + humidity + windspeed + case_count,family = "poisson",data=cancel_tidy)
 
 summary(poisson)
 ```
@@ -165,34 +182,27 @@ summary(poisson)
     ## 
     ## Call:
     ## glm(formula = cancel_count ~ temperature + humidity + windspeed + 
-    ##     case_count + airline_name, family = "poisson", data = cancel_tidy)
+    ##     case_count, family = "poisson", data = cancel_tidy)
     ## 
     ## Deviance Residuals: 
     ##     Min       1Q   Median       3Q      Max  
-    ## -11.311   -3.701   -1.241    2.167   14.413  
+    ## -10.834   -3.818   -1.062    1.687   12.682  
     ## 
     ## Coefficients:
-    ##                                Estimate Std. Error z value Pr(>|z|)    
-    ## (Intercept)                   2.202e+00  8.680e-02  25.368  < 2e-16 ***
-    ## temperature                  -1.204e-01  1.875e-03 -64.188  < 2e-16 ***
-    ## humidity                      5.744e-02  1.101e-03  52.197  < 2e-16 ***
-    ## windspeed                     3.815e-02  1.321e-03  28.873  < 2e-16 ***
-    ## case_count                    8.978e-06  8.448e-07  10.626  < 2e-16 ***
-    ## airline_nameAlaska Airlines   2.368e-01  4.103e-02   5.772 7.82e-09 ***
-    ## airline_nameJetBlue Airways  -4.970e-02  3.893e-02  -1.277  0.20165    
-    ## airline_nameDelta Air Lines   2.063e-01  4.002e-02   5.156 2.53e-07 ***
-    ## airline_nameEndeavor Air      2.020e-01  4.177e-02   4.835 1.33e-06 ***
-    ## airline_nameRepublic Airways  1.245e-01  4.177e-02   2.980  0.00288 ** 
-    ## airline_nameUnited Air Lines  4.329e-01  4.514e-02   9.591  < 2e-16 ***
+    ##               Estimate Std. Error z value Pr(>|z|)    
+    ## (Intercept)  2.257e+00  8.342e-02   27.06   <2e-16 ***
+    ## temperature -1.240e-01  1.852e-03  -66.97   <2e-16 ***
+    ## humidity     5.970e-02  1.080e-03   55.29   <2e-16 ***
+    ## windspeed    3.868e-02  1.313e-03   29.46   <2e-16 ***
+    ## case_count   1.017e-05  8.435e-07   12.06   <2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## (Dispersion parameter for poisson family taken to be 1)
     ## 
     ##     Null deviance: 15063.0  on 215  degrees of freedom
-    ## Residual deviance:  5012.7  on 205  degrees of freedom
-    ##   (18 observations deleted due to missingness)
-    ## AIC: 5990.4
+    ## Residual deviance:  5171.4  on 211  degrees of freedom
+    ## AIC: 6137.1
     ## 
     ## Number of Fisher Scoring iterations: 6
 
@@ -202,7 +212,7 @@ summary(poisson)
 cancel_tidy %>% 
   nest(df = -month) %>%
   mutate(
-    models = map(.x = df, ~ glm(cancel_count ~ temperature + humidity + windspeed + case_count + airline_name,family = "poisson", data = .x)),
+    models = map(.x = df, ~ glm(cancel_count ~ temperature + humidity + windspeed + case_count,family = "poisson", data = .x)),
     results = map(models, broom::tidy)
   ) %>% 
   unnest(results) %>% 
@@ -214,8 +224,52 @@ cancel_tidy %>%
   knitr::kable(digits = 3)
 ```
 
-| month    | (Intercept) | temperature | humidity | windspeed | case_count | airline_nameAlaska Airlines | airline_nameJetBlue Airways | airline_nameDelta Air Lines | airline_nameEndeavor Air | airline_nameRepublic Airways | airline_nameUnited Air Lines |
-|:---------|------------:|------------:|---------:|----------:|-----------:|----------------------------:|----------------------------:|----------------------------:|-------------------------:|-----------------------------:|-----------------------------:|
-| November |       0.182 |       0.054 |   -0.040 |     0.027 |          0 |                       0.213 |                       0.029 |                       0.070 |                    0.040 |                        0.139 |                       -0.135 |
-| December |      -1.169 |       0.005 |    0.032 |     0.046 |          0 |                      -0.104 |                      -0.362 |                      -0.041 |                   -1.884 |                       -1.609 |                        0.085 |
-| January  |       2.337 |      -0.130 |    0.062 |     0.033 |          0 |                       0.227 |                      -0.057 |                       0.190 |                    0.223 |                        0.146 |                        0.422 |
+| month    | (Intercept) | temperature | humidity | windspeed | case_count |
+|:---------|------------:|------------:|---------:|----------:|-----------:|
+| November |       0.073 |       0.058 |   -0.042 |     0.029 |          0 |
+| December |      -0.902 |       0.006 |    0.026 |     0.035 |          0 |
+| January  |       2.407 |      -0.133 |    0.064 |     0.034 |          0 |
+
+# Poisson model Nested by month
+
+## Descriptive table and plot
+
+``` r
+cancel_airline <- cancel_tidy  %>%
+  group_by(year, month, airline_name) %>%
+  mutate(Total_number_of_cancellation = sum(cancel_count)) 
+
+cancel_airline %>%
+  select(year, month, airline_name, Total_number_of_cancellation) %>%
+  distinct %>% 
+  pivot_wider(
+  names_from = airline_name, 
+  values_from = Total_number_of_cancellation) %>%
+  head() %>% knitr::kable(digits = 2)
+```
+
+| year | month    | American Airlines | Alaska Airlines | JetBlue Airways | Delta Air Lines | Endeavor Air | Republic Airways | United Air Lines |
+|-----:|:---------|------------------:|----------------:|----------------:|----------------:|-------------:|-----------------:|-----------------:|
+| 2021 | November |                42 |              23 |              11 |               8 |            3 |                8 |                1 |
+| 2021 | December |               174 |             143 |             252 |             226 |           10 |                5 |              171 |
+| 2022 | January  |              1047 |             977 |            1121 |            1039 |         1058 |             1047 |              672 |
+
+``` r
+plot_cancel_airline <- cancel_airline %>%
+  mutate(year_month = paste(year, month, sep="-")) %>%
+  ggplot(aes(x = year_month, y = Total_number_of_cancellation, fill = airline_name)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  labs(
+    title = "Total Number of Cancellation by Airline",
+    x = "Month",
+    y = "Total Number of Cancellation"
+  ) +
+  theme(legend.position="right", legend.title = element_blank(),
+        text = element_text(size = 10),
+        axis.text.x = element_text(angle = 60, hjust = 1, size = 5)) +
+  facet_grid(. ~ airline_name)
+
+ggplotly(plot_cancel_airline)
+```
+
+<img src="poisson_model_files/figure-gfm/unnamed-chunk-9-1.png" width="90%" />

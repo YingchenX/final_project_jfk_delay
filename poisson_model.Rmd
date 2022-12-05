@@ -4,10 +4,14 @@ output: github_document
 ---
 
 ```{r}
+# install.packages("zoo")
+
 library(dplyr)
 library(tidyverse)
 library(ggridges)
 library(patchwork)
+library(zoo)
+library(plotly)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -29,32 +33,14 @@ daily_weather = read_csv("tidied_data/daily_weather.csv")
 # Outcome: mutate count cancellation data
 Count numbers of cancellation by date
 ```{r}
-cancel_date <- cancel_raw %>% 
+cancel <- cancel_raw %>% 
   mutate(number = 1)%>% 
   mutate(number = as.numeric(number)) %>% 
-  select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes) %>% 
   group_by(date) %>% 
   mutate(cancel_count = sum(number)) %>% 
+  select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes, -number) %>%
   distinct
 
-```
-
-
-Count numbers of cancellation by airline and date
-```{r}
-cancel_airline <- cancel_raw %>% 
-  mutate(number = 1)%>% 
-  mutate(number = as.numeric(number)) %>% 
-  select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes) %>% 
-  group_by(date, airline_name) %>% 
-  mutate(cancel_by_airline = sum(number)) %>% 
-  distinct
-```
-
-```{r}
-cancel <- cancel_date %>%
- inner_join(cancel_airline, by = c("airline_name", "date", "month", "day", "year", "number")) %>% 
- select(-number) 
 ```
 
 # Merge outcome and predictors:
@@ -75,11 +61,18 @@ weather <- daily_weather %>%
 merge dataset 
 ```{r}
 # merge weather and covid dataset
-weather_covid <- weather %>% left_join(covid, by = c("date", "month", "day", "year"))
+weather_covid <- weather %>% left_join(covid, by = c("month", "day", "year"))
+
+```
+
+```{r}
+
 
 # merge cancel and weather_covid dataset
 cancel_tidy <- weather_covid %>% 
-  left_join(cancel, by = c("date", "month", "day", "year")) %>% 
+  left_join(cancel, by = c("month", "day", "year")) 
+
+cancel_tidy <- cancel_tidy%>% 
   mutate(
     temperature = as.numeric(temperature),
     humidity = as.numeric(humidity),
@@ -87,13 +80,14 @@ cancel_tidy <- weather_covid %>%
     case_count = as.numeric(case_count),
     airline_name = as_factor(airline_name),
     month = ifelse(month == 11, "November", 
-                        ifelse(month == 12, "December", "January"))) 
+                        ifelse(month == 12, "December", "January"))) %>% 
+    filter(!is.na(cancel_count))  
  
 ```
 
 # Poisson model
 ```{r}
-poisson = glm(cancel_count ~ temperature + humidity + windspeed + case_count + airline_name,family = "poisson",data=cancel_tidy)
+poisson = glm(cancel_count ~ temperature + humidity + windspeed + case_count,family = "poisson",data=cancel_tidy)
 
 summary(poisson)
 ```
@@ -103,7 +97,7 @@ summary(poisson)
 cancel_tidy %>% 
   nest(df = -month) %>%
   mutate(
-    models = map(.x = df, ~ glm(cancel_count ~ temperature + humidity + windspeed + case_count + airline_name,family = "poisson", data = .x)),
+    models = map(.x = df, ~ glm(cancel_count ~ temperature + humidity + windspeed + case_count,family = "poisson", data = .x)),
     results = map(models, broom::tidy)
   ) %>% 
   unnest(results) %>% 
@@ -113,5 +107,40 @@ cancel_tidy %>%
     names_from = term, 
     values_from = estimate) %>% 
   knitr::kable(digits = 3)
+```
+# Poisson model Nested by month
+## Descriptive table and plot
+```{r}
+cancel_airline <- cancel_tidy  %>%
+  group_by(year, month, airline_name) %>%
+  mutate(Total_number_of_cancellation = sum(cancel_count)) 
+
+cancel_airline %>%
+  select(year, month, airline_name, Total_number_of_cancellation) %>%
+  distinct %>% 
+  pivot_wider(
+  names_from = airline_name, 
+  values_from = Total_number_of_cancellation) %>%
+  head() %>% knitr::kable(digits = 2)
+
+
+```
+
+```{r}
+plot_cancel_airline <- cancel_airline %>%
+  mutate(year_month = paste(year, month, sep="-")) %>%
+  ggplot(aes(x = year_month, y = Total_number_of_cancellation, fill = airline_name)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  labs(
+    title = "Total Number of Cancellation by Airline",
+    x = "Month",
+    y = "Total Number of Cancellation"
+  ) +
+  theme(legend.position="right", legend.title = element_blank(),
+        text = element_text(size = 10),
+        axis.text.x = element_text(angle = 60, hjust = 1, size = 5)) +
+  facet_grid(. ~ airline_name)
+
+ggplotly(plot_cancel_airline)
 ```
 
