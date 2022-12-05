@@ -111,7 +111,7 @@ Count numbers of cancellation by date
 cancel_date <- cancelation %>% 
   mutate(number = 1)%>% 
   mutate(number = as.numeric(number)) %>% 
-  select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes, -airline_name) %>% 
+  select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes) %>% 
   group_by(date) %>% 
   mutate(cancel_by_date = sum(number)) %>% 
   distinct
@@ -120,7 +120,7 @@ cancel_date <- cancelation %>%
 Count numbers of cancellation by airline and date
 
 ``` r
-cancel_date_airline <- cancelation %>% 
+cancel_airline <- cancelation %>% 
   mutate(number = 1)%>% 
   mutate(number = as.numeric(number)) %>% 
   select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes) %>% 
@@ -128,3 +128,11 @@ cancel_date_airline <- cancelation %>%
   mutate(cancel_by_airline = sum(number)) %>% 
   distinct
 ```
+
+``` r
+cancel <- cancel_date %>%
+ inner_join(cancel_airline, by = c("airline_name", "date", "month", "day", "year", "number")) %>% 
+ select(-number)
+```
+
+# Predictors:
