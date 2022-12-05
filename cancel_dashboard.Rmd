@@ -6,13 +6,21 @@ output:
     vertical_layout: fill
 runtime: shiny
 ---
+<style>                     
+.navbar {
+  background-color:white;
+  border-color:white;
+}
+.navbar-brand {
+color:black!important;
+}
+</style>                    
 
 ```{r setup, include = FALSE}
 library(flexdashboard)
 library(tidyverse)
 library(plotly)
 library(shiny)
-
 
 cancel = read_csv("tidied_data/cancel.csv")
 
