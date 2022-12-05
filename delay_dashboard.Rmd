@@ -1,5 +1,5 @@
 ---
-title: "Plot Delay Dashboard"
+title: "Delay Dashboard"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -7,15 +7,27 @@ output:
 runtime: shiny
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 library(flexdashboard)
 library(tidyverse)
 library(plotly)
+library(shiny)
 
-cancel = read_csv("tidied_data/cancel.csv")
-covid = read_csv("tidied_data/covid.csv")
+
 delay = read_csv("tidied_data/delay.csv")
+
+delay = 
+  delay %>% 
+  group_by(month, day, airline_name) %>% 
+  mutate(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  mutate(
+    month = recode(month, "11" = "Nov, 2021", "12" = "Dec, 2021", "1" = "Jan, 2022")
+  ) 
 ```
+
 
 Column {.sidebar}
 -----------------------------------------------------------------------
@@ -24,17 +36,15 @@ Column {.sidebar}
 airlines = delay %>% distinct(airline_name) %>% pull()
 
 selectInput(
-  input = "airline_choice",
+  inputId = "airline_choice",
   label = h3("Airline"),
   choices = airlines,
   selected = "JetBlue Airways"
 )
 
-months = delay %>% 
+months = 
+  delay %>% 
   distinct(month) %>% 
-  mutate(
-    month = recode(month, "11" = "Nov, 2021", "12" = "Dec, 2021", "1" = "Jan, 2022")
-  ) %>% 
   pull()
 
 radioButtons(
@@ -43,8 +53,8 @@ radioButtons(
   choices = months,
   selected = "Nov, 2021"
 )
-
 ```
+
 
 Column {data-width=600}
 -----------------------------------------------------------------------
@@ -53,17 +63,16 @@ Column {data-width=600}
 
 ```{r}
 renderPlotly({
-  
   delay %>% 
     filter(
       airline_name == input[["airline_choice"]],
-      month == input[["month_choice"]]) %>% 
-  group_by(month, day, airline_name) %>% 
-  summarize(
-    count = n()) %>% 
-  plot_ly(x = ~day, y = ~count,
-              type = 'bar', alpha = .5)
-
+      month == input[["month_choice"]]
+    ) %>% 
+    mutate(
+      text_label = str_c("Date: ", date, "\nCount: ", count)
+    ) %>% 
+    plot_ly(x = ~day, y = ~count, text = ~text_label,
+            type = "scatter", mode = "markers", alpha = .5)
 })
 ```
 
@@ -75,19 +84,5 @@ Column {data-width=600}
 
 ```{r}
 
-delay %>% 
-  filter(
-      delay_minutes > 0,
-      airline_name == input[["airline_choice"]],
-      month == input[["month_choice"]]) %>% 
-  group_by(day) %>% 
-  mutate(
-    count = n(),
-    mean = mean(delay_minutes)) %>% 
-  plot_ly(x = ~day, y = ~mean, 
-          type = 'scatter', mode = 'markers') 
-          #color = ~count, colors = 'Reds',marker = list(size = ~count, opacity = 0.5))
-
 ```
-
 
