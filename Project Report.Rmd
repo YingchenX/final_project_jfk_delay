@@ -1,0 +1,19 @@
+---
+title: "Project Report"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    output: 
+  always_allow_html: true
+---
+
+# Introduction 
+
+# Data Source and Cleaning
+
+# Exploratory Analysis
+
+# Additional Anslysis
+
+# Discussion
