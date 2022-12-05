@@ -1,5 +1,5 @@
 ---
-title: "Cancelation Dashboard"
+title: "Cancelation vs COVID Case Count Dashboard"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -23,6 +23,8 @@ cancel =
     count = n()
   ) %>% 
   ungroup()
+
+covid = read_csv("tidied_data/covid.csv")
 ```
 
 
@@ -69,6 +71,15 @@ Column {data-width=600}
 ### Chart B
 
 ```{r}
-
+renderPlotly({
+  covid %>% 
+    mutate(
+      text_label = str_c("Date: ", date, "\nCase Count: ", case_count)
+    ) %>% 
+    plot_ly(x = ~date, y = ~case_count, color = "rgb(255, 65, 54)",
+            text = ~text_label,
+            type = "scatter", mode = "lines", opacity = .7
+            )
+})
 ```
 
