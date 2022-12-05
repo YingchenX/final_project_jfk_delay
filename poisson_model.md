@@ -37,17 +37,6 @@ library(tidyverse)
 ``` r
 library(ggridges)
 library(patchwork)
-library(zoo)
-```
-
-    ## 
-    ## Attaching package: 'zoo'
-    ## 
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     as.Date, as.Date.numeric
-
-``` r
 library(plotly)
 ```
 
@@ -167,8 +156,12 @@ cancel_tidy <- cancel_tidy%>%
     case_count = as.numeric(case_count),
     airline_name = as_factor(airline_name),
     month = ifelse(month == 11, "November", 
-                        ifelse(month == 12, "December", "January"))) %>% 
-    filter(!is.na(cancel_count))  
+                        ifelse(month == 12, "December", "January")),
+    month2 = ifelse(month == "November", "Nov", 
+                        ifelse(month == "December", "Dec", "Jan")),
+    year_month = paste(year, month2, sep="-")) %>% 
+    filter(!is.na(cancel_count))  %>% 
+    select(-month2)
 ```
 
 # Poisson model
@@ -236,11 +229,11 @@ cancel_tidy %>%
 
 ``` r
 cancel_airline <- cancel_tidy  %>%
-  group_by(year, month, airline_name) %>%
+  group_by(year_month, airline_name) %>%
   mutate(Total_number_of_cancellation = sum(cancel_count)) 
 
 cancel_airline %>%
-  select(year, month, airline_name, Total_number_of_cancellation) %>%
+  select(year_month, airline_name, Total_number_of_cancellation) %>%
   distinct %>% 
   pivot_wider(
   names_from = airline_name, 
@@ -248,20 +241,19 @@ cancel_airline %>%
   head() %>% knitr::kable(digits = 2)
 ```
 
-| year | month    | American Airlines | Alaska Airlines | JetBlue Airways | Delta Air Lines | Endeavor Air | Republic Airways | United Air Lines |
-|-----:|:---------|------------------:|----------------:|----------------:|----------------:|-------------:|-----------------:|-----------------:|
-| 2021 | November |                42 |              23 |              11 |               8 |            3 |                8 |                1 |
-| 2021 | December |               174 |             143 |             252 |             226 |           10 |                5 |              171 |
-| 2022 | January  |              1047 |             977 |            1121 |            1039 |         1058 |             1047 |              672 |
+| year_month | American Airlines | Alaska Airlines | JetBlue Airways | Delta Air Lines | Endeavor Air | Republic Airways | United Air Lines |
+|:-----------|------------------:|----------------:|----------------:|----------------:|-------------:|-----------------:|-----------------:|
+| 2021-Nov   |                42 |              23 |              11 |               8 |            3 |                8 |                1 |
+| 2021-Dec   |               174 |             143 |             252 |             226 |           10 |                5 |              171 |
+| 2022-Jan   |              1047 |             977 |            1121 |            1039 |         1058 |             1047 |              672 |
 
 ``` r
 plot_cancel_airline <- cancel_airline %>%
-  mutate(year_month = paste(year, month, sep="-")) %>%
   ggplot(aes(x = year_month, y = Total_number_of_cancellation, fill = airline_name)) +
   geom_bar(stat = "identity", show.legend = FALSE) +
   labs(
     title = "Total Number of Cancellation by Airline",
-    x = "Month",
+    x = "Year and Month",
     y = "Total Number of Cancellation"
   ) +
   theme(legend.position="right", legend.title = element_blank(),
@@ -269,7 +261,60 @@ plot_cancel_airline <- cancel_airline %>%
         axis.text.x = element_text(angle = 60, hjust = 1, size = 5)) +
   facet_grid(. ~ airline_name)
 
+  
 ggplotly(plot_cancel_airline)
 ```
 
 <img src="poisson_model_files/figure-gfm/unnamed-chunk-9-1.png" width="90%" />
+
+## Nesting airline
+
+``` r
+poisson_by_airline = cancel_tidy %>%
+  nest(data = -airline_name) %>% 
+  mutate(
+    models = map(data, ~glm(cancel_count ~ temperature + humidity + windspeed + case_count, family = "poisson", data = .x)),
+    results = map(models, ~broom::tidy(.x, conf.int = T))) %>% 
+  select(airline_name, results) %>% 
+  unnest(results) %>% 
+  mutate(
+    OR = exp(estimate),
+    CI_lower = exp(conf.low),
+    CI_upper = exp(conf.high),
+    p_val = rstatix::p_format(p.value, digits = 2)
+  ) %>% 
+  select(airline_name, term, OR, CI_lower,CI_upper, p_val) 
+
+poisson_by_airline %>% 
+  filter(term != "(Intercept)" & p_val < .05) %>% 
+  knitr::kable(digits = 3, align = "llccc", col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"))
+```
+
+| Airline Name      | Terms       | Estimated adjusted OR | CI lower bound | CI upper bound | P-value  |
+|:------------------|:------------|:---------------------:|:--------------:|:--------------:|:---------|
+| American Airlines | temperature |         0.885         |     0.877      |     0.892      | \<0.0001 |
+| American Airlines | humidity    |         1.069         |     1.063      |     1.074      | \<0.0001 |
+| American Airlines | windspeed   |         1.052         |     1.046      |     1.059      | \<0.0001 |
+| American Airlines | case_count  |         1.000         |     1.000      |     1.000      | \<0.0001 |
+| Alaska Airlines   | temperature |         0.896         |     0.888      |     0.904      | \<0.0001 |
+| Alaska Airlines   | humidity    |         1.047         |     1.041      |     1.053      | \<0.0001 |
+| Alaska Airlines   | windspeed   |         1.038         |     1.030      |     1.045      | \<0.0001 |
+| Alaska Airlines   | case_count  |         1.000         |     1.000      |     1.000      | 0.011    |
+| JetBlue Airways   | temperature |         0.871         |     0.864      |     0.879      | \<0.0001 |
+| JetBlue Airways   | humidity    |         1.074         |     1.069      |     1.079      | \<0.0001 |
+| JetBlue Airways   | windspeed   |         1.036         |     1.029      |     1.042      | \<0.0001 |
+| JetBlue Airways   | case_count  |         1.000         |     1.000      |     1.000      | \<0.0001 |
+| Delta Air Lines   | temperature |         0.898         |     0.889      |     0.908      | \<0.0001 |
+| Delta Air Lines   | humidity    |         1.046         |     1.041      |     1.052      | \<0.0001 |
+| Delta Air Lines   | windspeed   |         1.036         |     1.029      |     1.043      | \<0.0001 |
+| Endeavor Air      | temperature |         0.860         |     0.849      |     0.871      | \<0.0001 |
+| Endeavor Air      | humidity    |         1.086         |     1.077      |     1.095      | \<0.0001 |
+| Endeavor Air      | windspeed   |         1.013         |     1.005      |     1.021      | 0.002    |
+| Endeavor Air      | case_count  |         1.000         |     1.000      |     1.000      | \<0.0001 |
+| Republic Airways  | temperature |         0.874         |     0.865      |     0.883      | \<0.0001 |
+| Republic Airways  | humidity    |         1.063         |     1.057      |     1.070      | \<0.0001 |
+| Republic Airways  | windspeed   |         1.049         |     1.041      |     1.056      | \<0.0001 |
+| Republic Airways  | case_count  |         1.000         |     1.000      |     1.000      | \<0.0001 |
+| United Air Lines  | temperature |         0.929         |     0.915      |     0.941      | \<0.0001 |
+| United Air Lines  | humidity    |         1.028         |     1.021      |     1.034      | \<0.0001 |
+| United Air Lines  | windspeed   |         1.046         |     1.034      |     1.058      | \<0.0001 |

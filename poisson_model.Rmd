@@ -10,7 +10,6 @@ library(dplyr)
 library(tidyverse)
 library(ggridges)
 library(patchwork)
-library(zoo)
 library(plotly)
 
 knitr::opts_chunk$set(
@@ -80,8 +79,12 @@ cancel_tidy <- cancel_tidy%>%
     case_count = as.numeric(case_count),
     airline_name = as_factor(airline_name),
     month = ifelse(month == 11, "November", 
-                        ifelse(month == 12, "December", "January"))) %>% 
-    filter(!is.na(cancel_count))  
+                        ifelse(month == 12, "December", "January")),
+    month2 = ifelse(month == "November", "Nov", 
+                        ifelse(month == "December", "Dec", "Jan")),
+    year_month = paste(year, month2, sep="-")) %>% 
+    filter(!is.na(cancel_count))  %>% 
+    select(-month2)
  
 ```
 
@@ -112,11 +115,11 @@ cancel_tidy %>%
 ## Descriptive table and plot
 ```{r}
 cancel_airline <- cancel_tidy  %>%
-  group_by(year, month, airline_name) %>%
+  group_by(year_month, airline_name) %>%
   mutate(Total_number_of_cancellation = sum(cancel_count)) 
 
 cancel_airline %>%
-  select(year, month, airline_name, Total_number_of_cancellation) %>%
+  select(year_month, airline_name, Total_number_of_cancellation) %>%
   distinct %>% 
   pivot_wider(
   names_from = airline_name, 
@@ -128,12 +131,11 @@ cancel_airline %>%
 
 ```{r}
 plot_cancel_airline <- cancel_airline %>%
-  mutate(year_month = paste(year, month, sep="-")) %>%
   ggplot(aes(x = year_month, y = Total_number_of_cancellation, fill = airline_name)) +
   geom_bar(stat = "identity", show.legend = FALSE) +
   labs(
     title = "Total Number of Cancellation by Airline",
-    x = "Month",
+    x = "Year and Month",
     y = "Total Number of Cancellation"
   ) +
   theme(legend.position="right", legend.title = element_blank(),
@@ -141,6 +143,30 @@ plot_cancel_airline <- cancel_airline %>%
         axis.text.x = element_text(angle = 60, hjust = 1, size = 5)) +
   facet_grid(. ~ airline_name)
 
+  
 ggplotly(plot_cancel_airline)
+```
+
+## Nesting airline
+```{r}
+  
+poisson_by_airline = cancel_tidy %>%
+  nest(data = -airline_name) %>% 
+  mutate(
+    models = map(data, ~glm(cancel_count ~ temperature + humidity + windspeed + case_count, family = "poisson", data = .x)),
+    results = map(models, ~broom::tidy(.x, conf.int = T))) %>% 
+  select(airline_name, results) %>% 
+  unnest(results) %>% 
+  mutate(
+    OR = exp(estimate),
+    CI_lower = exp(conf.low),
+    CI_upper = exp(conf.high),
+    p_val = rstatix::p_format(p.value, digits = 2)
+  ) %>% 
+  select(airline_name, term, OR, CI_lower,CI_upper, p_val) 
+
+poisson_by_airline %>% 
+  filter(term != "(Intercept)" & p_val < .05) %>% 
+  knitr::kable(digits = 3, align = "llccc", col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"))
 ```
 
