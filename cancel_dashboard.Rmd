@@ -1,0 +1,96 @@
+---
+title: "Cancelation vs COVID Case Count Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+<style>                     
+.navbar {
+  background-color:white;
+  border-color:white;
+}
+.navbar-brand {
+color:black!important;
+}
+</style>                    
+
+
+```{r setup, include = FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+library(shiny)
+
+cancel = read_csv("tidied_data/cancel.csv")
+
+cancel = 
+  cancel %>% 
+  group_by(month, day, airline_name) %>% 
+  mutate(
+    count = n()
+  ) %>% 
+  ungroup()
+
+covid = read_csv("tidied_data/covid.csv")
+```
+
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+airlines = cancel %>% distinct(airline_name) %>% pull()
+
+selectInput(
+  inputId = "airline_choice",
+  label = h3("Airline"),
+  choices = airlines,
+  selected = "JetBlue Airways"
+)
+```
+
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+renderPlotly({
+  cancel %>% 
+    filter(
+      airline_name == input[["airline_choice"]]
+    ) %>% 
+    mutate(
+      text_label = str_c("Date: ", date, "\nCount: ", count)
+    ) %>% 
+    plot_ly(x = ~date, y = ~count, color = "rgb(255, 65, 54)",
+            size = ~count, sizes = c(10, 100), text = ~text_label,
+            hoverinfo = "text",
+            type = "scatter", mode = "markers", opacity = .7
+            )
+})
+```
+
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+renderPlotly({
+  covid %>% 
+    mutate(
+      text_label = str_c("Date: ", date, "\nCase Count: ", case_count)
+    ) %>% 
+    plot_ly(x = ~date, y = ~case_count, color = "rgb(255, 65, 54)",
+            text = ~text_label, hoverinfo = "text",
+            type = "scatter", mode = "lines", opacity = .7
+            )
+})
+```
+

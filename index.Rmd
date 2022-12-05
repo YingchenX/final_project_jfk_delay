@@ -1,12 +1,17 @@
 ---
 title: "Home"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    output: 
+  always_allow_html: true
 ---
 
-## Screencast Walking You through the Website
+## Website Overview
 
-Insert the video here
+(Insert the video here)
 
-## Motivation
 
 Where are you heading to during the holiday season? As the holiday season approaches, the demand for departure flights from NYC is booming. However, trip planning is always accompanied by the issue of potential flight delay, especially in busy metropolitan airports like JFK. Using JFK departed flights as an example, we’re interested in exploring the factors that are potentially related with flight delay (e.g., airlines, weather, and COVID conditions), in order to give the holiday travelers a better sense of what to expect regarding flight delay for this holiday season. 
 
