@@ -1,5 +1,11 @@
 ---
 title: "Home"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    output: 
+  always_allow_html: true
 ---
 
 ## Screencast Walking You through the Website
