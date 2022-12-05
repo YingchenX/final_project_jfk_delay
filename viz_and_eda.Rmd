@@ -3,7 +3,7 @@ title: "Visualization and EDA"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 library(tidyverse)
 library(ggridges)
 library(patchwork)
@@ -13,8 +13,10 @@ library(gganimate)
 knitr::opts_chunk$set(
 	echo = TRUE,
 	warning = FALSE,
+	message = FALSE,
 	fig.width = 8, 
   fig.height = 6,
+	dpi = 300,
   out.width = "90%"
 )
 
@@ -24,7 +26,7 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
 cancel = read_csv("tidied_data/cancel.csv")
 covid = read_csv("tidied_data/covid.csv")
 delay = read_csv("tidied_data/delay.csv")
-weather = read_csv("tidied_data/weather.csv")
+weather = read_csv("tidied_data/hourly_weather.csv")
 
 ```
 
@@ -88,8 +90,7 @@ delay %>%
 ggplot(aes(x = date, y = delay_minutes, size = count, color = airline_name)) +
   geom_point(alpha = 0.7, show.legend = FALSE) +
   #scale_colour_manual(values = airline_name) +
-  scale_size(range = c(2, 12)) +
-  facet_wrap(.~airline_name) +
+  scale_size(range = c(1, 10)) 
   # Here comes the gganimate specific bits
   labs(title = 'Month: {frame_time}', x = 'date', y = 'delay_minutes') +
   transition_time(month) +
@@ -118,4 +119,6 @@ covid_line = covid %>%
 cancel_line + covid_line
 
 ```
+
+
 
