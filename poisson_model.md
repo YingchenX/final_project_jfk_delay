@@ -324,7 +324,7 @@ Create a plot showing the estimated ORs and CIs for each airline
 ``` r
 poisson_by_airline %>% 
   mutate(airline_name = fct_reorder(airline_name, OR)) %>%
-  ggplot(aes(x = airline_name, y = OR)) +
+  ggplot(aes(x = airline_name, y = OR, color = airline_name)) +
   geom_point() +
   geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
@@ -335,12 +335,12 @@ poisson_by_airline %>%
 
 ``` r
 poisson_by_airline %>%
+  mutate(airline_name = fct_reorder(airline_name, OR)) %>%
   filter(term != "(Intercept)") %>%
   ggplot(aes(x = airline_name, y = OR, color = term)) + 
-  geom_point() +
-  geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper)) +
-  geom_hline(yintercept = 1, linetype="dashed", 
-                color = "darkred", size = 1, alpha = .7) +
+  geom_point(show.legend = FALSE, aes()) +
+  geom_errorbar(aes(ymin = CI_lower, 
+                    ymax = CI_upper)) +
   labs(
     title = "Estimated OR with 95% CI in Cancellation Count Data by Airline",
     x = "Airline",
