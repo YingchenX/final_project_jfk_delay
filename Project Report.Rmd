@@ -25,6 +25,7 @@ Using JFK departed flights as an example, we’re interested in exploring the fa
 
 ## 1.2 Related Work
 
+### Common reasons for flight delay
 Commercial aviation is a complex distributed transportation system. The typical operation of a commercial flight can take place at terminal boundaries, airports, runways, and airspace, being susceptible to different kinds of delays. Some examples include mechanical problems, weather conditions, ground delays, air traffic control, runway queues and capacity constraints.
 
 
@@ -33,6 +34,9 @@ knitr::include_graphics("./pictures/delay-reason.jpg")
 ```
 
 [Source: transtats.bts.gov](https://www.transtats.bts.gov/OT_Delay/OT_DelayCause1.asp)
+
+
+### Typical operation of a commercial flight
 
 The following scheme is repeated several times throughout the day for each flight in the system: 
 
