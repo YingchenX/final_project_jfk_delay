@@ -47,6 +47,9 @@ flight delay for this holiday season.
 - [COVID
   data](https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3) -
   NYC OpenData
+- [Airport location
+  information](https://data.humdata.org/dataset/ourairports-usa) - The
+  Humanitarian Data Exchange
 
 ## Planned Analyses
 

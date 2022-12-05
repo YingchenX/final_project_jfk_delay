@@ -7,6 +7,8 @@ output: github_document
 library(tidyverse)
 library(ggridges)
 library(patchwork)
+library(ggplot2)
+library(gganimate)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -19,7 +21,7 @@ knitr::opts_chunk$set(
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
 
-cancelation = read_csv("tidied_data/cancelation.csv")
+cancel = read_csv("tidied_data/cancel.csv")
 covid = read_csv("tidied_data/covid.csv")
 delay = read_csv("tidied_data/delay.csv")
 weather = read_csv("tidied_data/weather.csv")
@@ -29,50 +31,91 @@ weather = read_csv("tidied_data/weather.csv")
 
 ```{r}
 delay %>% 
-  mutate(
-    date = as.numeric(date),
-    month = as.numeric(month),
-    month_date = str_c(year, month, date, sep = "-"),
-    dayofyear = as.Date(month_date)
-  ) %>% 
-  group_by(dayofyear, airline_name) %>% 
+  group_by(date) %>% 
   summarize(
     count = n()
   ) %>% 
-  ggplot(aes(x = dayofyear, y = count, color = airline_name)) +
-  geom_line()
+  ggplot(aes(x = date, y = count)) +
+  geom_point(alpha = .3) +
+  geom_smooth(se = FALSE)
+
+delay %>% 
+  group_by(month) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  ggplot(aes(x = count, y = as.factor(month), fill = month)) +
+  geom_density_ridges(alpha = .5)
+
+
+delay %>% 
+  group_by(date, airline_name) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  ggplot(aes(x = date, y = count, color = airline_name)) +
+  geom_point(alpha = .3) +
+  geom_smooth(se = FALSE)
+
+delay %>% 
+  group_by(month) %>% 
+  filter(delay_minutes > 0) %>% 
+  ggplot(aes(x = as.factor(month), y = delay_minutes)) +
+  geom_violin()
+
+cancel %>% 
+  group_by(date) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  ggplot(aes(x = date, y = count)) +
+  geom_point(alpha = .3) +
+  geom_smooth(se = FALSE)
 
 
 ```
 
-```{r}
-cancel_line = cancelation %>% 
-    mutate(
-    date = as.numeric(date),
-    month = as.numeric(month),
-    month_date = str_c(year, month, date, sep = "-"),
-    dayofyear = as.Date(month_date)
+```{r, eval=FALSE}
+
+# Make a ggplot, but add frame=year: one image per year
+
+delay %>% 
+  group_by(month) %>% 
+  mutate(
+    count = n()
   ) %>% 
-  group_by(dayofyear, airline_name) %>% 
+  ungroup(month) %>% 
+ggplot(aes(x = date, y = delay_minutes, size = count, color = airline_name)) +
+  geom_point(alpha = 0.7, show.legend = FALSE) +
+  #scale_colour_manual(values = airline_name) +
+  scale_size(range = c(2, 12)) +
+  facet_wrap(.~airline_name) +
+  # Here comes the gganimate specific bits
+  labs(title = 'Month: {frame_time}', x = 'date', y = 'delay_minutes') +
+  transition_time(month) +
+  ease_aes('linear')
+
+# Save at gif:
+anim_save("271-ggplot2-animated-gif-chart-with-gganimate2.gif")
+```
+
+
+
+```{r}
+cancel_line = cancel %>% 
+  group_by(date, airline_name) %>% 
   summarize(
     count = n()
   ) %>% 
-  ggplot(aes(x = dayofyear, y = count, color = airline_name)) +
+  ggplot(aes(x = date, y = count, color = airline_name)) +
   geom_line()
 
 
 covid_line = covid %>% 
-  mutate(
-    day = as.numeric(day),
-    month = as.numeric(month),
-    month_date = str_c(year, month, day, sep = "-"),
-    dayofyear = as.Date(month_date)
-  ) %>% 
-  ggplot(aes(x = dayofyear, y = case_count)) +
+  ggplot(aes(x = date, y = case_count)) +
   geom_line()
 
 cancel_line + covid_line
-  
-  
+
 ```
 
