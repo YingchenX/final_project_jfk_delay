@@ -12,8 +12,6 @@ delay %>%
   geom_smooth(se = FALSE)
 ```
 
-    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
-
 <img src="viz_and_eda_files/figure-gfm/unnamed-chunk-1-1.png" width="90%" />
 
 ``` r
@@ -25,8 +23,6 @@ delay %>%
   ggplot(aes(x = count, y = as.factor(month), fill = month)) +
   geom_density_ridges(alpha = .5)
 ```
-
-    ## Picking joint bandwidth of NaN
 
 <img src="viz_and_eda_files/figure-gfm/unnamed-chunk-1-2.png" width="90%" />
 
@@ -40,10 +36,6 @@ delay %>%
   geom_point(alpha = .3) +
   geom_smooth(se = FALSE)
 ```
-
-    ## `summarise()` has grouped output by 'date'. You can override using the
-    ## `.groups` argument.
-    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
 <img src="viz_and_eda_files/figure-gfm/unnamed-chunk-1-3.png" width="90%" />
 
@@ -67,8 +59,6 @@ cancel %>%
   geom_point(alpha = .3) +
   geom_smooth(se = FALSE)
 ```
-
-    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
 <img src="viz_and_eda_files/figure-gfm/unnamed-chunk-1-5.png" width="90%" />
 
@@ -103,12 +93,8 @@ cancel_line = cancel %>%
   ) %>% 
   ggplot(aes(x = date, y = count, color = airline_name)) +
   geom_line()
-```
 
-    ## `summarise()` has grouped output by 'date'. You can override using the
-    ## `.groups` argument.
 
-``` r
 covid_line = covid %>% 
   ggplot(aes(x = date, y = case_count)) +
   geom_line()
