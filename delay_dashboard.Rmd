@@ -7,12 +7,22 @@ output:
 runtime: shiny
 ---
 
+<style>                     
+.navbar {
+  background-color:white;
+  border-color:white;
+}
+.navbar-brand {
+color:black!important;
+}
+</style> 
+
+
 ```{r setup, include = FALSE}
 library(flexdashboard)
 library(tidyverse)
 library(plotly)
 library(shiny)
-
 
 delay = read_csv("tidied_data/delay.csv")
 
