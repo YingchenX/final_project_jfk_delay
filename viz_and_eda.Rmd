@@ -3,7 +3,7 @@ title: "Visualization and EDA"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 library(tidyverse)
 library(ggridges)
 library(patchwork)
@@ -13,8 +13,10 @@ library(gganimate)
 knitr::opts_chunk$set(
 	echo = TRUE,
 	warning = FALSE,
+	message = FALSE,
 	fig.width = 8, 
   fig.height = 6,
+	dpi = 300,
   out.width = "90%"
 )
 
@@ -24,7 +26,7 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
 cancel = read_csv("tidied_data/cancel.csv")
 covid = read_csv("tidied_data/covid.csv")
 delay = read_csv("tidied_data/delay.csv")
-weather = read_csv("tidied_data/weather.csv")
+weather = read_csv("tidied_data/hourly_weather.csv")
 
 ```
 
