@@ -20,17 +20,16 @@ knitr::opts_chunk$set(
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
 
-cancelation = read_csv("tidied_data/cancel.csv")
+cancel_raw = read_csv("tidied_data/cancel.csv")
 covid = read_csv("tidied_data/covid.csv")
-delay = read_csv("tidied_data/delay.csv")
-weather = read_csv("tidied_data/weather.csv")
+daily_weather = read_csv("tidied_data/daily_weather.csv")
 
 ```
 
 # Outcome: mutate count cancellation data
 Count numbers of cancellation by date
 ```{r}
-cancel_date <- cancelation %>% 
+cancel_date <- cancel_raw %>% 
   mutate(number = 1)%>% 
   mutate(number = as.numeric(number)) %>% 
   select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes) %>% 
@@ -43,7 +42,7 @@ cancel_date <- cancelation %>%
 
 Count numbers of cancellation by airline and date
 ```{r}
-cancel_airline <- cancelation %>% 
+cancel_airline <- cancel_raw %>% 
   mutate(number = 1)%>% 
   mutate(number = as.numeric(number)) %>% 
   select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes) %>% 
@@ -55,12 +54,39 @@ cancel_airline <- cancelation %>%
 ```{r}
 cancel <- cancel_date %>%
  inner_join(cancel_airline, by = c("airline_name", "date", "month", "day", "year", "number")) %>% 
- select(-number)
+ select(-number) 
 ```
 
-# Predictors:
+# Merge outcome and predictors:
 
+weather dataset: select `daily_average_dry_bulb_temperature`,  `daily_average_relative_humidity`, `daily_peak_wind_speed` predictors
 ```{r}
+weather <- daily_weather %>% 
+  mutate(
+    temperature = daily_average_dry_bulb_temperature,
+    humidity = daily_average_relative_humidity,
+    windspeed = daily_peak_wind_speed
+         )  %>% 
+  select(date, year, month, day, temperature, humidity, windspeed) 
+  
+  
+```
 
+merge dataset 
+```{r}
+# merge weather and covid dataset
+weather_covid <- weather %>% left_join(covid, by = c("date", "month", "day", "year"))
+
+# merge cancel and weather_covid dataset
+cancel_weather_covid <- weather_covid %>% 
+  left_join(cancel, by = c("date", "month", "day", "year")) %>% 
+  mutate(
+    temperature = as.numeric(temperature),
+    humidity = as.numeric(humidity),
+    windspeed = as.numeric(windspeed),
+    case_count = as.numeric(case_count),
+    airline_name = as_factor(airline_name)
+  )  
+ 
 ```
 

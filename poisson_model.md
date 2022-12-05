@@ -47,7 +47,7 @@ knitr::opts_chunk$set(
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
 
-cancelation = read_csv("tidied_data/cancel.csv")
+cancel_raw = read_csv("tidied_data/cancel.csv")
 ```
 
     ## Rows: 1441 Columns: 10
@@ -75,29 +75,14 @@ covid = read_csv("tidied_data/covid.csv")
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 
 ``` r
-delay = read_csv("tidied_data/delay.csv")
+daily_weather = read_csv("tidied_data/daily_weather.csv")
 ```
 
-    ## Rows: 29725 Columns: 19
+    ## Rows: 92 Columns: 24
     ## ── Column specification ────────────────────────────────────────────────────────
     ## Delimiter: ","
-    ## chr   (4): airline_name, flight_number, destination_airport, scheduled_hour
-    ## dbl  (12): month, day, year, delay_minutes, scheduled_elapsed_time_minutes, ...
-    ## date  (1): date
-    ## time  (2): scheduled_departure_time, actual_departure_time
-    ## 
-    ## ℹ Use `spec()` to retrieve the full column specification for this data.
-    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
-``` r
-weather = read_csv("tidied_data/weather.csv")
-```
-
-    ## Rows: 2208 Columns: 22
-    ## ── Column specification ────────────────────────────────────────────────────────
-    ## Delimiter: ","
-    ## chr   (5): hourly_precipitation, hourly_present_weather_type, hourly_sky_con...
-    ## dbl  (16): year, month, day, hour, hourly_altimeter_setting, hourly_dew_poin...
+    ## chr   (5): daily_peak_wind_direction, daily_precipitation, daily_snowfall, d...
+    ## dbl  (18): year, month, day, daily_average_dew_point_temperature, daily_aver...
     ## date  (1): date
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
@@ -108,7 +93,7 @@ weather = read_csv("tidied_data/weather.csv")
 Count numbers of cancellation by date
 
 ``` r
-cancel_date <- cancelation %>% 
+cancel_date <- cancel_raw %>% 
   mutate(number = 1)%>% 
   mutate(number = as.numeric(number)) %>% 
   select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes) %>% 
@@ -120,7 +105,7 @@ cancel_date <- cancelation %>%
 Count numbers of cancellation by airline and date
 
 ``` r
-cancel_airline <- cancelation %>% 
+cancel_airline <- cancel_raw %>% 
   mutate(number = 1)%>% 
   mutate(number = as.numeric(number)) %>% 
   select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes) %>% 
@@ -132,7 +117,38 @@ cancel_airline <- cancelation %>%
 ``` r
 cancel <- cancel_date %>%
  inner_join(cancel_airline, by = c("airline_name", "date", "month", "day", "year", "number")) %>% 
- select(-number)
+ select(-number) 
 ```
 
-# Predictors:
+# Merge outcome and predictors:
+
+weather dataset: select `daily_average_dry_bulb_temperature`,
+`daily_average_relative_humidity`, `daily_peak_wind_speed` predictors
+
+``` r
+weather <- daily_weather %>% 
+  mutate(
+    temperature = daily_average_dry_bulb_temperature,
+    humidity = daily_average_relative_humidity,
+    windspeed = daily_peak_wind_speed
+         )  %>% 
+  select(date, year, month, day, temperature, humidity, windspeed) 
+```
+
+merge dataset
+
+``` r
+# merge weather and covid dataset
+weather_covid <- weather %>% left_join(covid, by = c("date", "month", "day", "year"))
+
+# merge cancel and weather_covid dataset
+cancel_weather_covid <- weather_covid %>% 
+  left_join(cancel, by = c("date", "month", "day", "year")) %>% 
+  mutate(
+    temperature = as.numeric(temperature),
+    humidity = as.numeric(humidity),
+    windspeed = as.numeric(windspeed),
+    case_count = as.numeric(case_count),
+    airline_name = as_factor(airline_name)
+  )  
+```
