@@ -6,6 +6,7 @@ output:
     vertical_layout: fill
 runtime: shiny
 ---
+
 <style>                     
 .navbar {
   background-color:white;
@@ -15,6 +16,7 @@ runtime: shiny
 color:black!important;
 }
 </style>                    
+
 
 ```{r setup, include = FALSE}
 library(flexdashboard)
