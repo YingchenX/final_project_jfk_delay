@@ -1,0 +1,28 @@
+name: "settings"
+output_dir: "."
+navbar:
+  title: "Home"
+  left:
+  - text: Project Report
+    href: project_report.html
+      
+  right:
+    - text: Analysis
+      menu:
+      - text: "Visualization"
+        href: xx.html
+      - text: "Mapping"
+        href: xx.html
+      - text: "Poission Regression"
+        href: xx.html
+      - text: "Predictive Model"
+        href: xx.html
+    - text: About Us
+      href: about.html
+    - icon: fa-envelope fa-lg
+      href: mailto:<jc5457@cumc.columbia.edu>
+    - icon: fa-github fa-lg
+      href: https://github.com/YingchenX/final_project_nycairport
+output:
+  html_document:
+    theme: journal
