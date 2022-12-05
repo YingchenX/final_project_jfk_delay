@@ -2,8 +2,6 @@ Poisson model
 ================
 
 ``` r
-# install.packages("zoo")
-
 library(dplyr)
 ```
 
@@ -223,7 +221,7 @@ cancel_tidy %>%
 | December |      -0.902 |       0.006 |    0.026 |     0.035 |          0 |
 | January  |       2.407 |      -0.133 |    0.064 |     0.034 |          0 |
 
-# Poisson model Nested by month
+# Poisson model nested by airline
 
 ## Descriptive table and plot
 
@@ -318,3 +316,41 @@ poisson_by_airline %>%
 | United Air Lines  | temperature |         0.929         |     0.915      |     0.941      | \<0.0001 |
 | United Air Lines  | humidity    |         1.028         |     1.021      |     1.034      | \<0.0001 |
 | United Air Lines  | windspeed   |         1.046         |     1.034      |     1.058      | \<0.0001 |
+
+## Plot
+
+Create a plot showing the estimated ORs and CIs for each airline
+
+``` r
+poisson_by_airline %>% 
+  mutate(airline_name = fct_reorder(airline_name, OR)) %>%
+  ggplot(aes(x = airline_name, y = OR)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  labs(x = "Airline", y = "Estimated OR with CI")
+```
+
+<img src="poisson_model_files/figure-gfm/unnamed-chunk-11-1.png" width="90%" />
+
+``` r
+poisson_by_airline %>%
+  filter(term != "(Intercept)") %>%
+  ggplot(aes(x = airline_name, y = OR, color = term)) + 
+  geom_point() +
+  geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper)) +
+  geom_hline(yintercept = 1, linetype="dashed", 
+                color = "darkred", size = 1, alpha = .7) +
+  labs(
+    title = "Estimated OR with 95% CI in Cancellation Count Data by Airline",
+    x = "Airline",
+    y = "Estimated OR with CI"
+  ) +
+  ylim(0, 5) +
+  theme(legend.position="right", legend.title = element_blank(),
+        text = element_text(size = 10),
+        axis.text.x = element_text(angle = 60, hjust = 1, size = 8)) + 
+  facet_grid(. ~ term)
+```
+
+<img src="poisson_model_files/figure-gfm/unnamed-chunk-12-1.png" width="90%" />

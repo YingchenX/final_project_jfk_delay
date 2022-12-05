@@ -4,7 +4,7 @@ output: github_document
 ---
 
 ```{r}
-# install.packages("zoo")
+
 
 library(dplyr)
 library(tidyverse)
@@ -111,7 +111,7 @@ cancel_tidy %>%
     values_from = estimate) %>% 
   knitr::kable(digits = 3)
 ```
-# Poisson model Nested by month
+# Poisson model nested by airline
 ## Descriptive table and plot
 ```{r}
 cancel_airline <- cancel_tidy  %>%
@@ -168,5 +168,38 @@ poisson_by_airline = cancel_tidy %>%
 poisson_by_airline %>% 
   filter(term != "(Intercept)" & p_val < .05) %>% 
   knitr::kable(digits = 3, align = "llccc", col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"))
+```
+
+## Plot
+Create a plot showing the estimated ORs and CIs for each airline
+```{r}
+
+poisson_by_airline %>% 
+  mutate(airline_name = fct_reorder(airline_name, OR)) %>%
+  ggplot(aes(x = airline_name, y = OR)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  labs(x = "Airline", y = "Estimated OR with CI")
+```
+
+```{r}
+poisson_by_airline %>%
+  filter(term != "(Intercept)") %>%
+  ggplot(aes(x = airline_name, y = OR, color = term)) + 
+  geom_point() +
+  geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper)) +
+  geom_hline(yintercept = 1, linetype="dashed", 
+                color = "darkred", size = 1, alpha = .7) +
+  labs(
+    title = "Estimated OR with 95% CI in Cancellation Count Data by Airline",
+    x = "Airline",
+    y = "Estimated OR with CI"
+  ) +
+  ylim(0, 5) +
+  theme(legend.position="right", legend.title = element_blank(),
+        text = element_text(size = 10),
+        axis.text.x = element_text(angle = 60, hjust = 1, size = 8)) + 
+  facet_grid(. ~ term)
 ```
 
