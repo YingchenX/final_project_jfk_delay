@@ -8,9 +8,9 @@ output:
   always_allow_html: true
 ---
 
-## Screencast Walking You through the Website
+## Screencast of the Website
 
-Insert the video here
+(Insert the video here)
 
 ## Motivation
 
