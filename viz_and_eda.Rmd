@@ -88,8 +88,7 @@ delay %>%
 ggplot(aes(x = date, y = delay_minutes, size = count, color = airline_name)) +
   geom_point(alpha = 0.7, show.legend = FALSE) +
   #scale_colour_manual(values = airline_name) +
-  scale_size(range = c(2, 12)) +
-  facet_wrap(.~airline_name) +
+  scale_size(range = c(1, 10)) 
   # Here comes the gganimate specific bits
   labs(title = 'Month: {frame_time}', x = 'date', y = 'delay_minutes') +
   transition_time(month) +
@@ -118,4 +117,6 @@ covid_line = covid %>%
 cancel_line + covid_line
 
 ```
+
+
 

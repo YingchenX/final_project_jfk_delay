@@ -18,9 +18,11 @@ delay = read_csv("tidied_data/delay.csv")
 
 delay = 
   delay %>% 
+  filter(delay_minutes > 0) %>% 
   group_by(month, day, airline_name) %>% 
   mutate(
-    count = n()
+    count = n(),
+    mean = mean(delay_minutes)
   ) %>% 
   ungroup() %>% 
   mutate(
@@ -59,7 +61,32 @@ radioButtons(
 Column {data-width=600}
 -----------------------------------------------------------------------
 
-### Chart A
+### Number of delay on each day 
+
+```{r}
+renderPlotly({
+  delay %>%
+    distinct(airline_name, date, month, day, year, count) %>% 
+    filter(
+      airline_name == input[["airline_choice"]],
+      month == input[["month_choice"]]
+    ) %>% 
+    mutate(
+      text_label = str_c("Date: ", date, "\nCount: ", count)
+    ) %>% 
+    plot_ly(x = ~day, y = ~count, text = ~text_label, hoverinfo = "text",
+            type = "bar", mode = "markers", alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Day"),
+      yaxis = list(title = "Count"))
+})
+```
+
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+
+### Distribution of delay time on each day
 
 ```{r}
 renderPlotly({
@@ -69,20 +96,14 @@ renderPlotly({
       month == input[["month_choice"]]
     ) %>% 
     mutate(
-      text_label = str_c("Date: ", date, "\nCount: ", count)
+      text_label = str_c("Date: ", date)
     ) %>% 
-    plot_ly(x = ~day, y = ~count, text = ~text_label,
-            type = "scatter", mode = "markers", alpha = .5)
+    plot_ly(x = ~day, y = ~delay_minutes, text = ~text_label, hoverinfo = "text",
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Day"),
+      yaxis = list(title = "Delay Time (Minutes)"))
 })
 ```
 
-
-Column {data-width=600}
------------------------------------------------------------------------
-
-### Chart B
-
-```{r}
-
-```
 
