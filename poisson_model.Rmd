@@ -1,0 +1,29 @@
+---
+title: "Poisson model"
+output: github_document
+---
+
+```{r}
+library(dplyr)
+library(tidyverse)
+library(ggridges)
+library(patchwork)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+
+cancelation = read_csv("tidied_data/cancel.csv")
+covid = read_csv("tidied_data/covid.csv")
+delay = read_csv("tidied_data/delay.csv")
+weather = read_csv("tidied_data/weather.csv")
+
+```
+
