@@ -18,7 +18,7 @@ navbar:
       - text: "Predictive Model"
         href: xx.html
     - text: About Us
-      href: about.html
+      href: About-us.html
     - icon: fa-envelope fa-lg
       href: mailto:<jc5457@cumc.columbia.edu>
     - icon: fa-github fa-lg
