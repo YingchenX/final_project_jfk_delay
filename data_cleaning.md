@@ -25,7 +25,7 @@ noaa_df = noaa %>%
     hour = as.numeric(hour)
   )
 
-daily_weather = noaa %>%
+daily_weather_condition = noaa %>%
   janitor::clean_names() %>% 
   select(date, daily_weather) %>% 
   filter(!is.na(daily_weather)) %>% 
@@ -40,7 +40,24 @@ daily_weather = noaa %>%
     day = as.numeric(day)
   )
 
-noaa_df = left_join(noaa_df, daily_weather, by = c("year", "month", "day"))
+noaa_df = left_join(noaa_df, daily_weather_condition, by = c("year", "month", "day"))
+
+daily_weather = noaa %>%
+  janitor::clean_names() %>% 
+  select(date, starts_with("daily")) %>% 
+  mutate(
+    date = str_replace_all(date, "T", "-")
+  ) %>% 
+  separate(date, c("year", "month", "day", "hour", "minute", "second"), remove = FALSE) %>% 
+  filter(minute == "59") %>% 
+  select(-c(hour:second)) %>% 
+  mutate(
+    date = as.Date(str_left(date, n = 10), format = "%Y-%m-%d"),
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day)
+  ) %>% 
+  drop_na(daily_average_dew_point_temperature)
 ```
 
 ### COVID
@@ -147,7 +164,8 @@ airport_info = left_join(airport_info, airport, by = "airport")
 ## Export
 
 ``` r
-write_csv(noaa_df, "tidied_data/weather.csv")
+write_csv(noaa_df, "tidied_data/hourly_weather.csv")
+write_csv(daily_weather, "tidied_data/daily_weather.csv")
 write_csv(covid_df, "tidied_data/covid.csv")
 write_csv(full_delay_df, "tidied_data/delay.csv")
 write_csv(full_cancel_df, "tidied_data/cancel.csv")
