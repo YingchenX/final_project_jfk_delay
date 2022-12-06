@@ -254,6 +254,8 @@ variable first.
 
 ## Univariate linear regression
 
+### Continuous vars
+
 - temperature
 
 ``` r
@@ -469,3 +471,101 @@ summary(lrLat) %>%
     ##   <chr>          <dbl>     <dbl>
     ## 1 (Intercept)     7.57 3.65e-246
     ## 2 latarrd         1.35 0
+
+### Categorical vars
+
+First, tell R that they are categorical variables
+
+``` r
+raw_df = 
+  raw_df %>% 
+  mutate(
+    month = fct_infreq(as.factor(month)),
+    hour_c = fct_infreq(hour_c),
+    airline = fct_infreq(airline)
+    )
+```
+
+- month
+
+``` r
+lrMon = lm(delay~month, data = raw_df)
+summary(lrMon) %>% broom::glance()
+```
+
+    ## # A tibble: 1 × 8
+    ##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+    ##       <dbl>         <dbl> <dbl>     <dbl>    <dbl> <dbl>       <int> <dbl>
+    ## 1   0.00939       0.00933  45.6      141. 1.23e-61     2       29722 29725
+
+``` r
+summary(lrMon) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+    ## # A tibble: 3 × 3
+    ##   term        estimate  p.value
+    ##   <chr>          <dbl>    <dbl>
+    ## 1 (Intercept)     6.53 1.69e-46
+    ## 2 month1         10.8  1.05e-62
+    ## 3 month12         4.77 1.97e-13
+
+- hour
+
+``` r
+lrHour = lm(delay~hour_c, data = raw_df)
+summary(lrHour) %>% broom::glance()
+```
+
+    ## # A tibble: 1 × 8
+    ##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+    ##       <dbl>         <dbl> <dbl>     <dbl>    <dbl> <dbl>       <int> <dbl>
+    ## 1   0.00934       0.00924  45.6      93.4 3.65e-60     3       29721 29725
+
+``` r
+summary(lrHour) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+    ## # A tibble: 4 × 3
+    ##   term            estimate   p.value
+    ##   <chr>              <dbl>     <dbl>
+    ## 1 (Intercept)        18.2  7.34e-273
+    ## 2 hour_cnoon         -8.54 2.39e- 31
+    ## 3 hour_cafternoon    -6.21 2.62e- 17
+    ## 4 hour_cmorning     -12.1  7.68e- 58
+
+- airline
+
+``` r
+lrAL = lm(delay~airline, data = raw_df)
+summary(lrAL) %>% broom::glance()
+```
+
+    ## # A tibble: 1 × 8
+    ##   r.squared adj.r.squared sigma statistic   p.value    df df.residual  nobs
+    ##       <dbl>         <dbl> <dbl>     <dbl>     <dbl> <dbl>       <int> <dbl>
+    ## 1    0.0368        0.0366  45.0      189. 2.90e-237     6       29718 29725
+
+``` r
+summary(lrAL) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+    ## # A tibble: 7 × 3
+    ##   term                     estimate   p.value
+    ##   <chr>                       <dbl>     <dbl>
+    ## 1 (Intercept)                  23.1 0        
+    ## 2 airlineDelta Air Lines      -14.0 1.08e- 76
+    ## 3 airlineRepublic Airways     -21.0 2.81e-161
+    ## 4 airlineAmerican Airlines    -13.3 5.48e- 56
+    ## 5 airlineEndeavor Air         -21.6 7.83e-137
+    ## 6 airlineAlaska Airlines      -19.8 3.88e- 36
+    ## 7 airlineUnited Air Lines     -12.9 1.85e-  7
+
+The above results were not very satisfying, however, according to the
+R-squared values, we would choose to include `carrierd` and `latarrd` in
+to the final model.

@@ -206,6 +206,8 @@ Now, since we are not yet able to decide the variable type of the rest of the pr
 
 ## Univariate linear regression
 
+### Continuous vars
+
 * temperature
 
 ```{r message=FALSE, warning=FALSE}
@@ -295,4 +297,51 @@ summary(lrLat) %>%
   broom::tidy() %>% 
   select(term, estimate, p.value)
 ```
+
+### Categorical vars
+
+First, tell R that they are categorical variables
+```{r}
+raw_df = 
+  raw_df %>% 
+  mutate(
+    month = fct_infreq(as.factor(month)),
+    hour_c = fct_infreq(hour_c),
+    airline = fct_infreq(airline)
+    )
+```
+
+* month
+
+```{r message=FALSE, warning=FALSE}
+lrMon = lm(delay~month, data = raw_df)
+summary(lrMon) %>% broom::glance()
+summary(lrMon) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+* hour
+
+```{r}
+lrHour = lm(delay~hour_c, data = raw_df)
+summary(lrHour) %>% broom::glance()
+summary(lrHour) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+* airline
+
+```{r}
+lrAL = lm(delay~airline, data = raw_df)
+summary(lrAL) %>% broom::glance()
+summary(lrAL) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+The above results were not very satisfying, however, according to the R-squared values, we would choose to include `carrierd` and `latarrd` in to the final model.
+
+
 
