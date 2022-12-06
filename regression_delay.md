@@ -1052,3 +1052,37 @@ nest_lm_m %>%
 | 11    |      -7.645 |    1.072 |   0.896 | 0.457 |     1.074 |   1.081 |      -0.044 |      0.835 |
 | 12    |      -2.538 |    1.048 |   1.020 | 0.465 |     1.249 |   1.064 |      -0.021 |      0.274 |
 | 1     |      -1.592 |    1.058 |   1.024 | 0.284 |     1.139 |   1.062 |      -0.051 |      0.286 |
+
+## Fit airline-specific model
+
+we can nest within airlines and fit airline-specific models associating
+delay with the rest of variables
+
+``` r
+nest_lm_a =
+  raw_df_10 %>% 
+  select(-month, -hour_c) %>% 
+  nest(data = -airline) %>% 
+  mutate(
+    models = map(data, ~lm(delay ~ ., data = .x)),
+    results = map(models, broom::tidy)) %>% 
+  select(-data, -models) %>% 
+  unnest(results)
+
+nest_lm_a %>% 
+  select(airline, term, estimate) %>% 
+  mutate(term = fct_inorder(term)) %>% 
+  pivot_wider(
+    names_from = term, values_from = estimate) %>% 
+  knitr::kable(digits = 3)
+```
+
+| airline           | (Intercept) | carrierd | extrmwd |  nasd | securityd | latarrd | temperature | visibility |
+|:------------------|------------:|---------:|--------:|------:|----------:|--------:|------------:|-----------:|
+| JetBlue Airways   |       1.050 |    1.047 |   1.034 | 0.390 |     1.046 |   1.071 |      -0.082 |      0.410 |
+| Endeavor Air      |     -14.745 |    1.068 |   0.965 | 0.765 |     1.534 |   1.063 |       0.011 |      1.040 |
+| Delta Air Lines   |      -0.682 |    1.073 |   1.027 | 0.292 |     1.623 |   1.126 |      -0.023 |      0.227 |
+| American Airlines |      -1.337 |    1.033 |   1.036 | 0.212 |     1.034 |   1.044 |      -0.008 |      0.188 |
+| Republic Airways  |      -4.601 |    1.064 |   1.058 | 0.091 |     1.188 |   1.056 |       0.012 |     -0.022 |
+| Alaska Airlines   |     -10.861 |    1.105 |   1.149 | 0.230 |        NA |   1.059 |       0.108 |      0.177 |
+| United Air Lines  |      -7.223 |    1.007 |   0.804 | 0.477 |        NA |   1.135 |       0.069 |      0.217 |
