@@ -271,51 +271,53 @@ ggplotly(plot_cancel_airline)
 poisson_by_airline = cancel_tidy %>%
   nest(data = -airline_name) %>% 
   mutate(
-    models = map(data, ~glm(cancel_count ~ temperature + humidity + windspeed + case_count, family = "poisson", data = .x)),
-    results = map(models, ~broom::tidy(.x, conf.int = T))) %>% 
+    models = map(.x = data, ~glm(cancel_count ~ temperature + humidity + windspeed + case_count, family = "poisson", data = .x)),
+    results = map(models, broom::tidy)
+    ) %>% 
   select(airline_name, results) %>% 
   unnest(results) %>% 
   mutate(
     OR = exp(estimate),
-    CI_lower = exp(conf.low),
-    CI_upper = exp(conf.high),
-    p_val = rstatix::p_format(p.value, digits = 2)
+    CI_lower = exp(estimate - 1.96 * std.error),
+    CI_upper = exp(estimate + 1.96 * std.error)
   ) %>% 
-  select(airline_name, term, OR, CI_lower,CI_upper, p_val) 
+  select(airline_name, term, OR, CI_lower,CI_upper, p.value) 
 
 poisson_by_airline %>% 
-  filter(term != "(Intercept)" & p_val < .05) %>% 
-  knitr::kable(digits = 3, align = "llccc", col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"))
+  filter(term != "(Intercept)" ) %>% 
+  knitr::kable(digits = 20, align = "llccc", col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"))
 ```
 
-| Airline Name      | Terms       | Estimated adjusted OR | CI lower bound | CI upper bound | P-value  |
-|:------------------|:------------|:---------------------:|:--------------:|:--------------:|:---------|
-| American Airlines | temperature |         0.885         |     0.877      |     0.892      | \<0.0001 |
-| American Airlines | humidity    |         1.069         |     1.063      |     1.074      | \<0.0001 |
-| American Airlines | windspeed   |         1.052         |     1.046      |     1.059      | \<0.0001 |
-| American Airlines | case_count  |         1.000         |     1.000      |     1.000      | \<0.0001 |
-| Alaska Airlines   | temperature |         0.896         |     0.888      |     0.904      | \<0.0001 |
-| Alaska Airlines   | humidity    |         1.047         |     1.041      |     1.053      | \<0.0001 |
-| Alaska Airlines   | windspeed   |         1.038         |     1.030      |     1.045      | \<0.0001 |
-| Alaska Airlines   | case_count  |         1.000         |     1.000      |     1.000      | 0.011    |
-| JetBlue Airways   | temperature |         0.871         |     0.864      |     0.879      | \<0.0001 |
-| JetBlue Airways   | humidity    |         1.074         |     1.069      |     1.079      | \<0.0001 |
-| JetBlue Airways   | windspeed   |         1.036         |     1.029      |     1.042      | \<0.0001 |
-| JetBlue Airways   | case_count  |         1.000         |     1.000      |     1.000      | \<0.0001 |
-| Delta Air Lines   | temperature |         0.898         |     0.889      |     0.908      | \<0.0001 |
-| Delta Air Lines   | humidity    |         1.046         |     1.041      |     1.052      | \<0.0001 |
-| Delta Air Lines   | windspeed   |         1.036         |     1.029      |     1.043      | \<0.0001 |
-| Endeavor Air      | temperature |         0.860         |     0.849      |     0.871      | \<0.0001 |
-| Endeavor Air      | humidity    |         1.086         |     1.077      |     1.095      | \<0.0001 |
-| Endeavor Air      | windspeed   |         1.013         |     1.005      |     1.021      | 0.002    |
-| Endeavor Air      | case_count  |         1.000         |     1.000      |     1.000      | \<0.0001 |
-| Republic Airways  | temperature |         0.874         |     0.865      |     0.883      | \<0.0001 |
-| Republic Airways  | humidity    |         1.063         |     1.057      |     1.070      | \<0.0001 |
-| Republic Airways  | windspeed   |         1.049         |     1.041      |     1.056      | \<0.0001 |
-| Republic Airways  | case_count  |         1.000         |     1.000      |     1.000      | \<0.0001 |
-| United Air Lines  | temperature |         0.929         |     0.915      |     0.941      | \<0.0001 |
-| United Air Lines  | humidity    |         1.028         |     1.021      |     1.034      | \<0.0001 |
-| United Air Lines  | windspeed   |         1.046         |     1.034      |     1.058      | \<0.0001 |
+| Airline Name      | Terms       | Estimated adjusted OR | CI lower bound | CI upper bound | P-value      |
+|:------------------|:------------|:---------------------:|:--------------:|:--------------:|:-------------|
+| American Airlines | temperature |       0.8846483       |   0.8775611    |   0.8917927    | 0.000000e+00 |
+| American Airlines | humidity    |       1.0686233       |   1.0630732    |   1.0742023    | 0.000000e+00 |
+| American Airlines | windspeed   |       1.0521990       |   1.0456680    |   1.0587709    | 0.000000e+00 |
+| American Airlines | case_count  |       1.0000157       |   1.0000116    |   1.0000199    | 1.342065e-13 |
+| Alaska Airlines   | temperature |       0.8956385       |   0.8876480    |   0.9037009    | 0.000000e+00 |
+| Alaska Airlines   | humidity    |       1.0471660       |   1.0411269    |   1.0532401    | 0.000000e+00 |
+| Alaska Airlines   | windspeed   |       1.0377509       |   1.0304065    |   1.0451476    | 0.000000e+00 |
+| Alaska Airlines   | case_count  |       1.0000057       |   1.0000013    |   1.0000101    | 1.073996e-02 |
+| JetBlue Airways   | temperature |       0.8714847       |   0.8639014    |   0.8791346    | 0.000000e+00 |
+| JetBlue Airways   | humidity    |       1.0738661       |   1.0686825    |   1.0790750    | 0.000000e+00 |
+| JetBlue Airways   | windspeed   |       1.0356740       |   1.0294890    |   1.0418961    | 0.000000e+00 |
+| JetBlue Airways   | case_count  |       1.0000128       |   1.0000088    |   1.0000169    | 5.776996e-10 |
+| Delta Air Lines   | temperature |       0.8984078       |   0.8887831    |   0.9081367    | 0.000000e+00 |
+| Delta Air Lines   | humidity    |       1.0463897       |   1.0409742    |   1.0518334    | 0.000000e+00 |
+| Delta Air Lines   | windspeed   |       1.0355927       |   1.0285581    |   1.0426754    | 0.000000e+00 |
+| Delta Air Lines   | case_count  |       1.0000019       |   0.9999978    |   1.0000060    | 3.601724e-01 |
+| Endeavor Air      | temperature |       0.8601985       |   0.8495072    |   0.8710243    | 0.000000e+00 |
+| Endeavor Air      | humidity    |       1.0861519       |   1.0772882    |   1.0950886    | 0.000000e+00 |
+| Endeavor Air      | windspeed   |       1.0129569       |   1.0047147    |   1.0212668    | 2.012441e-03 |
+| Endeavor Air      | case_count  |       1.0000182       |   1.0000131    |   1.0000233    | 3.949415e-12 |
+| Republic Airways  | temperature |       0.8739409       |   0.8649762    |   0.8829984    | 0.000000e+00 |
+| Republic Airways  | humidity    |       1.0633295       |   1.0566389    |   1.0700623    | 0.000000e+00 |
+| Republic Airways  | windspeed   |       1.0487196       |   1.0414215    |   1.0560688    | 0.000000e+00 |
+| Republic Airways  | case_count  |       1.0000145       |   1.0000097    |   1.0000194    | 4.098106e-09 |
+| United Air Lines  | temperature |       0.9287536       |   0.9158573    |   0.9418316    | 0.000000e+00 |
+| United Air Lines  | humidity    |       1.0275640       |   1.0208801    |   1.0342917    | 3.170600e-16 |
+| United Air Lines  | windspeed   |       1.0463292       |   1.0342887    |   1.0585098    | 1.729727e-14 |
+| United Air Lines  | case_count  |       0.9999957       |   0.9999912    |   1.0000001    | 5.706210e-02 |
 
 ## Plot
 

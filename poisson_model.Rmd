@@ -153,21 +153,21 @@ ggplotly(plot_cancel_airline)
 poisson_by_airline = cancel_tidy %>%
   nest(data = -airline_name) %>% 
   mutate(
-    models = map(data, ~glm(cancel_count ~ temperature + humidity + windspeed + case_count, family = "poisson", data = .x)),
-    results = map(models, ~broom::tidy(.x, conf.int = T))) %>% 
+    models = map(.x = data, ~glm(cancel_count ~ temperature + humidity + windspeed + case_count, family = "poisson", data = .x)),
+    results = map(models, broom::tidy)
+    ) %>% 
   select(airline_name, results) %>% 
   unnest(results) %>% 
   mutate(
     OR = exp(estimate),
-    CI_lower = exp(conf.low),
-    CI_upper = exp(conf.high),
-    p_val = rstatix::p_format(p.value, digits = 2)
+    CI_lower = exp(estimate - 1.96 * std.error),
+    CI_upper = exp(estimate + 1.96 * std.error)
   ) %>% 
-  select(airline_name, term, OR, CI_lower,CI_upper, p_val) 
+  select(airline_name, term, OR, CI_lower,CI_upper, p.value) 
 
 poisson_by_airline %>% 
-  filter(term != "(Intercept)" & p_val < .05) %>% 
-  knitr::kable(digits = 3, align = "llccc", col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"))
+  filter(term != "(Intercept)" ) %>% 
+  knitr::kable(digits = 20, align = "llccc", col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"))
 ```
 
 ## Plot
