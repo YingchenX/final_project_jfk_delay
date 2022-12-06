@@ -715,7 +715,15 @@ heatmap(x = cor, col = color, symm = TRUE)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-29-1.png" width="90%" />
 
-Looks good, Pretty independent.
+Looks good, pretty independent.
 
 \*Could considering removing 1 of (`visibility` and `humidity`) as they
 have the strongest correlation coefficient (-0.54)
+
+## Assumption 3: Normality
+
+Check this after we make the model.
+
+## Assumption 4: Homoscedasticity
+
+Check this after we make the model.
