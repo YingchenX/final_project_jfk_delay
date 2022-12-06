@@ -71,7 +71,7 @@ radioButtons(
 Column {data-width=600}
 -----------------------------------------------------------------------
 
-### Number of delay on each day 
+### Number of Delays on Each Day 
 
 ```{r}
 renderPlotly({
@@ -96,7 +96,7 @@ renderPlotly({
 Column {data-width=600}
 -----------------------------------------------------------------------
 
-### Distribution of delay time on each day
+### Distribution of Delay Time on Each Day
 
 ```{r}
 renderPlotly({
