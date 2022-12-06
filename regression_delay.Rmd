@@ -10,6 +10,8 @@ library(viridis)
 library(modelr)
 library(mgcv)
 library(dplyr)
+library(tidyr)
+library(skimr)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -112,3 +114,56 @@ check 'NA'
 sum(is.na(raw_df))
 ```
 _0_ -> good
+
+To this step, we have our raw dataset for doing association analysis.
+Since the outcome variable `delay_min` is a continuous variavle, we would do linear regression.
+However, there might be too many variables so far (ignoring `date` we still got 12 potential predictors), so next step will be fitting the model.
+
+By intuition, I would set:
+
+`airline` -> categorical
+`month` -> categorical
+`hour` -> categorical (need further categorization)
+and for the rest -> continuous
+
+Let's first check how each variable roughly distribute.
+
+### For categorical variables
+```{r}
+cat_sum = raw_df %>% 
+  select(airline, month, hour) %>% 
+  mutate(
+    airline = as.factor(airline),
+    month = as.factor(month),
+    hour = as.factor(hour)
+    ) %>% 
+  summary(maxsum = 24)
+
+cat_sum
+```
+
+### For continuous variables
+```{r}
+con_sum_df = raw_df %>% 
+  select(-date, -airline, -month, -hour)
+
+con_sum = skim(con_sum_df) %>%
+  dplyr::select(-n_missing, -complete_rate) %>% 
+  mutate(
+    mean = numeric.mean,
+    sd = numeric.sd,
+    histogram = numeric.hist,
+    var = skim_variable,
+    min = numeric.p0,
+    max = numeric.p100,
+    median = numeric.p50,
+    q1 = numeric.p25,
+    q3 = numeric.p75
+  ) %>% 
+  dplyr::select(-numeric.mean, -numeric.sd, -numeric.hist, -skim_variable, -numeric.p0, -numeric.p100, -numeric.p50, -numeric.p25, -numeric.p75) %>% 
+  relocate(var, mean, min, q1, median, q3, max, sd, histogram)
+
+con_sum
+```
+
+

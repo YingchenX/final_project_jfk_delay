@@ -108,3 +108,92 @@ sum(is.na(raw_df))
 ```
 
 *0* -\> good
+
+To this step, we have our raw dataset for doing association analysis.
+Since the outcome variable `delay_min` is a continuous variavle, we
+would do linear regression. However, there might be too many variables
+so far (ignoring `date` we still got 12 potential predictors), so next
+step will be fitting the model.
+
+By intuition, I would set:
+
+`airline` -\> categorical `month` -\> categorical `hour` -\> categorical
+(need further categorization) and for the rest -\> continuous
+
+Let’s first check how each variable roughly distribute.
+
+### For categorical variables
+
+``` r
+cat_sum = raw_df %>% 
+  select(airline, month, hour) %>% 
+  mutate(
+    airline = as.factor(airline),
+    month = as.factor(month),
+    hour = as.factor(hour)
+    ) %>% 
+  summary(maxsum = 24)
+
+cat_sum
+```
+
+    ##               airline      month      hour     
+    ##  Alaska Airlines  :  888   1 : 9931   5 : 165  
+    ##  American Airlines: 3976   11:10042   6 :1180  
+    ##  Delta Air Lines  : 5513   12: 9752   7 :2035  
+    ##  Endeavor Air     : 3711              8 :3311  
+    ##  JetBlue Airways  :10199              9 :2065  
+    ##  Republic Airways : 5094              10: 987  
+    ##  United Air Lines :  344              11:1503  
+    ##                                       12:1280  
+    ##                                       13:1697  
+    ##                                       14:1780  
+    ##                                       15:2212  
+    ##                                       16:1689  
+    ##                                       17:1795  
+    ##                                       18:1871  
+    ##                                       19:2148  
+    ##                                       20:1815  
+    ##                                       21:1487  
+    ##                                       22: 619  
+    ##                                       23:  86
+
+### For continuous variables
+
+``` r
+con_sum_df = raw_df %>% 
+  select(-date, -airline, -month, -hour)
+
+con_sum = skim(con_sum_df) %>%
+  dplyr::select(-n_missing, -complete_rate) %>% 
+  mutate(
+    mean = numeric.mean,
+    sd = numeric.sd,
+    histogram = numeric.hist,
+    var = skim_variable,
+    min = numeric.p0,
+    max = numeric.p100,
+    median = numeric.p50,
+    q1 = numeric.p25,
+    q3 = numeric.p75
+  ) %>% 
+  dplyr::select(-numeric.mean, -numeric.sd, -numeric.hist, -skim_variable, -numeric.p0, -numeric.p100, -numeric.p50, -numeric.p25, -numeric.p75) %>% 
+  relocate(var, mean, min, q1, median, q3, max, sd, histogram)
+
+con_sum
+```
+
+    ## # A tibble: 10 × 10
+    ##    var              mean   min    q1 median    q3   max    sd histogram skim_t…¹
+    ##    <chr>           <dbl> <dbl> <dbl>  <dbl> <dbl> <dbl> <dbl> <chr>     <chr>   
+    ##  1 delay_min     11.7      -27    -5     -2     9  1252 45.8  ▇▁▁▁▁     numeric 
+    ##  2 carrierd_min   7.31       0     0      0     0  1225 32.3  ▇▁▁▁▁     numeric 
+    ##  3 extrmwd_min    0.614      0     0      0     0   850 12.2  ▇▁▁▁▁     numeric 
+    ##  4 nasd_min       2.63       0     0      0     0   731 11.4  ▇▁▁▁▁     numeric 
+    ##  5 securityd_min  0.0447     0     0      0     0   137  1.48 ▇▁▁▁▁     numeric 
+    ##  6 latarrd_min    3.07       0     0      0     0   714 19.0  ▇▁▁▁▁     numeric 
+    ##  7 temperature   41.4       10    35     42    49    68 10.8  ▁▃▇▆▂     numeric 
+    ##  8 humidity      59.6       16    45     56    73   100 18.5  ▁▇▇▅▃     numeric 
+    ##  9 visibility     9.42       0    10     10    10    10  1.95 ▁▁▁▁▇     numeric 
+    ## 10 wind_s        11.9        0     7     11    16    32  6.22 ▅▇▇▃▁     numeric 
+    ## # … with abbreviated variable name ¹​skim_type
