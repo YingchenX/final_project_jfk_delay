@@ -1012,3 +1012,43 @@ plot(Best_lm, 3)
 ```
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-38-1.png" width="90%" />
+
+# Step 4: Fit stratum-specific models
+
+Stratum of interest:
+
+1.  month
+
+2.  airline
+
+3.  hour_c
+
+## Fit month-specific model
+
+we can nest within months and fit month-specific models associating
+delay with the rest of variables
+
+``` r
+nest_lm_m =
+  raw_df_10 %>% 
+  select(-airline, -hour_c) %>% 
+  nest(data = -month) %>% 
+  mutate(
+    models = map(data, ~lm(delay ~ ., data = .x)),
+    results = map(models, broom::tidy)) %>% 
+  select(-data, -models) %>% 
+  unnest(results)
+
+nest_lm_m %>% 
+  select(month, term, estimate) %>% 
+  mutate(term = fct_inorder(term)) %>% 
+  pivot_wider(
+    names_from = term, values_from = estimate) %>% 
+  knitr::kable(digits = 3)
+```
+
+| month | (Intercept) | carrierd | extrmwd |  nasd | securityd | latarrd | temperature | visibility |
+|:------|------------:|---------:|--------:|------:|----------:|--------:|------------:|-----------:|
+| 11    |      -7.645 |    1.072 |   0.896 | 0.457 |     1.074 |   1.081 |      -0.044 |      0.835 |
+| 12    |      -2.538 |    1.048 |   1.020 | 0.465 |     1.249 |   1.064 |      -0.021 |      0.274 |
+| 1     |      -1.592 |    1.058 |   1.024 | 0.284 |     1.139 |   1.062 |      -0.051 |      0.286 |
