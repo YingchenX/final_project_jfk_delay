@@ -5,7 +5,6 @@ output: github_document
 ---
 
 
-
 ```{r setup, include=FALSE}
 # Step 0: Setup
 
@@ -420,7 +419,7 @@ heatmap(x = cor, col = color, symm = TRUE)
 
 Looks good, pretty independent.
 
-*Could considering removing 1 of (`visibility` and `humidity`) as they have the strongest correlation coefficient  (-0.54)
+*Could considering removing 1 of (`visibility` and `humidity`) as they have a moderate correlation coefficient  (-0.54)
 
 
 ## Assumption 3: Normality
@@ -441,15 +440,117 @@ summary(lm_all)
 
 _Note:_ 
 
-`humidity` -> p-value = 0.497590 (not significant) under this model
-
-`wind_s` -> p-value = 0.618192 (not significant) under this model
-
-R-squared = 0.9467 -> good, not surprisingly 
+R-squared = 0.9467 -> good 
 
 F-statistic: 
 F-value = 2.639e+04 -> large, variance between >> variance within, good  
 p-value < 2.2e-16 -> small, significant, good
 
-For now, the model with all independent variable as predictors seems to be good. 
+_The F-test of overall significance indicates whether this current linear regression model provides a better fit to the data than a model that contains no independent variables._
+
+`humidity` -> p-value = 0.497590 (not significant) under this model
+-> given what's mentioned above, remove 
+
+`wind_s` -> p-value = 0.618192 (not significant) under this model
+-> remove
+
+
+Fit lm without  `wind_s` or `humidity`
+```{r}
+raw_df_10 = raw_df %>% 
+  select(-humidity, -wind_s)
+
+lm_10 = lm(delay ~ ., data = raw_df_10)
+summary(lm_10)
+```
+
+_Note:_ 
+
+R-squared = 0.9467 -> same, good 
+
+F-statistic: 
+F-value = 2.932e+04 -> close, large, variance between >> variance within, good
+p-value < 2.2e-16 -> same, small, significant, good
+
+## Fit the best subset linear model
+
+The function regsubsets() will produce the best model with 1 predictor, the best model with 2 predictors, 3 predictors, … up to 14 predictors(nvmax=14 option).
+
+```{r}
+library(leaps)
+
+bestsub.lm <- regsubsets(delay ~ ., 
+                            data = raw_df_10, nvmax = 18)
+
+sum.bestsub.lm = summary(bestsub.lm)
+```
+
+We have 18 predictor parameters, and the sample size 29725 will be sufficient for it ("One in ten" rule)
+
+Check some measures to select the best subset model
+
+_Note:_
+
+A small value of Cp means that the model is relatively precise.
+
+A larger R-squared value means that the independent variables explain a larger percentage of the variation in the independent variable.
+
+A lower BIC implies either fewer explanatory variables, better fit, or both.
+
+```{r}
+cbind( 
+    Cp = summary(bestsub.lm)$cp,
+    r2 = summary(bestsub.lm)$rsq,
+    BIC = summary(bestsub.lm)$bic
+)
+```
+
+
+```{r}
+which.max(sum.bestsub.lm$rsq)
+```
+
+
+```{r}
+sum.bestsub.lm$which[18,]
+```
+
+All true -> keep all
+
+## Fit the regression model
+```{r}
+Best_lm = lm(delay ~  .,
+              data = raw_df_10)
+summary(Best_lm) %>% broom::glance()
+summary(Best_lm) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+  
+```
+
+## Check for residual normality
+```{r}
+library("olsrr")
+
+ols_plot_resid_fit(Best_lm)
+
+# residual vs fitted
+plot(Best_lm, 1)
+
+#qq plot
+plot(Best_lm, 2)
+
+
+```
+
+## Check for heteroscadacity
+
+
+```{r}
+plot(Best_lm, 3)
+```
+
+
+
+
 

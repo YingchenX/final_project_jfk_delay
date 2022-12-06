@@ -716,7 +716,7 @@ heatmap(x = cor, col = color, symm = TRUE)
 Looks good, pretty independent.
 
 \*Could considering removing 1 of (`visibility` and `humidity`) as they
-have the strongest correlation coefficient (-0.54)
+have a moderate correlation coefficient (-0.54)
 
 ## Assumption 3: Normality
 
@@ -775,15 +775,240 @@ summary(lm_all)
 
 *Note:*
 
-`humidity` -\> p-value = 0.497590 (not significant) under this model
-
-`wind_s` -\> p-value = 0.618192 (not significant) under this model
-
-R-squared = 0.9467 -\> good, not surprisingly
+R-squared = 0.9467 -\> good
 
 F-statistic: F-value = 2.639e+04 -\> large, variance between \>\>
 variance within, good  
 p-value \< 2.2e-16 -\> small, significant, good
 
-For now, the model with all independent variable as predictors seems to
-be good.
+*The F-test of overall significance indicates whether this current
+linear regression model provides a better fit to the data than a model
+that contains no independent variables.*
+
+`humidity` -\> p-value = 0.497590 (not significant) under this model -\>
+given what’s mentioned above, remove
+
+`wind_s` -\> p-value = 0.618192 (not significant) under this model -\>
+remove
+
+Fit lm without `wind_s` or `humidity`
+
+``` r
+raw_df_10 = raw_df %>% 
+  select(-humidity, -wind_s)
+
+lm_10 = lm(delay ~ ., data = raw_df_10)
+summary(lm_10)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = delay ~ ., data = raw_df_10)
+    ## 
+    ## Residuals:
+    ##    Min     1Q Median     3Q    Max 
+    ## -72.27  -5.46  -1.80   2.96 466.11 
+    ## 
+    ## Coefficients:
+    ##                           Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)               1.547322   0.590098   2.622 0.008742 ** 
+    ## month1                   -0.041123   0.204769  -0.201 0.840834    
+    ## month12                   0.556387   0.157480   3.533 0.000411 ***
+    ## airlineDelta Air Lines   -0.850964   0.178994  -4.754 2.00e-06 ***
+    ## airlineRepublic Airways  -6.814635   0.184303 -36.975  < 2e-16 ***
+    ## airlineAmerican Airlines -1.776285   0.199482  -8.904  < 2e-16 ***
+    ## airlineEndeavor Air      -5.327340   0.205146 -25.969  < 2e-16 ***
+    ## airlineAlaska Airlines   -6.554049   0.372371 -17.601  < 2e-16 ***
+    ## airlineUnited Air Lines  -3.362436   0.582786  -5.770 8.03e-09 ***
+    ## carrierd                  1.046114   0.001951 536.308  < 2e-16 ***
+    ## extrmwd                   1.013883   0.005061 200.323  < 2e-16 ***
+    ## nasd                      0.399011   0.005466  72.993  < 2e-16 ***
+    ## securityd                 1.081295   0.041479  26.068  < 2e-16 ***
+    ## latarrd                   1.058777   0.003296 321.271  < 2e-16 ***
+    ## temperature              -0.038891   0.008037  -4.839 1.31e-06 ***
+    ## visibility                0.307304   0.033640   9.135  < 2e-16 ***
+    ## hour_cnoon               -2.014486   0.172905 -11.651  < 2e-16 ***
+    ## hour_cafternoon          -0.784077   0.172651  -4.541 5.61e-06 ***
+    ## hour_cmorning            -3.292524   0.178558 -18.440  < 2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 10.58 on 29706 degrees of freedom
+    ## Multiple R-squared:  0.9467, Adjusted R-squared:  0.9467 
+    ## F-statistic: 2.932e+04 on 18 and 29706 DF,  p-value: < 2.2e-16
+
+*Note:*
+
+R-squared = 0.9467 -\> same, good
+
+F-statistic: F-value = 2.932e+04 -\> close, large, variance between \>\>
+variance within, good p-value \< 2.2e-16 -\> same, small, significant,
+good
+
+## Fit the best subset linear model
+
+The function regsubsets() will produce the best model with 1 predictor,
+the best model with 2 predictors, 3 predictors, … up to 14
+predictors(nvmax=14 option).
+
+``` r
+library(leaps)
+
+bestsub.lm <- regsubsets(delay ~ ., 
+                            data = raw_df_10, nvmax = 18)
+
+sum.bestsub.lm = summary(bestsub.lm)
+```
+
+We have 18 predictor parameters, and the sample size 29725 will be
+sufficient for it (“One in ten” rule)
+
+Check some measures to select the best subset model
+
+*Note:*
+
+A small value of Cp means that the model is relatively precise.
+
+A larger R-squared value means that the independent variables explain a
+larger percentage of the variation in the independent variable.
+
+A lower BIC implies either fewer explanatory variables, better fit, or
+both.
+
+``` r
+cbind( 
+    Cp = summary(bestsub.lm)$cp,
+    r2 = summary(bestsub.lm)$rsq,
+    BIC = summary(bestsub.lm)$bic
+)
+```
+
+    ##                 Cp        r2       BIC
+    ##  [1,] 162974.57340 0.6543593 -31557.92
+    ##  [2,]  50807.45804 0.8555586 -57483.45
+    ##  [3,]   8320.51509 0.9317716 -79767.28
+    ##  [4,]   3112.94055 0.9411161 -84135.26
+    ##  [5,]   2161.15122 0.9428269 -85001.40
+    ##  [6,]   1443.34944 0.9441180 -85670.06
+    ##  [7,]    974.92935 0.9449618 -86112.02
+    ##  [8,]    704.72935 0.9454501 -86366.59
+    ##  [9,]    426.64945 0.9459524 -86631.31
+    ## [10,]    292.63274 0.9461964 -86755.50
+    ## [11,]    195.17830 0.9463748 -86843.92
+    ## [12,]    138.09244 0.9464808 -86892.43
+    ## [13,]    101.27835 0.9465504 -86920.82
+    ## [14,]     75.07943 0.9466010 -86938.66
+    ## [15,]     52.67099 0.9466448 -86952.74
+    ## [16,]     33.22710 0.9466832 -86963.88
+    ## [17,]     17.04033 0.9467159 -86971.77
+    ## [18,]     19.00000 0.9467159 -86961.52
+
+``` r
+which.max(sum.bestsub.lm$rsq)
+```
+
+    ## [1] 18
+
+``` r
+sum.bestsub.lm$which[18,]
+```
+
+    ##              (Intercept)                   month1                  month12 
+    ##                     TRUE                     TRUE                     TRUE 
+    ##   airlineDelta Air Lines  airlineRepublic Airways airlineAmerican Airlines 
+    ##                     TRUE                     TRUE                     TRUE 
+    ##      airlineEndeavor Air   airlineAlaska Airlines  airlineUnited Air Lines 
+    ##                     TRUE                     TRUE                     TRUE 
+    ##                 carrierd                  extrmwd                     nasd 
+    ##                     TRUE                     TRUE                     TRUE 
+    ##                securityd                  latarrd              temperature 
+    ##                     TRUE                     TRUE                     TRUE 
+    ##               visibility               hour_cnoon          hour_cafternoon 
+    ##                     TRUE                     TRUE                     TRUE 
+    ##            hour_cmorning 
+    ##                     TRUE
+
+All true -\> keep all
+
+## Fit the regression model
+
+``` r
+Best_lm = lm(delay ~  .,
+              data = raw_df_10)
+summary(Best_lm) %>% broom::glance()
+```
+
+    ## # A tibble: 1 × 8
+    ##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
+    ##       <dbl>         <dbl> <dbl>     <dbl>   <dbl> <dbl>       <int> <dbl>
+    ## 1     0.947         0.947  10.6    29322.       0    18       29706 29725
+
+``` r
+summary(Best_lm) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+    ## # A tibble: 19 × 3
+    ##    term                     estimate   p.value
+    ##    <chr>                       <dbl>     <dbl>
+    ##  1 (Intercept)                1.55   8.74e-  3
+    ##  2 month1                    -0.0411 8.41e-  1
+    ##  3 month12                    0.556  4.11e-  4
+    ##  4 airlineDelta Air Lines    -0.851  2.00e-  6
+    ##  5 airlineRepublic Airways   -6.81   1.25e-292
+    ##  6 airlineAmerican Airlines  -1.78   5.66e- 19
+    ##  7 airlineEndeavor Air       -5.33   4.93e-147
+    ##  8 airlineAlaska Airlines    -6.55   5.44e- 69
+    ##  9 airlineUnited Air Lines   -3.36   8.03e-  9
+    ## 10 carrierd                   1.05   0        
+    ## 11 extrmwd                    1.01   0        
+    ## 12 nasd                       0.399  0        
+    ## 13 securityd                  1.08   3.89e-148
+    ## 14 latarrd                    1.06   0        
+    ## 15 temperature               -0.0389 1.31e-  6
+    ## 16 visibility                 0.307  6.95e- 20
+    ## 17 hour_cnoon                -2.01   2.66e- 31
+    ## 18 hour_cafternoon           -0.784  5.61e-  6
+    ## 19 hour_cmorning             -3.29   1.67e- 75
+
+## Check for residual normality
+
+``` r
+library("olsrr")
+```
+
+    ## 
+    ## Attaching package: 'olsrr'
+
+    ## The following object is masked from 'package:datasets':
+    ## 
+    ##     rivers
+
+``` r
+ols_plot_resid_fit(Best_lm)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-37-1.png" width="90%" />
+
+``` r
+# residual vs fitted
+plot(Best_lm, 1)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-37-2.png" width="90%" />
+
+``` r
+#qq plot
+plot(Best_lm, 2)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-37-3.png" width="90%" />
+
+## Check for heteroscadacity
+
+``` r
+plot(Best_lm, 3)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-38-1.png" width="90%" />
