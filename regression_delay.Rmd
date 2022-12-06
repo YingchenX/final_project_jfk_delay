@@ -202,7 +202,51 @@ sum(is.na(raw_df))
 
 _0_ 'NA' and the distribution looks good.
 
+Now, since we are not yet able to decide the variable type of the rest of the predictors, we decide to do univariate linear regression for each variable first.
 
+## Univariate linear regression
+```{r message=FALSE, warning=FALSE}
+## Normal Equation — Covariance/Variance
 
+library(MASS)
 
+# Outcome variable `delay_min` - Y
+y = as.matrix(raw_df$delay_min)
+
+# Potential continuous predictors - Xs
+temp = as.matrix(raw_df$temperature)
+hum = as.matrix(raw_df$humidity)
+vis = as.matrix(raw_df$visibility)
+wind = as.matrix(raw_df$wind_s)
+carr = as.matrix(raw_df$carrierd_min)
+extw = as.matrix(raw_df$extrmwd_min)
+nasd = as.matrix(raw_df$nasd_min)
+secu = as.matrix(raw_df$securityd_min)
+latar = as.matrix(raw_df$latarrd_min)
+
+# Function
+getCoeffs <- function(X,y)
+{
+  covariance_xy = cov(X,y)
+  variance_x = var(X)
+  coeffs = covariance_xy/variance_x
+  y_intercept = mean(y) - coeffs * mean(X)
+  return(list('intercept' = y_intercept[1], 'coefficient' = coeffs[1]))
+  
+}
+getPred <- function(X,y)
+{
+  res <- getCoeffs(X,y)
+  print(res)
+  preds = res$intercept + (res$coefficient * X)
+  return(preds)
+}
+
+```
+
+* temperature
+
+```{r}
+preds = getPred(temp,y)
+```
 
