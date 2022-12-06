@@ -250,3 +250,50 @@ getPred <- function(X,y)
 preds = getPred(temp,y)
 ```
 
+* humidity
+
+```{r}
+preds = getPred(hum,y)
+```
+
+* visibility
+
+```{r}
+preds = getPred(vis,y)
+```
+
+* wind speed
+
+```{r}
+preds = getPred(wind,y)
+```
+
+* carrier delay
+
+```{r}
+preds = getPred(carr,y)
+```
+
+* extreme weather delay
+
+```{r}
+preds = getPred(extw,y)
+```
+
+* NAS delay
+
+```{r}
+preds = getPred(nasd,y)
+```
+
+* security delay
+
+```{r}
+preds = getPred(secu,y)
+```
+
+* late arrival delay
+
+```{r}
+preds = getPred(latar,y)
+```

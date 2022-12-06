@@ -304,3 +304,99 @@ preds = getPred(temp,y)
     ## 
     ## $coefficient
     ## [1] -0.3552846
+
+- humidity
+
+``` r
+preds = getPred(hum,y)
+```
+
+    ## $intercept
+    ## [1] 3.804286
+    ## 
+    ## $coefficient
+    ## [1] 0.1325925
+
+- visibility
+
+``` r
+preds = getPred(vis,y)
+```
+
+    ## $intercept
+    ## [1] 29.74182
+    ## 
+    ## $coefficient
+    ## [1] -1.913785
+
+- wind speed
+
+``` r
+preds = getPred(wind,y)
+```
+
+    ## $intercept
+    ## [1] 9.941394
+    ## 
+    ## $coefficient
+    ## [1] 0.1481787
+
+- carrier delay
+
+``` r
+preds = getPred(carr,y)
+```
+
+    ## $intercept
+    ## [1] 3.312128
+    ## 
+    ## $coefficient
+    ## [1] 1.148809
+
+- extreme weather delay
+
+``` r
+preds = getPred(extw,y)
+```
+
+    ## $intercept
+    ## [1] 11.05505
+    ## 
+    ## $coefficient
+    ## [1] 1.066717
+
+- NAS delay
+
+``` r
+preds = getPred(nasd,y)
+```
+
+    ## $intercept
+    ## [1] 9.887579
+    ## 
+    ## $coefficient
+    ## [1] 0.6935167
+
+- security delay
+
+``` r
+preds = getPred(secu,y)
+```
+
+    ## $intercept
+    ## [1] 11.64699
+    ## 
+    ## $coefficient
+    ## [1] 1.397151
+
+- late arrival delay
+
+``` r
+preds = getPred(latar,y)
+```
+
+    ## $intercept
+    ## [1] 7.570233
+    ## 
+    ## $coefficient
+    ## [1] 1.346272
