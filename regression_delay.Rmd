@@ -4,11 +4,16 @@ author: "Fengyi Ma"
 output: github_document
 ---
 
+# Step 0: Setup
+
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(viridis)
 library(modelr)
 library(mgcv)
+library(dplyr)
+library(tidyr)
+library(skimr)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -30,7 +35,11 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
 set.seed(1)
 ```
 
-## Data Import
+
+# Step 1: Data Wrangling
+
+## Data import
+
 ```{r}
 delay = read.csv("./tidied_data/delay.csv") %>% 
   janitor::clean_names() 
@@ -39,11 +48,383 @@ h_weather = read.csv("./tidied_data/hourly_weather.csv") %>%
   janitor::clean_names() 
 ```
 
-```{r}
+## Clean dataset 'delay'
 
+Check how many airlines
+```{r}
+unique(delay$airline_name)
+```
+_7_ -> ok, keep
+
+Check how many destinations
+```{r}
+unique(delay$destination_airport)
+```
+_66_ -> too many, remove
+
+Keep variables of interest and `date` for merge purpose (which will be removed later) 
+```{r}
+delay = delay %>% 
+  mutate(
+    airline = airline_name,
+    hour = scheduled_hour,
+    delay = delay_minutes,
+    carrierd = delay_carrier_minutes,
+    extrmwd = delay_weather_minutes,
+    nasd = delay_national_aviation_system_minutes,
+    securityd = delay_security_minutes,
+    latarrd = delay_late_aircraft_arrival_minutes) %>% 
+  mutate(hour = as.numeric(hour)) %>% 
+  select(airline, date, month, hour, delay, carrierd, extrmwd, nasd, securityd, latarrd)
 ```
 
-### hypothesized predictors
-At 100% relative humidity, the wet-bulb temperature is equal to the air temperature (dry-bulb temperature); at lower humidity the wet-bulb temperature is lower than dry-bulb temperature because of evaporative cooling.
+check 'NA'
+```{r eval=FALSE}
+sum(is.na(delay))
+```
+_0_ -> good
 
-The wet-bulb temperature is defined as the temperature of a parcel of air cooled to saturation (100% relative humidity) by the evaporation of water into it, with the latent heat supplied by the parcel.
+
+## Clean dataset 'h_weather'
+
+About the measure of temperature:
+Since the dry bulb temperature is the ambient air temperature measured by regular thermometers, that is, the temperature often mentioned in our general weather forecast. Thus, we decide to use the variable `hourly_dry_bulb_temperature` to represent temperature.
+
+```{r}
+h_weather = h_weather %>% 
+  mutate(
+    temperature = hourly_dry_bulb_temperature,
+    humidity = hourly_relative_humidity,
+    visibility = hourly_visibility,
+    wind_s = hourly_wind_speed,
+    hour = as.numeric(hour)) %>% 
+      select(date, month, hour, temperature, humidity, visibility, wind_s)
+```
+
+check 'NA'
+```{r eval=FALSE}
+sum(is.na(h_weather))
+```
+_0_ -> good
+
+
+## Merge datasets 'delay' and 'hourly_weather'
+```{r}
+raw_df = merge(x = delay, y = h_weather, by = c("date", "month", "hour"),
+               all.x = TRUE)
+```
+
+check 'NA'
+```{r eval=FALSE}
+sum(is.na(raw_df))
+```
+_0_ -> good
+
+To this step, we have our raw dataset for doing association analysis.
+Since the outcome variable `delay` is a continuous variable, we would do linear regression.
+However, there might be too many variables so far (ignoring `date` we still got 12 potential predictors), so next step will be fitting the model.
+
+By intuition, I would set:
+
+`airline` -> categorical
+`month` -> categorical
+`hour` -> categorical (need further categorization)
+and for the rest -> continuous
+
+## Inspections into the dataset
+
+Let's first check how each variable is roughly distributed.
+
+### Dependent variable / outcome (continuous)
+See if our dependent variable `delay` follows a normal distribution.
+
+```{r}
+hist(raw_df$delay)
+```
+
+No, our dependent variable `delay` is not normally distributed. 
+
+-> It is okay because for linear regression, dependent variable does not have to be normally distributed. On the other hand, the model's residuals, do have to be normally distributed. 
+
+### Independent variables / predictors (categorical)
+```{r}
+cat_sum = raw_df %>% 
+  select(airline, month, hour) %>% 
+  mutate(
+    airline = as.factor(airline),
+    month = as.factor(month),
+    hour = as.factor(hour)
+    ) %>% 
+  summary(maxsum = 24)
+
+cat_sum
+```
+
+### Independent variables / predictors (continuous)
+```{r}
+con_sum_df = raw_df %>% 
+  select(-date, -airline, -month, -hour)
+
+con_sum = skim(con_sum_df) %>%
+  dplyr::select(-n_missing, -complete_rate) %>% 
+  mutate(
+    mean = numeric.mean,
+    sd = numeric.sd,
+    histogram = numeric.hist,
+    var = skim_variable,
+    min = numeric.p0,
+    max = numeric.p100,
+    median = numeric.p50,
+    q1 = numeric.p25,
+    q3 = numeric.p75
+  ) %>% 
+  dplyr::select(-numeric.mean, -numeric.sd, -numeric.hist, -skim_variable, -numeric.p0, -numeric.p100, -numeric.p50, -numeric.p25, -numeric.p75) %>% 
+  relocate(var, mean, min, q1, median, q3, max, sd, histogram)
+
+con_sum
+```
+
+Next, as mentioned above, we want to further categorize variable `hour`.
+
+_Motivation:_ 
+
+To increase the power of our model by reducing the number of parameters involved and to be more efficient and concise.
+
+_Rationale for the categorization of `hour`:_
+
+Based on the previous inspection of variable `hour`, we could see that: except for 5, 8, 10, 22, and 23, the frequencies of the other classes are roughly even (between 1000-2000). Take this into consideration, our rationale for classification will be a combination of convention and the desire to achieve a uniform distribution.
+
+Thus, we would categorize `hour` into the following 4 categories:
+
+_morning_: 5-8
+
+_noon_: 9-13
+
+_afternoon_: 14-17 
+
+_night_:18-23 
+
+Now, we can start categorize `hour`
+```{r}
+raw_df = raw_df %>% 
+  mutate(hour_c = cut(hour, breaks = c(4, 8, 13, 17, 24),
+                      labels = c("morning","noon","afternoon","night"))) %>% 
+  select(-hour)
+```
+
+As usual, check if it was done properly
+```{r}
+summary(as.factor(raw_df$hour_c))
+sum(is.na(raw_df))
+```
+
+_0_ 'NA' and the distribution looks good.
+
+Now, since we are not yet able to decide the variable type of the rest of the predictors, we need further analysis.
+
+
+# Step 2: Check Assumptions for Regression
+
+## Assumption 1: Linearity
+
+Do simple linear regression for each independent variable, along with scatterplots to assess the linearity
+
+### Continuous vars
+
+* temperature
+
+```{r message=FALSE, warning=FALSE}
+lrTemp = lm(delay~temperature, data = raw_df)
+summary(lrTemp) %>% broom::glance()
+summary(lrTemp) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+
+plot(delay~temperature, data = raw_df)
+```
+
+* humidity
+
+```{r message=FALSE, warning=FALSE}
+lrHum = lm(delay~humidity, data = raw_df)
+summary(lrHum) %>% broom::glance()
+summary(lrHum) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+
+plot(delay~humidity, data = raw_df)
+```
+
+* visibility
+
+```{r message=FALSE, warning=FALSE}
+lrVis = lm(delay~visibility, data = raw_df)
+summary(lrVis) %>% broom::glance()
+summary(lrVis) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+
+plot(delay~visibility, data = raw_df)
+```
+
+* wind speed
+
+```{r message=FALSE, warning=FALSE}
+lrWin = lm(delay~wind_s, data = raw_df)
+summary(lrWin) %>% broom::glance()
+summary(lrWin) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+
+plot(delay~wind_s, data = raw_df)
+```
+
+* carrier delay
+
+```{r message=FALSE, warning=FALSE}
+lrCar = lm(delay~carrierd, data = raw_df)
+summary(lrCar) %>% broom::glance()
+summary(lrCar) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+
+plot(delay~carrierd, data = raw_df)
+```
+
+* extreme weather delay
+
+```{r message=FALSE, warning=FALSE}
+lrExw = lm(delay~extrmwd, data = raw_df)
+summary(lrExw) %>% broom::glance()
+summary(lrExw) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+
+plot(delay~extrmwd, data = raw_df)
+```
+
+* NAS delay
+
+```{r message=FALSE, warning=FALSE}
+lrNas = lm(delay~nasd, data = raw_df)
+summary(lrNas) %>% broom::glance()
+summary(lrNas) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+
+plot(delay~nasd, data = raw_df)
+```
+
+* security delay
+
+```{r message=FALSE, warning=FALSE}
+lrSec = lm(delay~securityd, data = raw_df)
+summary(lrSec) %>% broom::glance()
+summary(lrSec) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) 
+
+plot(delay~securityd, data = raw_df)
+```
+
+* late arrival delay
+
+```{r message=FALSE, warning=FALSE}
+lrLat = lm(delay~latarrd, data = raw_df)
+summary(lrLat) %>% broom::glance()
+summary(lrLat) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+
+plot(delay~latarrd, data = raw_df)
+```
+
+### Categorical vars
+
+First, tell R that they are categorical variables
+```{r}
+raw_df = 
+  raw_df %>% 
+  mutate(
+    month = fct_infreq(as.factor(month)),
+    hour_c = fct_infreq(hour_c),
+    airline = fct_infreq(airline)
+    )
+```
+
+* month
+
+```{r message=FALSE, warning=FALSE}
+lrMon = lm(delay~month, data = raw_df)
+summary(lrMon) %>% broom::glance()
+summary(lrMon) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+* hour
+
+```{r}
+lrHour = lm(delay~hour_c, data = raw_df)
+summary(lrHour) %>% broom::glance()
+summary(lrHour) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+* airline
+
+```{r}
+lrAL = lm(delay~airline, data = raw_df)
+summary(lrAL) %>% broom::glance()
+summary(lrAL) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+The above results were not very straightforward, but give us a sense that we could include `carrierd` and `latarrd` in to the final model, according to the R-squared values.
+
+
+## Assumption 2: Independence of observations
+
+Use correlation to assess the relationship between all independent variables and make sure they aren’t too highly correlated.
+
+First, it's time to remove variable `date` as it is not one of the predictors
+
+```{r}
+raw_df = raw_df %>% 
+  select(-date)
+```
+
+Correlation matrix 
+
+_*NOTE:_ This approach is not meaningful for our nominal predictors `month`, `airline`, or `hour_c`. you can ignore them.
+
+```{r}
+cor = raw_df %>% 
+  select(-delay) %>% 
+  mutate(
+    airline = as.numeric(airline),
+    month = as.numeric(month),
+    hour_c = as.numeric(hour_c)
+    ) %>% 
+  cor(method = c("pearson", "kendall", "spearman"))
+
+round(cor, 2)
+
+color = colorRampPalette(c("Blue", "white", "Red"))(20)
+heatmap(x = cor, col = color, symm = TRUE)
+```
+
+Looks good, pretty independent.
+
+*Could considering removing 1 of (`visibility` and `humidity`) as they have the strongest correlation coefficient  (-0.54)
+
+
+## Assumption 3: Normality
+
+Check this after we make the model.
+
+## Assumption 4: Homoscedasticity
+
+Check this after we make the model.

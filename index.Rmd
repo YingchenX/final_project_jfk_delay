@@ -1,5 +1,5 @@
 ---
-title: "Home"
+title: "The Flight Delay Issue"
 output: 
   html_document:
     toc: true
@@ -7,6 +7,13 @@ output:
     output: 
   always_allow_html: true
 ---
+
+
+
+```{r, echo=FALSE, out.width="100%", fig.cap="(generated via [Midjourney](https://midjourney.com/))", fig.align = 'center'}
+knitr::include_graphics("./pictures/Jialu_Cheng_a_colorful_the_united_states_flight_route_map.png")
+```
+
 
 ## Website Overview
 
