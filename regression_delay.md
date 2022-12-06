@@ -1086,3 +1086,34 @@ nest_lm_a %>%
 | Republic Airways  |      -4.601 |    1.064 |   1.058 | 0.091 |     1.188 |   1.056 |       0.012 |     -0.022 |
 | Alaska Airlines   |     -10.861 |    1.105 |   1.149 | 0.230 |        NA |   1.059 |       0.108 |      0.177 |
 | United Air Lines  |      -7.223 |    1.007 |   0.804 | 0.477 |        NA |   1.135 |       0.069 |      0.217 |
+
+## Fit hour-specific model
+
+we can nest within airlines and fit airline-specific models associating
+delay with the rest of variables
+
+``` r
+nest_lm_h =
+  raw_df_10 %>% 
+  select(-airline, -month) %>% 
+  nest(data = -hour_c) %>% 
+  mutate(
+    models = map(data, ~lm(delay ~ ., data = .x)),
+    results = map(models, broom::tidy)) %>% 
+  select(-data, -models) %>% 
+  unnest(results)
+
+nest_lm_h %>% 
+  select(hour_c, term, estimate) %>% 
+  mutate(term = fct_inorder(term)) %>% 
+  pivot_wider(
+    names_from = term, values_from = estimate) %>% 
+  knitr::kable(digits = 3)
+```
+
+| hour_c    | (Intercept) | carrierd | extrmwd |  nasd | securityd | latarrd | temperature | visibility |
+|:----------|------------:|---------:|--------:|------:|----------:|--------:|------------:|-----------:|
+| noon      |      -4.138 |    1.054 |   1.037 | 0.383 |     1.125 |   1.035 |      -0.022 |      0.372 |
+| afternoon |      -4.010 |    1.040 |   0.980 | 0.610 |     1.062 |   1.054 |      -0.047 |      0.491 |
+| night     |       2.940 |    1.057 |   1.036 | 0.147 |     1.196 |   1.103 |      -0.063 |      0.069 |
+| morning   |      -2.324 |    1.080 |   0.998 | 0.310 |     1.247 |   1.057 |      -0.027 |      0.126 |

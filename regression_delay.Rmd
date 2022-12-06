@@ -608,3 +608,26 @@ nest_lm_a %>%
 ```
 
 
+## Fit hour-specific model
+
+we can nest within airlines and fit airline-specific models associating delay with the rest of variables
+
+```{r}
+nest_lm_h =
+  raw_df_10 %>% 
+  select(-airline, -month) %>% 
+  nest(data = -hour_c) %>% 
+  mutate(
+    models = map(data, ~lm(delay ~ ., data = .x)),
+    results = map(models, broom::tidy)) %>% 
+  select(-data, -models) %>% 
+  unnest(results)
+
+nest_lm_h %>% 
+  select(hour_c, term, estimate) %>% 
+  mutate(term = fct_inorder(term)) %>% 
+  pivot_wider(
+    names_from = term, values_from = estimate) %>% 
+  knitr::kable(digits = 3)
+```
+
