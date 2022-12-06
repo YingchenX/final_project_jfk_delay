@@ -56,7 +56,7 @@ selectInput(
 Column {data-width=600}
 -----------------------------------------------------------------------
 
-### Chart A
+### Number of Cancelations on Each Day
 
 ```{r}
 renderPlotly({
@@ -79,7 +79,7 @@ renderPlotly({
 Column {data-width=600}
 -----------------------------------------------------------------------
 
-### Chart B
+### Number of COVID Cases on Each Day
 
 ```{r}
 renderPlotly({
