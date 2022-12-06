@@ -166,4 +166,27 @@ con_sum = skim(con_sum_df) %>%
 con_sum
 ```
 
+Next, as mentioned above, we want to further categorize variable `hour`.
+
+_Motivation:_ 
+
+To increase the power of our model by reducing the number of parameters involved and to be more efficient and concise.
+
+_Rationale for the categorization of `hour`:_
+
+Based on the previous inspection of variable `hour`, we could see that: except for 5, 8, 10, 22, and 23, the frequencies of the other classes are roughly even (between 1000-2000). Take this into consideration, our rationale for classification will be a combination of convention and the desire to achieve a uniform distribution.
+
+Thus, we would categorize `hour` into the following 4 categories:
+
+_morning_: 5-8
+
+_noon_: 9-13
+
+_afternoon_: 14-17 
+
+_night_:18-23 
+
+
+
+
 

@@ -197,3 +197,28 @@ con_sum
     ##  9 visibility     9.42       0    10     10    10    10  1.95 ▁▁▁▁▇     numeric 
     ## 10 wind_s        11.9        0     7     11    16    32  6.22 ▅▇▇▃▁     numeric 
     ## # … with abbreviated variable name ¹​skim_type
+
+Next, as mentioned above, we want to further categorize variable `hour`.
+
+*Motivation:*
+
+To increase the power of our model by reducing the number of parameters
+involved and to be more efficient and concise.
+
+*Rationale for the categorization of `hour`:*
+
+Based on the previous inspection of variable `hour`, we could see that:
+except for 5, 8, 10, 22, and 23, the frequencies of the other classes
+are roughly even (between 1000-2000). Take this into consideration, our
+rationale for classification will be a combination of convention and the
+desire to achieve a uniform distribution.
+
+Thus, we would categorize `hour` into the following 4 categories:
+
+*morning*: 5-8
+
+*noon*: 9-13
+
+*afternoon*: 14-17
+
+*night*:18-23
