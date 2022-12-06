@@ -4,9 +4,11 @@ author: "Fengyi Ma"
 output: github_document
 ---
 
-# Step 0: Setup
+
 
 ```{r setup, include=FALSE}
+# Step 0: Setup
+
 library(tidyverse)
 library(viridis)
 library(modelr)
@@ -398,7 +400,7 @@ raw_df = raw_df %>%
 
 Correlation matrix 
 
-_*NOTE:_ This approach is not meaningful for our nominal predictors `month`, `airline`, or `hour_c`. you can ignore them.
+_NOTE:_ This approach is not meaningful for our nominal predictors `month`, `airline`, or `hour_c`. you can ignore them.
 
 ```{r}
 cor = raw_df %>% 
@@ -428,3 +430,26 @@ Check this after we make the model.
 ## Assumption 4: Homoscedasticity
 
 Check this after we make the model.
+
+# Step 3: Building linear regression model
+
+## Perform linear regression with all predictors
+```{r}
+lm_all = lm(delay ~ ., data = raw_df)
+summary(lm_all)
+```
+
+_Note:_ 
+
+`humidity` -> p-value = 0.497590 (not significant) under this model
+
+`wind_s` -> p-value = 0.618192 (not significant) under this model
+
+R-squared = 0.9467 -> good, not surprisingly 
+
+F-statistic: 
+F-value = 2.639e+04 -> large, variance between >> variance within, good  
+p-value < 2.2e-16 -> small, significant, good
+
+For now, the model with all independent variable as predictors seems to be good. 
+

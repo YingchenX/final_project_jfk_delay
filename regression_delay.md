@@ -2,8 +2,6 @@ Regression_delay
 ================
 Fengyi Ma
 
-# Step 0: Setup
-
 # Step 1: Data Wrangling
 
 ## Data import
@@ -665,7 +663,7 @@ raw_df = raw_df %>%
 
 Correlation matrix
 
-\_\*NOTE:\_ This approach is not meaningful for our nominal predictors
+*NOTE:* This approach is not meaningful for our nominal predictors
 `month`, `airline`, or `hour_c`. you can ignore them.
 
 ``` r
@@ -727,3 +725,65 @@ Check this after we make the model.
 ## Assumption 4: Homoscedasticity
 
 Check this after we make the model.
+
+# Step 3: Building linear regression model
+
+## Perform linear regression with all predictors
+
+``` r
+lm_all = lm(delay ~ ., data = raw_df)
+summary(lm_all)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = delay ~ ., data = raw_df)
+    ## 
+    ## Residuals:
+    ##    Min     1Q Median     3Q    Max 
+    ## -72.31  -5.46  -1.80   2.96 466.00 
+    ## 
+    ## Coefficients:
+    ##                           Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)               1.817474   0.693937   2.619 0.008821 ** 
+    ## month1                   -0.014309   0.207595  -0.069 0.945048    
+    ## month12                   0.559148   0.157783   3.544 0.000395 ***
+    ## airlineDelta Air Lines   -0.853021   0.179019  -4.765 1.90e-06 ***
+    ## airlineRepublic Airways  -6.817158   0.184339 -36.982  < 2e-16 ***
+    ## airlineAmerican Airlines -1.775304   0.199506  -8.899  < 2e-16 ***
+    ## airlineEndeavor Air      -5.330495   0.205239 -25.972  < 2e-16 ***
+    ## airlineAlaska Airlines   -6.551832   0.372406 -17.593  < 2e-16 ***
+    ## airlineUnited Air Lines  -3.367266   0.582855  -5.777 7.67e-09 ***
+    ## carrierd                  1.046131   0.001951 536.255  < 2e-16 ***
+    ## extrmwd                   1.013910   0.005062 200.309  < 2e-16 ***
+    ## nasd                      0.399336   0.005482  72.842  < 2e-16 ***
+    ## securityd                 1.081225   0.041482  26.065  < 2e-16 ***
+    ## latarrd                   1.058872   0.003298 321.033  < 2e-16 ***
+    ## temperature              -0.037177   0.008367  -4.443 8.88e-06 ***
+    ## humidity                 -0.002925   0.004312  -0.678 0.497590    
+    ## visibility                0.295628   0.038703   7.638 2.27e-14 ***
+    ## wind_s                   -0.005066   0.010165  -0.498 0.618192    
+    ## hour_cnoon               -2.034640   0.177463 -11.465  < 2e-16 ***
+    ## hour_cafternoon          -0.801831   0.175172  -4.577 4.73e-06 ***
+    ## hour_cmorning            -3.278425   0.179473 -18.267  < 2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 10.59 on 29704 degrees of freedom
+    ## Multiple R-squared:  0.9467, Adjusted R-squared:  0.9467 
+    ## F-statistic: 2.639e+04 on 20 and 29704 DF,  p-value: < 2.2e-16
+
+*Note:*
+
+`humidity` -\> p-value = 0.497590 (not significant) under this model
+
+`wind_s` -\> p-value = 0.618192 (not significant) under this model
+
+R-squared = 0.9467 -\> good, not surprisingly
+
+F-statistic: F-value = 2.639e+04 -\> large, variance between \>\>
+variance within, good  
+p-value \< 2.2e-16 -\> small, significant, good
+
+For now, the model with all independent variable as predictors seems to
+be good.
