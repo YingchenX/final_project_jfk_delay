@@ -222,3 +222,29 @@ Thus, we would categorize `hour` into the following 4 categories:
 *afternoon*: 14-17
 
 *night*:18-23
+
+Now, we can start categorize `hour`
+
+``` r
+raw_df = raw_df %>% 
+  mutate(hour_c = cut(hour, breaks = c(4, 8, 13, 17, 24),
+                      labels = c("morning","noon","afternoon","night"))) %>% 
+  select(-hour)
+```
+
+As usual, check if it was done properly
+
+``` r
+summary(as.factor(raw_df$hour_c))
+```
+
+    ##   morning      noon afternoon     night 
+    ##      6691      7532      7476      8026
+
+``` r
+sum(is.na(raw_df))
+```
+
+    ## [1] 0
+
+*0* ‘NA’ and the distribution looks good.
