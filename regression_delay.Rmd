@@ -4,6 +4,8 @@ author: "Fengyi Ma"
 output: github_document
 ---
 
+# Step 0: Setup
+
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(viridis)
@@ -33,7 +35,10 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
 set.seed(1)
 ```
 
-## Data Import
+
+# Step 1: Data Wrangling
+
+## Data import
 
 ```{r}
 delay = read.csv("./tidied_data/delay.csv") %>% 
@@ -43,7 +48,7 @@ h_weather = read.csv("./tidied_data/hourly_weather.csv") %>%
   janitor::clean_names() 
 ```
 
-## clean dataset 'delay'
+## Clean dataset 'delay'
 
 Check how many airlines
 ```{r}
@@ -80,7 +85,7 @@ sum(is.na(delay))
 _0_ -> good
 
 
-## clean dataset 'h_weather'
+## Clean dataset 'h_weather'
 
 About the measure of temperature:
 Since the dry bulb temperature is the ambient air temperature measured by regular thermometers, that is, the temperature often mentioned in our general weather forecast. Thus, we decide to use the variable `hourly_dry_bulb_temperature` to represent temperature.
@@ -103,7 +108,7 @@ sum(is.na(h_weather))
 _0_ -> good
 
 
-## merge datasets 'delay' and 'hourly_weather'
+## Merge datasets 'delay' and 'hourly_weather'
 ```{r}
 raw_df = merge(x = delay, y = h_weather, by = c("date", "month", "hour"),
                all.x = TRUE)
@@ -126,9 +131,22 @@ By intuition, I would set:
 `hour` -> categorical (need further categorization)
 and for the rest -> continuous
 
-Let's first check how each variable roughly distribute.
+## Inspections into the dataset
 
-### For categorical variables
+Let's first check how each variable is roughly distributed.
+
+### Dependent variable / outcome (continuous)
+See if our dependent variable `delay` follows a normal distribution.
+
+```{r}
+hist(raw_df$delay)
+```
+
+No, our dependent variable `delay` is not normally distributed. 
+
+-> It is okay because for linear regression, dependent variable does not have to be normally distributed. On the other hand, the model's residuals, do have to be normally distributed. 
+
+### Independent variables / predictors (categorical)
 ```{r}
 cat_sum = raw_df %>% 
   select(airline, month, hour) %>% 
@@ -142,7 +160,7 @@ cat_sum = raw_df %>%
 cat_sum
 ```
 
-### For continuous variables
+### Independent variables / predictors (continuous)
 ```{r}
 con_sum_df = raw_df %>% 
   select(-date, -airline, -month, -hour)
@@ -202,9 +220,14 @@ sum(is.na(raw_df))
 
 _0_ 'NA' and the distribution looks good.
 
-Now, since we are not yet able to decide the variable type of the rest of the predictors, we decide to do univariate linear regression for each variable first.
+Now, since we are not yet able to decide the variable type of the rest of the predictors, we need further analysis.
 
-## Univariate linear regression
+
+# Step 2: Check Assumptions for Regression
+
+## Assumption 1: Linearity
+
+Do simple linear regression for each independent variable, along with scatterplots to assess the linearity
 
 ### Continuous vars
 
@@ -216,6 +239,8 @@ summary(lrTemp) %>% broom::glance()
 summary(lrTemp) %>% 
   broom::tidy() %>% 
   select(term, estimate, p.value)
+
+plot(delay~temperature, data = raw_df)
 ```
 
 * humidity
@@ -226,6 +251,8 @@ summary(lrHum) %>% broom::glance()
 summary(lrHum) %>% 
   broom::tidy() %>% 
   select(term, estimate, p.value)
+
+plot(delay~humidity, data = raw_df)
 ```
 
 * visibility
@@ -236,6 +263,8 @@ summary(lrVis) %>% broom::glance()
 summary(lrVis) %>% 
   broom::tidy() %>% 
   select(term, estimate, p.value)
+
+plot(delay~visibility, data = raw_df)
 ```
 
 * wind speed
@@ -246,6 +275,8 @@ summary(lrWin) %>% broom::glance()
 summary(lrWin) %>% 
   broom::tidy() %>% 
   select(term, estimate, p.value)
+
+plot(delay~wind_s, data = raw_df)
 ```
 
 * carrier delay
@@ -256,6 +287,8 @@ summary(lrCar) %>% broom::glance()
 summary(lrCar) %>% 
   broom::tidy() %>% 
   select(term, estimate, p.value)
+
+plot(delay~carrierd, data = raw_df)
 ```
 
 * extreme weather delay
@@ -266,6 +299,8 @@ summary(lrExw) %>% broom::glance()
 summary(lrExw) %>% 
   broom::tidy() %>% 
   select(term, estimate, p.value)
+
+plot(delay~extrmwd, data = raw_df)
 ```
 
 * NAS delay
@@ -276,6 +311,8 @@ summary(lrNas) %>% broom::glance()
 summary(lrNas) %>% 
   broom::tidy() %>% 
   select(term, estimate, p.value)
+
+plot(delay~nasd, data = raw_df)
 ```
 
 * security delay
@@ -286,6 +323,8 @@ summary(lrSec) %>% broom::glance()
 summary(lrSec) %>% 
   broom::tidy() %>% 
   select(term, estimate, p.value) 
+
+plot(delay~securityd, data = raw_df)
 ```
 
 * late arrival delay
@@ -296,6 +335,8 @@ summary(lrLat) %>% broom::glance()
 summary(lrLat) %>% 
   broom::tidy() %>% 
   select(term, estimate, p.value)
+
+plot(delay~latarrd, data = raw_df)
 ```
 
 ### Categorical vars
@@ -341,7 +382,43 @@ summary(lrAL) %>%
   select(term, estimate, p.value)
 ```
 
-The above results were not very satisfying, however, according to the R-squared values, we would choose to include `carrierd` and `latarrd` in to the final model.
+The above results were not very straightforward, but give us a sense that we could include `carrierd` and `latarrd` in to the final model, according to the R-squared values.
+
+
+## Assumption 2: Independence of observations
+
+Use correlation to assess the relationship between all independent variables and make sure they aren’t too highly correlated.
+
+First, it's time to remove variable `date` as it is not one of the predictors
+
+```{r}
+raw_df = raw_df %>% 
+  select(-date)
+```
+
+Correlation matrix 
+
+_*NOTE:_ This approach is not meaningful for our nominal predictors `month`, `airline`, or `hour_c`. you can ignore them.
+
+```{r}
+cor = raw_df %>% 
+  select(-delay) %>% 
+  mutate(
+    airline = as.numeric(airline),
+    month = as.numeric(month),
+    hour_c = as.numeric(hour_c)
+    ) %>% 
+  cor(method = c("pearson", "kendall", "spearman"))
+
+round(cor, 2)
+
+color = colorRampPalette(c("Blue", "white", "Red"))(20)
+heatmap(x = cor, col = color, symm = TRUE)
+```
+
+Looks good, Pretty independent.
+
+*Could considering removing 1 of (`visibility` and `humidity`) as they have the strongest correlation coefficient  (-0.54)
 
 
 

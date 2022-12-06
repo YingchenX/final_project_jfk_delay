@@ -2,7 +2,11 @@ Regression_delay
 ================
 Fengyi Ma
 
-## Data Import
+# Step 0: Setup
+
+# Step 1: Data Wrangling
+
+## Data import
 
 ``` r
 delay = read.csv("./tidied_data/delay.csv") %>% 
@@ -12,7 +16,7 @@ h_weather = read.csv("./tidied_data/hourly_weather.csv") %>%
   janitor::clean_names() 
 ```
 
-## clean dataset ‘delay’
+## Clean dataset ‘delay’
 
 Check how many airlines
 
@@ -67,7 +71,7 @@ sum(is.na(delay))
 
 *0* -\> good
 
-## clean dataset ‘h_weather’
+## Clean dataset ‘h_weather’
 
 About the measure of temperature: Since the dry bulb temperature is the
 ambient air temperature measured by regular thermometers, that is, the
@@ -94,7 +98,7 @@ sum(is.na(h_weather))
 
 *0* -\> good
 
-## merge datasets ‘delay’ and ‘hourly_weather’
+## Merge datasets ‘delay’ and ‘hourly_weather’
 
 ``` r
 raw_df = merge(x = delay, y = h_weather, by = c("date", "month", "hour"),
@@ -120,9 +124,27 @@ By intuition, I would set:
 `airline` -\> categorical `month` -\> categorical `hour` -\> categorical
 (need further categorization) and for the rest -\> continuous
 
-Let’s first check how each variable roughly distribute.
+## Inspections into the dataset
 
-### For categorical variables
+Let’s first check how each variable is roughly distributed.
+
+### Dependent variable / outcome (continuous)
+
+See if our dependent variable `delay` follows a normal distribution.
+
+``` r
+hist(raw_df$delay)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-10-1.png" width="90%" />
+
+No, our dependent variable `delay` is not normally distributed.
+
+-\> It is okay because for linear regression, dependent variable does
+not have to be normally distributed. On the other hand, the model’s
+residuals, do have to be normally distributed.
+
+### Independent variables / predictors (categorical)
 
 ``` r
 cat_sum = raw_df %>% 
@@ -158,7 +180,7 @@ cat_sum
     ##                                       22: 619  
     ##                                       23:  86
 
-### For continuous variables
+### Independent variables / predictors (continuous)
 
 ``` r
 con_sum_df = raw_df %>% 
@@ -249,10 +271,14 @@ sum(is.na(raw_df))
 *0* ‘NA’ and the distribution looks good.
 
 Now, since we are not yet able to decide the variable type of the rest
-of the predictors, we decide to do univariate linear regression for each
-variable first.
+of the predictors, we need further analysis.
 
-## Univariate linear regression
+# Step 2: Check Assumptions for Regression
+
+## Assumption 1: Linearity
+
+Do simple linear regression for each independent variable, along with
+scatterplots to assess the linearity
 
 ### Continuous vars
 
@@ -280,6 +306,12 @@ summary(lrTemp) %>%
     ## 1 (Intercept)   26.4   2.00e-137
     ## 2 temperature   -0.355 4.60e- 47
 
+``` r
+plot(delay~temperature, data = raw_df)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-15-1.png" width="90%" />
+
 - humidity
 
 ``` r
@@ -303,6 +335,12 @@ summary(lrHum) %>%
     ##   <chr>          <dbl>    <dbl>
     ## 1 (Intercept)    3.80  2.26e- 5
     ## 2 humidity       0.133 3.16e-20
+
+``` r
+plot(delay~humidity, data = raw_df)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-16-1.png" width="90%" />
 
 - visibility
 
@@ -328,6 +366,12 @@ summary(lrVis) %>%
     ## 1 (Intercept)    29.7  1.45e-113
     ## 2 visibility     -1.91 6.70e- 45
 
+``` r
+plot(delay~visibility, data = raw_df)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-17-1.png" width="90%" />
+
 - wind speed
 
 ``` r
@@ -351,6 +395,12 @@ summary(lrWin) %>%
     ##   <chr>          <dbl>    <dbl>
     ## 1 (Intercept)    9.94  1.34e-66
     ## 2 wind_s         0.148 5.29e- 4
+
+``` r
+plot(delay~wind_s, data = raw_df)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-18-1.png" width="90%" />
 
 - carrier delay
 
@@ -376,6 +426,12 @@ summary(lrCar) %>%
     ## 1 (Intercept)     3.31 3.30e-94
     ## 2 carrierd        1.15 0
 
+``` r
+plot(delay~carrierd, data = raw_df)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-19-1.png" width="90%" />
+
 - extreme weather delay
 
 ``` r
@@ -399,6 +455,12 @@ summary(lrExw) %>%
     ##   <chr>          <dbl>   <dbl>
     ## 1 (Intercept)    11.1        0
     ## 2 extrmwd         1.07       0
+
+``` r
+plot(delay~extrmwd, data = raw_df)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-20-1.png" width="90%" />
 
 - NAS delay
 
@@ -424,6 +486,12 @@ summary(lrNas) %>%
     ## 1 (Intercept)    9.89  6.55e-290
     ## 2 nasd           0.694 2.05e-198
 
+``` r
+plot(delay~nasd, data = raw_df)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-21-1.png" width="90%" />
+
 - security delay
 
 ``` r
@@ -448,6 +516,12 @@ summary(lrSec) %>%
     ## 1 (Intercept)    11.6  0       
     ## 2 securityd       1.40 6.92e-15
 
+``` r
+plot(delay~securityd, data = raw_df)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-22-1.png" width="90%" />
+
 - late arrival delay
 
 ``` r
@@ -471,6 +545,12 @@ summary(lrLat) %>%
     ##   <chr>          <dbl>     <dbl>
     ## 1 (Intercept)     7.57 3.65e-246
     ## 2 latarrd         1.35 0
+
+``` r
+plot(delay~latarrd, data = raw_df)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-23-1.png" width="90%" />
 
 ### Categorical vars
 
@@ -566,6 +646,76 @@ summary(lrAL) %>%
     ## 6 airlineAlaska Airlines      -19.8 3.88e- 36
     ## 7 airlineUnited Air Lines     -12.9 1.85e-  7
 
-The above results were not very satisfying, however, according to the
-R-squared values, we would choose to include `carrierd` and `latarrd` in
-to the final model.
+The above results were not very straightforward, but give us a sense
+that we could include `carrierd` and `latarrd` in to the final model,
+according to the R-squared values.
+
+## Assumption 2: Independence of observations
+
+Use correlation to assess the relationship between all independent
+variables and make sure they aren’t too highly correlated.
+
+First, it’s time to remove variable `date` as it is not one of the
+predictors
+
+``` r
+raw_df = raw_df %>% 
+  select(-date)
+```
+
+Correlation matrix
+
+\_\*NOTE:\_ This approach is not meaningful for our nominal predictors
+`month`, `airline`, or `hour_c`. you can ignore them.
+
+``` r
+cor = raw_df %>% 
+  select(-delay) %>% 
+  mutate(
+    airline = as.numeric(airline),
+    month = as.numeric(month),
+    hour_c = as.numeric(hour_c)
+    ) %>% 
+  cor(method = c("pearson", "kendall", "spearman"))
+
+round(cor, 2)
+```
+
+    ##             month airline carrierd extrmwd  nasd securityd latarrd temperature
+    ## month        1.00    0.00     0.04    0.01  0.05      0.00    0.01       -0.15
+    ## airline      0.00    1.00    -0.12    0.00  0.00     -0.02   -0.04        0.01
+    ## carrierd     0.04   -0.12     1.00   -0.01  0.05      0.00    0.14       -0.05
+    ## extrmwd      0.01    0.00    -0.01    1.00  0.07      0.00    0.03       -0.04
+    ## nasd         0.05    0.00     0.05    0.07  1.00      0.00    0.04       -0.01
+    ## securityd    0.00   -0.02     0.00    0.00  0.00      1.00    0.01        0.00
+    ## latarrd      0.01   -0.04     0.14    0.03  0.04      0.01    1.00       -0.05
+    ## temperature -0.15    0.01    -0.05   -0.04 -0.01      0.00   -0.05        1.00
+    ## humidity     0.09   -0.02     0.04    0.02  0.13      0.01    0.03        0.22
+    ## visibility  -0.18    0.00    -0.06   -0.06 -0.16      0.00   -0.04       -0.10
+    ## wind_s      -0.06    0.00     0.00    0.01  0.02     -0.01    0.04       -0.04
+    ## hour_c       0.01    0.04    -0.05   -0.01  0.00      0.00   -0.06       -0.03
+    ##             humidity visibility wind_s hour_c
+    ## month           0.09      -0.18  -0.06   0.01
+    ## airline        -0.02       0.00   0.00   0.04
+    ## carrierd        0.04      -0.06   0.00  -0.05
+    ## extrmwd         0.02      -0.06   0.01  -0.01
+    ## nasd            0.13      -0.16   0.02   0.00
+    ## securityd       0.01       0.00  -0.01   0.00
+    ## latarrd         0.03      -0.04   0.04  -0.06
+    ## temperature     0.22      -0.10  -0.04  -0.03
+    ## humidity        1.00      -0.54  -0.16   0.07
+    ## visibility     -0.54       1.00   0.07  -0.05
+    ## wind_s         -0.16       0.07   1.00   0.01
+    ## hour_c          0.07      -0.05   0.01   1.00
+
+``` r
+color = colorRampPalette(c("Blue", "white", "Red"))(20)
+heatmap(x = cor, col = color, symm = TRUE)
+```
+
+<img src="regression_delay_files/figure-gfm/unnamed-chunk-29-1.png" width="90%" />
+
+Looks good, Pretty independent.
+
+\*Could considering removing 1 of (`visibility` and `humidity`) as they
+have the strongest correlation coefficient (-0.54)
