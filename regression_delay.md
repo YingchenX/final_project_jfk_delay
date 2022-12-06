@@ -258,36 +258,214 @@ variable first.
 
 ``` r
 lrTemp = lm(delay~temperature, data = raw_df)
-print(lrTemp)
+summary(lrTemp) %>% broom::glance()
 ```
 
-    ## 
-    ## Call:
-    ## lm(formula = delay ~ temperature, data = raw_df)
-    ## 
-    ## Coefficients:
-    ## (Intercept)  temperature  
-    ##     26.4267      -0.3553
+    ## # A tibble: 1 × 8
+    ##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+    ##       <dbl>         <dbl> <dbl>     <dbl>    <dbl> <dbl>       <int> <dbl>
+    ## 1   0.00696       0.00693  45.7      208. 4.60e-47     1       29723 29725
 
 ``` r
-summary(lrTemp)
+summary(lrTemp) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
 ```
 
-    ## 
-    ## Call:
-    ## lm(formula = delay ~ temperature, data = raw_df)
-    ## 
-    ## Residuals:
-    ##     Min      1Q  Median      3Q     Max 
-    ##  -44.74  -17.37  -12.57   -2.24 1240.50 
-    ## 
-    ## Coefficients:
-    ##             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept) 26.42667    1.05352   25.08   <2e-16 ***
-    ## temperature -0.35528    0.02462  -14.43   <2e-16 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Residual standard error: 45.68 on 29723 degrees of freedom
-    ## Multiple R-squared:  0.00696,    Adjusted R-squared:  0.006927 
-    ## F-statistic: 208.3 on 1 and 29723 DF,  p-value: < 2.2e-16
+    ## # A tibble: 2 × 3
+    ##   term        estimate   p.value
+    ##   <chr>          <dbl>     <dbl>
+    ## 1 (Intercept)   26.4   2.00e-137
+    ## 2 temperature   -0.355 4.60e- 47
+
+- humidity
+
+``` r
+lrHum = lm(delay~humidity, data = raw_df)
+summary(lrHum) %>% broom::glance()
+```
+
+    ## # A tibble: 1 × 8
+    ##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+    ##       <dbl>         <dbl> <dbl>     <dbl>    <dbl> <dbl>       <int> <dbl>
+    ## 1   0.00285       0.00282  45.8      85.0 3.16e-20     1       29723 29725
+
+``` r
+summary(lrHum) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+    ## # A tibble: 2 × 3
+    ##   term        estimate  p.value
+    ##   <chr>          <dbl>    <dbl>
+    ## 1 (Intercept)    3.80  2.26e- 5
+    ## 2 humidity       0.133 3.16e-20
+
+- visibility
+
+``` r
+lrVis = lm(delay~visibility, data = raw_df)
+summary(lrVis) %>% broom::glance()
+```
+
+    ## # A tibble: 1 × 8
+    ##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+    ##       <dbl>         <dbl> <dbl>     <dbl>    <dbl> <dbl>       <int> <dbl>
+    ## 1   0.00663       0.00660  45.7      198. 6.70e-45     1       29723 29725
+
+``` r
+summary(lrVis) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+    ## # A tibble: 2 × 3
+    ##   term        estimate   p.value
+    ##   <chr>          <dbl>     <dbl>
+    ## 1 (Intercept)    29.7  1.45e-113
+    ## 2 visibility     -1.91 6.70e- 45
+
+- wind speed
+
+``` r
+lrWin = lm(delay~wind_s, data = raw_df)
+summary(lrWin) %>% broom::glance()
+```
+
+    ## # A tibble: 1 × 8
+    ##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+    ##       <dbl>         <dbl> <dbl>     <dbl>    <dbl> <dbl>       <int> <dbl>
+    ## 1  0.000404      0.000370  45.8      12.0 0.000529     1       29723 29725
+
+``` r
+summary(lrWin) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+    ## # A tibble: 2 × 3
+    ##   term        estimate  p.value
+    ##   <chr>          <dbl>    <dbl>
+    ## 1 (Intercept)    9.94  1.34e-66
+    ## 2 wind_s         0.148 5.29e- 4
+
+- carrier delay
+
+``` r
+lrCar = lm(delay~carrierd, data = raw_df)
+summary(lrCar) %>% broom::glance()
+```
+
+    ## # A tibble: 1 × 8
+    ##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
+    ##       <dbl>         <dbl> <dbl>     <dbl>   <dbl> <dbl>       <int> <dbl>
+    ## 1     0.654         0.654  27.0    56271.       0     1       29723 29725
+
+``` r
+summary(lrCar) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+    ## # A tibble: 2 × 3
+    ##   term        estimate  p.value
+    ##   <chr>          <dbl>    <dbl>
+    ## 1 (Intercept)     3.31 3.30e-94
+    ## 2 carrierd        1.15 0
+
+- extreme weather delay
+
+``` r
+lrExw = lm(delay~extrmwd, data = raw_df)
+summary(lrExw) %>% broom::glance()
+```
+
+    ## # A tibble: 1 × 8
+    ##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
+    ##       <dbl>         <dbl> <dbl>     <dbl>   <dbl> <dbl>       <int> <dbl>
+    ## 1    0.0805        0.0805  44.0     2603.       0     1       29723 29725
+
+``` r
+summary(lrExw) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+    ## # A tibble: 2 × 3
+    ##   term        estimate p.value
+    ##   <chr>          <dbl>   <dbl>
+    ## 1 (Intercept)    11.1        0
+    ## 2 extrmwd         1.07       0
+
+- NAS delay
+
+``` r
+lrNas = lm(delay~nasd, data = raw_df)
+summary(lrNas) %>% broom::glance()
+```
+
+    ## # A tibble: 1 × 8
+    ##   r.squared adj.r.squared sigma statistic   p.value    df df.residual  nobs
+    ##       <dbl>         <dbl> <dbl>     <dbl>     <dbl> <dbl>       <int> <dbl>
+    ## 1    0.0299        0.0299  45.2      917. 2.05e-198     1       29723 29725
+
+``` r
+summary(lrNas) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+    ## # A tibble: 2 × 3
+    ##   term        estimate   p.value
+    ##   <chr>          <dbl>     <dbl>
+    ## 1 (Intercept)    9.89  6.55e-290
+    ## 2 nasd           0.694 2.05e-198
+
+- security delay
+
+``` r
+lrSec = lm(delay~securityd, data = raw_df)
+summary(lrSec) %>% broom::glance()
+```
+
+    ## # A tibble: 1 × 8
+    ##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+    ##       <dbl>         <dbl> <dbl>     <dbl>    <dbl> <dbl>       <int> <dbl>
+    ## 1   0.00204       0.00200  45.8      60.7 6.92e-15     1       29723 29725
+
+``` r
+summary(lrSec) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) 
+```
+
+    ## # A tibble: 2 × 3
+    ##   term        estimate  p.value
+    ##   <chr>          <dbl>    <dbl>
+    ## 1 (Intercept)    11.6  0       
+    ## 2 securityd       1.40 6.92e-15
+
+- late arrival delay
+
+``` r
+lrLat = lm(delay~latarrd, data = raw_df)
+summary(lrLat) %>% broom::glance()
+```
+
+    ## # A tibble: 1 × 8
+    ##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
+    ##       <dbl>         <dbl> <dbl>     <dbl>   <dbl> <dbl>       <int> <dbl>
+    ## 1     0.310         0.310  38.1    13339.       0     1       29723 29725
+
+``` r
+summary(lrLat) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+    ## # A tibble: 2 × 3
+    ##   term        estimate   p.value
+    ##   <chr>          <dbl>     <dbl>
+    ## 1 (Intercept)     7.57 3.65e-246
+    ## 2 latarrd         1.35 0

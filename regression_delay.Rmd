@@ -210,7 +210,89 @@ Now, since we are not yet able to decide the variable type of the rest of the pr
 
 ```{r message=FALSE, warning=FALSE}
 lrTemp = lm(delay~temperature, data = raw_df)
-print(lrTemp)
-summary(lrTemp)
+summary(lrTemp) %>% broom::glance()
+summary(lrTemp) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+* humidity
+
+```{r message=FALSE, warning=FALSE}
+lrHum = lm(delay~humidity, data = raw_df)
+summary(lrHum) %>% broom::glance()
+summary(lrHum) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+* visibility
+
+```{r message=FALSE, warning=FALSE}
+lrVis = lm(delay~visibility, data = raw_df)
+summary(lrVis) %>% broom::glance()
+summary(lrVis) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+* wind speed
+
+```{r message=FALSE, warning=FALSE}
+lrWin = lm(delay~wind_s, data = raw_df)
+summary(lrWin) %>% broom::glance()
+summary(lrWin) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+* carrier delay
+
+```{r message=FALSE, warning=FALSE}
+lrCar = lm(delay~carrierd, data = raw_df)
+summary(lrCar) %>% broom::glance()
+summary(lrCar) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+* extreme weather delay
+
+```{r message=FALSE, warning=FALSE}
+lrExw = lm(delay~extrmwd, data = raw_df)
+summary(lrExw) %>% broom::glance()
+summary(lrExw) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+* NAS delay
+
+```{r message=FALSE, warning=FALSE}
+lrNas = lm(delay~nasd, data = raw_df)
+summary(lrNas) %>% broom::glance()
+summary(lrNas) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
+```
+
+* security delay
+
+```{r message=FALSE, warning=FALSE}
+lrSec = lm(delay~securityd, data = raw_df)
+summary(lrSec) %>% broom::glance()
+summary(lrSec) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) 
+```
+
+* late arrival delay
+
+```{r message=FALSE, warning=FALSE}
+lrLat = lm(delay~latarrd, data = raw_df)
+summary(lrLat) %>% broom::glance()
+summary(lrLat) %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value)
 ```
 
