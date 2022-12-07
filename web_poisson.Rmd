@@ -4,6 +4,8 @@ output:
   html_document:
     toc: true
     toc_float: true
+    output: 
+  always_allow_html: true
 
 ---
 
@@ -64,7 +66,7 @@ Cancellation count per month show difference both by month and airline, therefor
 ```{r}
 cancel_airline <- cancel_tidy  %>%
   group_by(year_month, airline_name) %>%
-  mutate(Total_number_of_cancellation = sum(cancel_count)) 
+  mutate(Total_number_of_cancellation = sum(cancel_count))  
 
 cancel_airline %>%
   select(year_month, airline_name, Total_number_of_cancellation) %>%
@@ -73,24 +75,24 @@ cancel_airline %>%
   names_from = airline_name, 
   values_from = Total_number_of_cancellation) %>%
   head() %>% 
-  knitr::kable(digits = 2, caption = "Total number of cancellation in each airline") 
+  knitr::kable(digits = 2, caption = "Monthly flight Cancellation numbers by month and airline") 
 
-write_csv(cancel_airline, "tidied_data/cancel_tidy.csv")
 ```
+
 
 ```{r}
 plot_cancel_airline <- cancel_airline %>%
-  ggplot(aes(x = year_month, y = Total_number_of_cancellation, fill = airline_name)) +
+  ggplot(aes(x = airline_name, y = Total_number_of_cancellation, fill = year_month)) +
   geom_bar(stat = "identity", show.legend = FALSE) +
   labs(
-    title = "Total Number of Cancellation by Airline",
-    x = "Year and Month",
-    y = "Total Number of Cancellation"
+    title = "Monthly flight Cancellation numbers by month and airline",
+    x = "Airline Name",
+    y = "Monthly flight Cancellation numbers"
   ) +
   theme(legend.position="right", legend.title = element_blank(),
         text = element_text(size = 10),
         axis.text.x = element_text(angle = 60, hjust = 1, size = 5)) +
-  facet_grid(. ~ airline_name)
+  facet_grid(. ~ year_month)
 
   
 ggplotly(plot_cancel_airline)
