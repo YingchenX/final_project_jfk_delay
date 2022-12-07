@@ -76,6 +76,7 @@ delay = delay %>%
     securityd = delay_security_minutes,
     latarrd = delay_late_aircraft_arrival_minutes) %>% 
   mutate(hour = as.numeric(hour)) %>% 
+  mutate(month = month.abb[month]) %>% 
   select(airline, date, month, hour, delay, carrierd, extrmwd, nasd, securityd, latarrd)
 ```
 
@@ -98,8 +99,9 @@ h_weather = h_weather %>%
     humidity = hourly_relative_humidity,
     visibility = hourly_visibility,
     wind_s = hourly_wind_speed,
-    hour = as.numeric(hour)) %>% 
-      select(date, month, hour, temperature, humidity, visibility, wind_s)
+    hour = as.numeric(hour)) %>%
+  mutate(month = month.abb[month]) %>% 
+  select(date, month, hour, temperature, humidity, visibility, wind_s)
 ```
 
 check 'NA'
@@ -584,6 +586,7 @@ nest_lm_m %>%
   knitr::kable(digits = 3)
 ```
 
+
 ## Fit airline-specific model
 
 we can nest within airlines and fit airline-specific models associating delay with the rest of variables
@@ -610,7 +613,7 @@ nest_lm_a %>%
 
 ## Fit hour-specific model
 
-we can nest within airlines and fit airline-specific models associating delay with the rest of variables
+we can nest within hour categories and fit hour-specific models associating delay with the rest of variables
 
 ```{r}
 nest_lm_h =

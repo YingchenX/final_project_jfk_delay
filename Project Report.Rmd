@@ -15,6 +15,11 @@ knitr::opts_chunk$set(
   warning = FALSE)
 
 library(tidyverse)
+library(readxl)
+library(stringr)
+library(rvest)
+library(httr)
+library(forstringr)
 ```
 
 <style type="text/css">
@@ -54,7 +59,7 @@ Commercial aviation is a complex distributed transportation system. The typical 
 knitr::include_graphics("./pictures/delay-reason.jpg")
 ```
 
-[Source: transtats.bts.gov](https://www.transtats.bts.gov/OT_Delay/OT_DelayCause1.asp)
+Source: [transtats.bts.gov](https://www.transtats.bts.gov/OT_Delay/OT_DelayCause1.asp)
 
 &nbsp;
 
@@ -66,7 +71,7 @@ The following scheme is repeated several times throughout the day for each fligh
 knitr::include_graphics("./pictures/operation-flow.png")
 ```
 
-[Source: Sternberg, et al. (2017). A Review on Flight Delay Prediction.](https://www.researchgate.net/publication/315382748_A_Review_on_Flight_Delay_Prediction)
+Source: [Sternberg, et al. (2017). A Review on Flight Delay Prediction.](https://www.researchgate.net/publication/315382748_A_Review_on_Flight_Delay_Prediction)
 
 Pilots, flight attendants and aircrafts may have different schedules due to legal rests, duties, and maintenance plans for airplanes. So, any disruption in the system can impact the subsequent flights of the same airline. Moreover, disturbances may cause congestion at airspace or other airports, creating queues and delaying some flights from other carriers. 
 
@@ -80,21 +85,211 @@ Considering the availability and scale of the flight data, we focus on JFK Airpo
 * What are the potential factors that contribute to the flight delay in JFK during last holiday season?
 * Are there significant associations of multiple factors with JFK flight delays during last holiday season?
 
-
 &nbsp;
 
 # 02 Data Source and Cleaning
 
 ## 2.1 Data Source
 
-*   [Flight delay and cancellation data](https://www.transtats.bts.gov/ONTIME/) - The Bureau of Transportation Statistics (BTS) 
+*   [JFK flight delay and cancellation data between Nov 2020 and Jan 2021](https://www.transtats.bts.gov/ONTIME/) - The Bureau of Transportation Statistics (BTS) 
 *   [Weather condition data](https://www.ncdc.noaa.gov/cdo-web/datatools/lcd) - The National Oceanic and Atmospheric Administration (NOAA) 
 *   [COVID data](https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3) - NYC OpenData
 *   [Airport location information](https://data.humdata.org/dataset/ourairports-usa) - The Humanitarian Data Exchange
 
 &nbsp;
 
-## 2.2 Data Cleaning
+## 2.2 Variable of Interest
+
+**Outcome**
+
+* `delay_minutes`: minutes of delay
+* `cancel_count`: daily flight cancellation count in JFK airport
+
+**Potential Predictors**
+
+* `temperature`: daily average dry bulb temperature
+* `humidity`: daily average relative humidity
+* `windspeed`: daily average relative windspeed
+* `covid_case`: new daily cases of COVID-19
+* `airline_name`: domestic airline 
+* `year_month`: the date format in "Year Month"s
+
+&nbsp;
+
+## 2.3 Data Cleaning
+
+**Weather Condition**
+
+First, we imported the NOAA weather data. To align the time unit of weather with flight information, also considering data availability, we picked the weather at the 51th minute to represent the weather condition of the hour, and the weather at 23:59 to represent the weather condition of the day.
+
+```{r, message = FALSE, warning = FALSE}
+noaa = read_csv("data/weather.csv", na = c("","NA"))
+
+noaa_df = noaa %>%
+  janitor::clean_names() %>% 
+  select(date, starts_with("hourly")) %>% 
+  mutate(
+    date = str_replace_all(date, "T", "-")
+  ) %>% 
+  separate(date, c("year", "month", "day", "hour", "minute", "second"), remove = FALSE) %>% 
+  filter(minute == "51") %>% 
+  select(-minute, -second) %>% 
+  mutate(
+    date = as.Date(str_left(date, n = 10), format = "%Y-%m-%d"),
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day),
+    hour = as.numeric(hour)
+  )
+
+daily_weather_condition = noaa %>%
+  janitor::clean_names() %>% 
+  select(date, daily_weather) %>% 
+  filter(!is.na(daily_weather)) %>% 
+  mutate(
+    date = str_replace_all(date, "T", "-")
+  ) %>% 
+  separate(date, c("year", "month", "day", "hour", "minute", "second")) %>% 
+  select(-c(hour:second)) %>% 
+  mutate(
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day)
+  )
+
+noaa_df = left_join(noaa_df, daily_weather_condition, by = c("year", "month", "day"))
+
+daily_weather = noaa %>%
+  janitor::clean_names() %>% 
+  select(date, starts_with("daily")) %>% 
+  mutate(
+    date = str_replace_all(date, "T", "-")
+  ) %>% 
+  separate(date, c("year", "month", "day", "hour", "minute", "second"), remove = FALSE) %>% 
+  filter(minute == "59") %>% 
+  select(-c(hour:second)) %>% 
+  mutate(
+    date = as.Date(str_left(date, n = 10), format = "%Y-%m-%d"),
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day)
+  ) %>% 
+  drop_na(daily_average_dew_point_temperature)
+```
+
+**COVID**
+
+```{r, message = FALSE, warning = FALSE}
+covid = 
+  GET("https://data.cityofnewyork.us/resource/rc75-m7u3.csv") %>% 
+  content("parsed") 
+
+covid_df = covid %>% 
+  select(date = date_of_interest, case_count) %>%
+  filter(date < "2022-01-31" & date >= "2021-10-31") %>% 
+  separate(date, c("year", "month", "day"), remove = FALSE) %>% 
+  mutate(
+    date = as.Date(date, format = "%Y-%m-%d")
+  ) %>% 
+  mutate_if(is.character, as.numeric)
+```
+
+**Delay**
+
+```{r, message = FALSE, warning = FALSE}
+read_csv_function = function(path) {
+  
+  df = read_csv(path, 
+                skip = 7, 
+                cols(.default = "c")) %>%
+    janitor::row_to_names(1) %>% 
+    janitor::clean_names()
+  
+  df
+  
+}
+
+delay_cancel = 
+  tibble(
+    files = list.files("data/delay/"),
+    path = str_c("data/delay/", files)
+  ) %>% 
+  mutate(data = map(path, read_csv_function)) %>% 
+  unnest(data) %>% 
+  select(-files, -path) %>%
+  mutate(
+    airline_name = case_when(
+      carrier_code == "9E" ~ "Endeavor Air",
+      carrier_code == "AA" ~ "American Airlines",
+      carrier_code == "AS" ~ "Alaska Airlines",
+      carrier_code == "B6" ~ "JetBlue Airways",
+      carrier_code == "DL" ~ "Delta Air Lines",
+      carrier_code == "UA" ~ "United Air Lines",
+      carrier_code == "YX" ~ "Republic Airways",
+      TRUE      ~ ""
+    ),
+    scheduled_hour = str_left(scheduled_departure_time, 2)
+  ) %>% 
+  separate(date_mm_dd_yyyy, into = c("month", "day", "year"), sep = "/", remove = FALSE) %>%
+  mutate(
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day),
+    date_mm_dd_yyyy = as.Date(date_mm_dd_yyyy, format = "%m/%d/%Y")
+  ) %>%
+  select(airline_name, date = date_mm_dd_yyyy, everything(), -carrier_code, -tail_number, -wheels_off_time) %>% 
+  arrange(date) %>% 
+  relocate(scheduled_hour, .before = scheduled_departure_time)
+
+full_delay_df = 
+  delay_cancel %>% 
+  filter(actual_elapsed_time_minutes != 0) %>% 
+  mutate(
+    delay_minutes = as.numeric(as.POSIXct(actual_departure_time, format = "%H:%M") - as.POSIXct(scheduled_departure_time, format = "%H:%M")) / 60,
+    delay_minutes = ifelse(delay_minutes < -100, delay_minutes + 1440, delay_minutes)
+  ) %>% 
+  select(-departure_delay_minutes) %>% 
+  relocate(delay_minutes, .after = actual_departure_time)
+```
+
+**Cancelation**
+
+```{r, message = FALSE, warning = FALSE}
+full_cancel_df = 
+  delay_cancel %>% 
+  filter(actual_elapsed_time_minutes == 0) %>% 
+  select(airline_name:scheduled_departure_time, scheduled_elapsed_time_minutes)
+```
+
+**Airport Info**
+
+```{r, message = FALSE, warning = FALSE}
+airport = read_csv("data/us-airports.csv") %>% 
+  slice(-1) %>% 
+  select(airport = iata_code, name, lat = latitude_deg, long = longitude_deg, region_name, local_region, municipality)
+
+airport_info =
+  delay_cancel %>% 
+  distinct(destination_airport) %>% 
+  rename(airport = destination_airport) %>% 
+  rbind("JFK") %>% 
+  arrange(airport)
+
+airport_info = left_join(airport_info, airport, by = "airport")
+```
+
+
+**Export**
+
+```{r, message = FALSE, warning = FALSE}
+write_csv(noaa_df, "tidied_data/hourly_weather.csv")
+write_csv(daily_weather, "tidied_data/daily_weather.csv")
+write_csv(covid_df, "tidied_data/covid.csv")
+write_csv(full_delay_df, "tidied_data/delay.csv")
+write_csv(full_cancel_df, "tidied_data/cancel.csv")
+write_csv(airport_info, "tidied_data/airport.csv")
+```
+
 
 &nbsp;
 

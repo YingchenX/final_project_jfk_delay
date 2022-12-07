@@ -101,12 +101,41 @@ Column {data-width=600}
 
 ```{r}
 renderPlotly({
+<<<<<<< HEAD
   delay %>% 
+=======
+   delay %>% 
+>>>>>>> d69bf693a373ebe551a923063941bd0e1fbb93e4
     filter(
       airline_name == input[["airline_choice"]],
       month == input[["month_choice"]]
     ) %>% 
     mutate(
+<<<<<<< HEAD
+=======
+      text_label = str_c("Date: ", date)
+    ) %>% 
+    plot_ly(x = ~day, y = ~delay_minutes, text = ~text_label, hoverinfo = "text",
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Day"),
+      yaxis = list(title = "Delay Time (Minutes)"))
+})
+```
+
+```{r, eval = FALSE}
+mutate(
+  text_label = str_c("Date: ", date, "\nCount: ", count)
+) %>% 
+  plot_ly(x = ~day, y = ~count, text = ~text_label, hoverinfo = "text",
+          type = "bar", mode = "markers", alpha = .5) %>% 
+  layout(
+    xaxis = list(title = "Day"),
+    yaxis = list(title = "Count"))
+
+
+mutate(
+>>>>>>> d69bf693a373ebe551a923063941bd0e1fbb93e4
   text_label = str_c("Date: ", date)
 ) %>% 
 plot_ly(x = ~day, y = ~delay_minutes, text = ~text_label, hoverinfo = "text",

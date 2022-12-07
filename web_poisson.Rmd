@@ -1,6 +1,12 @@
 ---
 title: "Poisson model"
-output: github_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    output: 
+  always_allow_html: true
+
 ---
 
 ```{r}
@@ -22,91 +28,27 @@ knitr::opts_chunk$set(
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
-
-cancel_raw = read_csv("tidied_data/cancel.csv")
-covid = read_csv("tidied_data/covid.csv")
-daily_weather = read_csv("tidied_data/daily_weather.csv")
+cancel_airline = read_csv("tidied_data/cancel_airline.csv")
+cancel_tidy = read_csv("tidied_data/cancel_tidy.csv")
 
 ```
+# Overview
+We wanted to investigate factors that are related to - and may be used to predict daily flight cancellation count since the effects of weather and COVID-19 were our primary research interests, but we did not have any precise hypothesis. For instance, there can be daily flight cancellations because of COVID breakouts or lockdowns. 
 
-# Preparations before modelling
-## Outcome: mutate count cancellation data
-Count numbers of cancellation per day
-```{r}
-cancel <- cancel_raw %>% 
-  mutate(number = 1)%>% 
-  mutate(number = as.numeric(number)) %>% 
-  group_by(date) %>% 
-  mutate(cancel_count = sum(number)) %>% 
-  select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes, -number) %>%
-  distinct
+# Data description
+In this research, we look for a relationship between cancellation and a number of variables. The number of cancellations each day is therefore regarded as the result (dependent variable), and exposures of interest are regarded as the independent variables.
 
-```
-
-## Merge outcome and predictors:
-
-weather dataset: select `daily_average_dry_bulb_temperature`,  `daily_average_relative_humidity`, `daily_peak_wind_speed` predictors
-```{r}
-weather <- daily_weather %>% 
-  mutate(
-    temperature = daily_average_dry_bulb_temperature,
-    humidity = daily_average_relative_humidity,
-    windspeed = daily_peak_wind_speed
-         )  %>% 
-  select(date, year, month, day, temperature, humidity, windspeed) 
-  
-  
-```
-
-merge dataset 
-```{r}
-# merge weather and covid dataset
-weather_covid <- weather %>% left_join(covid, by = c("month", "day", "year")) %>% 
-mutate(covid_case = case_count) %>% 
-  select(-case_count)
-
-```
-## Final Tidied dataset
-```{r}
-
-# merge cancel and weather_covid dataset
-cancel_tidy <- weather_covid %>% 
-  left_join(cancel, by = c("month", "day", "year")) 
-
-cancel_tidy <- cancel_tidy%>% 
-  mutate(
-    temperature = as.numeric(temperature),
-    humidity = as.numeric(humidity),
-    windspeed = as.numeric(windspeed),
-    covid_case = as.numeric(covid_case),
-    airline_name = as_factor(airline_name),
-    month1 = ifelse(month == 11, "November", 
-                        ifelse(month == 12, "December", "January")))
-
-
-
-cancel_tidy <- cancel_tidy%>% 
-    mutate(
-    month2 = ifelse(month1 == "November", "Nov", 
-                        ifelse(month1 == "December", "Dec", "Jan")),
-    year_month = paste(year, month2, sep="-"),
-    year_month = fct_reorder(year_month, month)) %>% 
-    filter(!is.na(cancel_count))  %>% 
-    select(-month2, -date.y, -date.x, -date)
-
-cancel_tidy <- cancel_tidy%>%
-    mutate(
-    month2 = month)  
-
-cancel_tidy <- cancel_tidy %>%
-    mutate(month = month1) %>% 
-    select(-month1)
-
-write_csv(cancel_tidy, "tidied_data/cancel_tidy.csv")
+`cancel_coun`t: daily flight cancellation count in JFK airport
+`temperature`: daily average dry bulb temperature
+`humidity`: daily average relative humidity
+`windspeed`: daily average relative windspeed
+`covid_case`: new daily cases of COVID-19
+`airline_name`: domestic airline 
+`year_month`: the date format in "Year Month"
  
-```
-# Check distribution
-Since our outcome, `cancel_coun`t, is calculated using a count variable (number of cancellation) repeated over time, we’ll model it using a Poisson regression model.
+# Pre-analysis
+## Check distribution
+Since our outcome, `cancel_count`, is calculated using a count variable (number of cancellation) repeated over time, we’ll model it using a Poisson regression model.
 ```{r}
 # poisson distribution of counts
 cancel_tidy %>% 
@@ -120,11 +62,11 @@ cancel_tidy %>%
 ```
 
 ## Stratification factors
-Cancellation count per month show difference both by month and airline, therefore, using month and airline as stratification factors
+Cancellation count per month show difference both by month and airline, therefore, using month and airline as stratification factors.
 ```{r}
 cancel_airline <- cancel_tidy  %>%
   group_by(year_month, airline_name) %>%
-  mutate(Total_number_of_cancellation = sum(cancel_count)) 
+  mutate(Total_number_of_cancellation = sum(cancel_count))  
 
 cancel_airline %>%
   select(year_month, airline_name, Total_number_of_cancellation) %>%
@@ -133,24 +75,24 @@ cancel_airline %>%
   names_from = airline_name, 
   values_from = Total_number_of_cancellation) %>%
   head() %>% 
-  knitr::kable(digits = 2, caption = "Total number of cancellation in each airline") 
+  knitr::kable(digits = 2, caption = "Monthly flight Cancellation numbers by month and airline") 
 
-write_csv(cancel_airline, "tidied_data/cancel_airline.csv")
 ```
+
 
 ```{r}
 plot_cancel_airline <- cancel_airline %>%
-  ggplot(aes(x = year_month, y = Total_number_of_cancellation, fill = airline_name)) +
+  ggplot(aes(x = airline_name, y = Total_number_of_cancellation, fill = year_month)) +
   geom_bar(stat = "identity", show.legend = FALSE) +
   labs(
-    title = "Total Number of Cancellation by Airline",
-    x = "Year and Month",
-    y = "Total Number of Cancellation"
+    title = "Monthly flight Cancellation numbers by month and airline",
+    x = "Airline Name",
+    y = "Monthly flight Cancellation numbers"
   ) +
   theme(legend.position="right", legend.title = element_blank(),
         text = element_text(size = 10),
         axis.text.x = element_text(angle = 60, hjust = 1, size = 5)) +
-  facet_grid(. ~ airline_name)
+  facet_grid(. ~ year_month)
 
   
 ggplotly(plot_cancel_airline)
