@@ -96,7 +96,10 @@ cancel_tidy <- cancel_tidy%>%
 
 cancel_tidy <- cancel_tidy%>%
     mutate(
-    month = month1) %>% 
+    month2 = month)  
+
+cancel_tidy <- cancel_tidy %>%
+    mutate(month = month1) %>% 
     select(-month1)
 
 write_csv(cancel_tidy, "tidied_data/cancel_tidy.csv")
