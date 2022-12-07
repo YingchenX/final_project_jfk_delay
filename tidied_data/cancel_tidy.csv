@@ -1,217 +1,217 @@
-year,month,day,temperature,humidity,windspeed,covid_case,airline_name,cancel_count,year_month,Total_number_of_cancellation
-2021,November,1,56,53,29,780,American Airlines,9,2021-Nov,42
-2021,November,1,56,53,29,780,Alaska Airlines,9,2021-Nov,23
-2021,November,2,50,62,23,806,American Airlines,2,2021-Nov,42
-2021,November,6,46,62,13,508,JetBlue Airways,2,2021-Nov,11
-2021,November,6,46,62,13,508,Delta Air Lines,2,2021-Nov,8
-2021,November,7,46,61,19,542,American Airlines,1,2021-Nov,42
-2021,November,8,55,53,22,1135,American Airlines,2,2021-Nov,42
-2021,November,10,57,54,30,1049,American Airlines,6,2021-Nov,42
-2021,November,10,57,54,30,1049,Alaska Airlines,6,2021-Nov,23
-2021,November,10,57,54,30,1049,Delta Air Lines,6,2021-Nov,8
-2021,November,11,50,71,35,875,American Airlines,1,2021-Nov,42
-2021,November,12,58,80,40,1028,Endeavor Air,3,2021-Nov,3
-2021,November,12,58,80,40,1028,JetBlue Airways,3,2021-Nov,11
-2021,November,12,58,80,40,1028,Republic Airways,3,2021-Nov,8
-2021,November,13,52,72,51,614,American Airlines,5,2021-Nov,42
-2021,November,13,52,72,51,614,Republic Airways,5,2021-Nov,8
-2021,November,15,45,68,42,1263,American Airlines,2,2021-Nov,42
-2021,November,15,45,68,42,1263,JetBlue Airways,2,2021-Nov,11
-2021,November,16,44,54,31,1272,American Airlines,2,2021-Nov,42
-2021,November,16,44,54,31,1272,Alaska Airlines,2,2021-Nov,23
-2021,November,17,45,73,24,1329,American Airlines,2,2021-Nov,42
-2021,November,18,56,81,38,1310,Alaska Airlines,3,2021-Nov,23
-2021,November,18,56,81,38,1310,JetBlue Airways,3,2021-Nov,11
-2021,November,21,50,73,22,840,JetBlue Airways,1,2021-Nov,11
-2021,November,22,46,66,33,1528,American Airlines,1,2021-Nov,42
-2021,November,25,44,57,17,531,American Airlines,3,2021-Nov,42
-2021,November,26,43,69,44,1171,American Airlines,2,2021-Nov,42
-2021,November,28,38,76,19,1060,American Airlines,1,2021-Nov,42
-2021,November,29,39,57,29,2328,American Airlines,3,2021-Nov,42
-2021,November,29,39,57,29,2328,Alaska Airlines,3,2021-Nov,23
-2021,November,30,37,62,25,2006,United Air Lines,1,2021-Nov,1
-2021,December,1,45,54,21,2180,American Airlines,2,2021-Dec,174
-2021,December,7,41,47,41,2922,JetBlue Airways,3,2021-Dec,252
-2021,December,7,41,47,41,2922,Delta Air Lines,3,2021-Dec,226
-2021,December,8,38,70,23,3136,JetBlue Airways,2,2021-Dec,252
-2021,December,8,38,70,23,3136,Republic Airways,2,2021-Dec,5
-2021,December,9,36,52,32,3022,American Airlines,2,2021-Dec,174
-2021,December,9,36,52,32,3022,JetBlue Airways,2,2021-Dec,252
-2021,December,10,44,65,18,3089,Endeavor Air,4,2021-Dec,10
-2021,December,10,44,65,18,3089,JetBlue Airways,4,2021-Dec,252
-2021,December,11,52,94,36,2159,Endeavor Air,4,2021-Dec,10
-2021,December,11,52,94,36,2159,JetBlue Airways,4,2021-Dec,252
-2021,December,13,46,42,27,7529,JetBlue Airways,3,2021-Dec,252
-2021,December,14,46,41,25,10875,JetBlue Airways,1,2021-Dec,252
-2021,December,15,44,68,28,13167,Endeavor Air,2,2021-Dec,10
-2021,December,15,44,68,28,13167,JetBlue Airways,2,2021-Dec,252
-2021,December,16,56,78,25,13866,Alaska Airlines,2,2021-Dec,143
-2021,December,18,44,81,19,9949,American Airlines,3,2021-Dec,174
-2021,December,18,44,81,19,9949,Delta Air Lines,3,2021-Dec,226
-2021,December,18,44,81,19,9949,Republic Airways,3,2021-Dec,5
-2021,December,20,30,52,25,27953,Delta Air Lines,1,2021-Dec,226
-2021,December,21,37,63,22,30410,JetBlue Airways,2,2021-Dec,252
-2021,December,22,42,62,38,31401,JetBlue Airways,2,2021-Dec,252
-2021,December,23,34,47,33,31819,American Airlines,8,2021-Dec,174
-2021,December,23,34,47,33,31819,Alaska Airlines,8,2021-Dec,143
-2021,December,23,34,47,33,31819,JetBlue Airways,8,2021-Dec,252
-2021,December,24,36,81,16,17475,American Airlines,19,2021-Dec,174
-2021,December,24,36,81,16,17475,JetBlue Airways,19,2021-Dec,252
-2021,December,24,36,81,16,17475,Delta Air Lines,19,2021-Dec,226
-2021,December,25,43,90,20,7796,American Airlines,30,2021-Dec,174
-2021,December,25,43,90,20,7796,Alaska Airlines,30,2021-Dec,143
-2021,December,25,43,90,20,7796,JetBlue Airways,30,2021-Dec,252
-2021,December,25,43,90,20,7796,Delta Air Lines,30,2021-Dec,226
-2021,December,25,43,90,20,7796,United Air Lines,30,2021-Dec,171
-2021,December,26,46,55,39,22990,American Airlines,35,2021-Dec,174
-2021,December,26,46,55,39,22990,Alaska Airlines,35,2021-Dec,143
-2021,December,26,46,55,39,22990,JetBlue Airways,35,2021-Dec,252
-2021,December,26,46,55,39,22990,Delta Air Lines,35,2021-Dec,226
-2021,December,26,46,55,39,22990,United Air Lines,35,2021-Dec,171
-2021,December,27,36,66,24,51244,American Airlines,27,2021-Dec,174
-2021,December,27,36,66,24,51244,Alaska Airlines,27,2021-Dec,143
-2021,December,27,36,66,24,51244,JetBlue Airways,27,2021-Dec,252
-2021,December,27,36,66,24,51244,Delta Air Lines,27,2021-Dec,226
-2021,December,27,36,66,24,51244,United Air Lines,27,2021-Dec,171
-2021,December,28,42,76,20,49686,American Airlines,19,2021-Dec,174
-2021,December,28,42,76,20,49686,Alaska Airlines,19,2021-Dec,143
-2021,December,28,42,76,20,49686,JetBlue Airways,19,2021-Dec,252
-2021,December,28,42,76,20,49686,Delta Air Lines,19,2021-Dec,226
-2021,December,28,42,76,20,49686,United Air Lines,19,2021-Dec,171
-2021,December,29,43,93,15,50503,Alaska Airlines,22,2021-Dec,143
-2021,December,29,43,93,15,50503,JetBlue Airways,22,2021-Dec,252
-2021,December,29,43,93,15,50503,Delta Air Lines,22,2021-Dec,226
-2021,December,29,43,93,15,50503,United Air Lines,22,2021-Dec,171
-2021,December,30,47,92,13,47450,JetBlue Airways,38,2021-Dec,252
-2021,December,30,47,92,13,47450,Delta Air Lines,38,2021-Dec,226
-2021,December,30,47,92,13,47450,United Air Lines,38,2021-Dec,171
-2021,December,31,49,95,16,29135,American Airlines,29,2021-Dec,174
-2021,December,31,49,95,16,29135,JetBlue Airways,29,2021-Dec,252
-2021,December,31,49,95,16,29135,Delta Air Lines,29,2021-Dec,226
-2022,January,1,51,99,18,12063,Endeavor Air,39,2022-Jan,1058
-2022,January,1,51,99,18,12063,American Airlines,39,2022-Jan,1047
-2022,January,1,51,99,18,12063,Alaska Airlines,39,2022-Jan,977
-2022,January,1,51,99,18,12063,JetBlue Airways,39,2022-Jan,1121
-2022,January,1,51,99,18,12063,Delta Air Lines,39,2022-Jan,1039
-2022,January,1,51,99,18,12063,United Air Lines,39,2022-Jan,672
-2022,January,1,51,99,18,12063,Republic Airways,39,2022-Jan,1047
-2022,January,2,49,87,30,32512,Endeavor Air,54,2022-Jan,1058
-2022,January,2,49,87,30,32512,American Airlines,54,2022-Jan,1047
-2022,January,2,49,87,30,32512,Alaska Airlines,54,2022-Jan,977
-2022,January,2,49,87,30,32512,JetBlue Airways,54,2022-Jan,1121
-2022,January,2,49,87,30,32512,Delta Air Lines,54,2022-Jan,1039
-2022,January,2,49,87,30,32512,Republic Airways,54,2022-Jan,1047
-2022,January,3,31,50,37,54956,Endeavor Air,49,2022-Jan,1058
-2022,January,3,31,50,37,54956,American Airlines,49,2022-Jan,1047
-2022,January,3,31,50,37,54956,Alaska Airlines,49,2022-Jan,977
-2022,January,3,31,50,37,54956,JetBlue Airways,49,2022-Jan,1121
-2022,January,3,31,50,37,54956,Delta Air Lines,49,2022-Jan,1039
-2022,January,3,31,50,37,54956,United Air Lines,49,2022-Jan,672
-2022,January,3,31,50,37,54956,Republic Airways,49,2022-Jan,1047
-2022,January,4,26,54,26,49206,Endeavor Air,28,2022-Jan,1058
-2022,January,4,26,54,26,49206,American Airlines,28,2022-Jan,1047
-2022,January,4,26,54,26,49206,Alaska Airlines,28,2022-Jan,977
-2022,January,4,26,54,26,49206,JetBlue Airways,28,2022-Jan,1121
-2022,January,4,26,54,26,49206,Delta Air Lines,28,2022-Jan,1039
-2022,January,4,26,54,26,49206,United Air Lines,28,2022-Jan,672
-2022,January,4,26,54,26,49206,Republic Airways,28,2022-Jan,1047
-2022,January,5,38,88,20,40239,American Airlines,6,2022-Jan,1047
-2022,January,5,38,88,20,40239,JetBlue Airways,6,2022-Jan,1121
-2022,January,5,38,88,20,40239,Delta Air Lines,6,2022-Jan,1039
-2022,January,5,38,88,20,40239,Republic Airways,6,2022-Jan,1047
-2022,January,6,38,55,29,36369,Endeavor Air,16,2022-Jan,1058
-2022,January,6,38,55,29,36369,American Airlines,16,2022-Jan,1047
-2022,January,6,38,55,29,36369,Alaska Airlines,16,2022-Jan,977
-2022,January,6,38,55,29,36369,JetBlue Airways,16,2022-Jan,1121
-2022,January,6,38,55,29,36369,Delta Air Lines,16,2022-Jan,1039
-2022,January,6,38,55,29,36369,Republic Airways,16,2022-Jan,1047
-2022,January,7,30,68,38,23205,Endeavor Air,127,2022-Jan,1058
-2022,January,7,30,68,38,23205,American Airlines,127,2022-Jan,1047
-2022,January,7,30,68,38,23205,Alaska Airlines,127,2022-Jan,977
-2022,January,7,30,68,38,23205,JetBlue Airways,127,2022-Jan,1121
-2022,January,7,30,68,38,23205,Delta Air Lines,127,2022-Jan,1039
-2022,January,7,30,68,38,23205,Republic Airways,127,2022-Jan,1047
-2022,January,8,26,50,36,16191,American Airlines,11,2022-Jan,1047
-2022,January,8,26,50,36,16191,Alaska Airlines,11,2022-Jan,977
-2022,January,8,26,50,36,16191,JetBlue Airways,11,2022-Jan,1121
-2022,January,8,26,50,36,16191,Delta Air Lines,11,2022-Jan,1039
-2022,January,8,26,50,36,16191,Republic Airways,11,2022-Jan,1047
-2022,January,9,35,78,30,14351,American Airlines,8,2022-Jan,1047
-2022,January,9,35,78,30,14351,Alaska Airlines,8,2022-Jan,977
-2022,January,9,35,78,30,14351,JetBlue Airways,8,2022-Jan,1121
-2022,January,9,35,78,30,14351,Delta Air Lines,8,2022-Jan,1039
-2022,January,10,33,46,35,25034,Alaska Airlines,9,2022-Jan,977
-2022,January,10,33,46,35,25034,JetBlue Airways,9,2022-Jan,1121
-2022,January,10,33,46,35,25034,Delta Air Lines,9,2022-Jan,1039
-2022,January,11,20,41,38,18537,American Airlines,5,2022-Jan,1047
-2022,January,11,20,41,38,18537,JetBlue Airways,5,2022-Jan,1121
-2022,January,12,28,55,32,18439,Endeavor Air,5,2022-Jan,1058
-2022,January,12,28,55,32,18439,American Airlines,5,2022-Jan,1047
-2022,January,12,28,55,32,18439,JetBlue Airways,5,2022-Jan,1121
-2022,January,13,39,68,12,16095,Alaska Airlines,3,2022-Jan,977
-2022,January,13,39,68,12,16095,Delta Air Lines,3,2022-Jan,1039
-2022,January,14,33,68,48,13290,JetBlue Airways,2,2022-Jan,1121
-2022,January,14,33,68,48,13290,Delta Air Lines,2,2022-Jan,1039
-2022,January,15,16,43,35,6759,Endeavor Air,6,2022-Jan,1058
-2022,January,15,16,43,35,6759,American Airlines,6,2022-Jan,1047
-2022,January,15,16,43,35,6759,JetBlue Airways,6,2022-Jan,1121
-2022,January,16,26,66,41,6893,Endeavor Air,57,2022-Jan,1058
-2022,January,16,26,66,41,6893,American Airlines,57,2022-Jan,1047
-2022,January,16,26,66,41,6893,Alaska Airlines,57,2022-Jan,977
-2022,January,16,26,66,41,6893,JetBlue Airways,57,2022-Jan,1121
-2022,January,16,26,66,41,6893,Delta Air Lines,57,2022-Jan,1039
-2022,January,16,26,66,41,6893,Republic Airways,57,2022-Jan,1047
-2022,January,17,41,76,56,9828,Endeavor Air,15,2022-Jan,1058
-2022,January,17,41,76,56,9828,American Airlines,15,2022-Jan,1047
-2022,January,17,41,76,56,9828,Alaska Airlines,15,2022-Jan,977
-2022,January,17,41,76,56,9828,JetBlue Airways,15,2022-Jan,1121
-2022,January,17,41,76,56,9828,Republic Airways,15,2022-Jan,1047
-2022,January,18,32,47,42,10921,JetBlue Airways,6,2022-Jan,1121
-2022,January,18,32,47,42,10921,Republic Airways,6,2022-Jan,1047
-2022,January,19,36,64,33,9030,American Airlines,4,2022-Jan,1047
-2022,January,19,36,64,33,9030,JetBlue Airways,4,2022-Jan,1121
-2022,January,20,33,68,30,7043,Endeavor Air,17,2022-Jan,1058
-2022,January,20,33,68,30,7043,American Airlines,17,2022-Jan,1047
-2022,January,20,33,68,30,7043,Alaska Airlines,17,2022-Jan,977
-2022,January,20,33,68,30,7043,JetBlue Airways,17,2022-Jan,1121
-2022,January,20,33,68,30,7043,United Air Lines,17,2022-Jan,672
-2022,January,20,33,68,30,7043,Republic Airways,17,2022-Jan,1047
-2022,January,21,19,44,31,5797,Endeavor Air,21,2022-Jan,1058
-2022,January,21,19,44,31,5797,JetBlue Airways,21,2022-Jan,1121
-2022,January,21,19,44,31,5797,Republic Airways,21,2022-Jan,1047
-2022,January,22,23,54,24,3632,Alaska Airlines,5,2022-Jan,977
-2022,January,22,23,54,24,3632,JetBlue Airways,5,2022-Jan,1121
-2022,January,22,23,54,24,3632,Republic Airways,5,2022-Jan,1047
-2022,January,23,31,52,23,3397,JetBlue Airways,3,2022-Jan,1121
-2022,January,23,31,52,23,3397,Delta Air Lines,3,2022-Jan,1039
-2022,January,23,31,52,23,3397,Republic Airways,3,2022-Jan,1047
-2022,January,24,33,70,24,6017,American Airlines,2,2022-Jan,1047
-2022,January,24,33,70,24,6017,JetBlue Airways,2,2022-Jan,1121
-2022,January,25,37,59,25,4763,American Airlines,3,2022-Jan,1047
-2022,January,25,37,59,25,4763,Delta Air Lines,3,2022-Jan,1039
-2022,January,26,24,38,30,4199,American Airlines,2,2022-Jan,1047
-2022,January,26,24,38,30,4199,JetBlue Airways,2,2022-Jan,1121
-2022,January,27,23,54,20,3634,American Airlines,2,2022-Jan,1047
-2022,January,27,23,54,20,3634,Republic Airways,2,2022-Jan,1047
-2022,January,28,32,76,26,2725,Endeavor Air,52,2022-Jan,1058
-2022,January,28,32,76,26,2725,American Airlines,52,2022-Jan,1047
-2022,January,28,32,76,26,2725,JetBlue Airways,52,2022-Jan,1121
-2022,January,28,32,76,26,2725,Delta Air Lines,52,2022-Jan,1039
-2022,January,28,32,76,26,2725,Republic Airways,52,2022-Jan,1047
-2022,January,29,21,72,46,512,Endeavor Air,333,2022-Jan,1058
-2022,January,29,21,72,46,512,American Airlines,333,2022-Jan,1047
-2022,January,29,21,72,46,512,Alaska Airlines,333,2022-Jan,977
-2022,January,29,21,72,46,512,JetBlue Airways,333,2022-Jan,1121
-2022,January,29,21,72,46,512,Delta Air Lines,333,2022-Jan,1039
-2022,January,29,21,72,46,512,United Air Lines,333,2022-Jan,672
-2022,January,29,21,72,46,512,Republic Airways,333,2022-Jan,1047
-2022,January,30,19,50,36,1425,Endeavor Air,206,2022-Jan,1058
-2022,January,30,19,50,36,1425,American Airlines,206,2022-Jan,1047
-2022,January,30,19,50,36,1425,Alaska Airlines,206,2022-Jan,977
-2022,January,30,19,50,36,1425,JetBlue Airways,206,2022-Jan,1121
-2022,January,30,19,50,36,1425,Delta Air Lines,206,2022-Jan,1039
-2022,January,30,19,50,36,1425,United Air Lines,206,2022-Jan,672
-2022,January,30,19,50,36,1425,Republic Airways,206,2022-Jan,1047
-2022,January,31,24,51,12,3112,Endeavor Air,33,2022-Jan,1058
-2022,January,31,24,51,12,3112,JetBlue Airways,33,2022-Jan,1121
-2022,January,31,24,51,12,3112,Delta Air Lines,33,2022-Jan,1039
+year,month,day,temperature,humidity,windspeed,covid_case,airline_name,cancel_count,year_month
+2021,November,1,56,53,29,780,American Airlines,9,2021-Nov
+2021,November,1,56,53,29,780,Alaska Airlines,9,2021-Nov
+2021,November,2,50,62,23,806,American Airlines,2,2021-Nov
+2021,November,6,46,62,13,508,JetBlue Airways,2,2021-Nov
+2021,November,6,46,62,13,508,Delta Air Lines,2,2021-Nov
+2021,November,7,46,61,19,542,American Airlines,1,2021-Nov
+2021,November,8,55,53,22,1135,American Airlines,2,2021-Nov
+2021,November,10,57,54,30,1049,American Airlines,6,2021-Nov
+2021,November,10,57,54,30,1049,Alaska Airlines,6,2021-Nov
+2021,November,10,57,54,30,1049,Delta Air Lines,6,2021-Nov
+2021,November,11,50,71,35,875,American Airlines,1,2021-Nov
+2021,November,12,58,80,40,1028,Endeavor Air,3,2021-Nov
+2021,November,12,58,80,40,1028,JetBlue Airways,3,2021-Nov
+2021,November,12,58,80,40,1028,Republic Airways,3,2021-Nov
+2021,November,13,52,72,51,614,American Airlines,5,2021-Nov
+2021,November,13,52,72,51,614,Republic Airways,5,2021-Nov
+2021,November,15,45,68,42,1263,American Airlines,2,2021-Nov
+2021,November,15,45,68,42,1263,JetBlue Airways,2,2021-Nov
+2021,November,16,44,54,31,1272,American Airlines,2,2021-Nov
+2021,November,16,44,54,31,1272,Alaska Airlines,2,2021-Nov
+2021,November,17,45,73,24,1329,American Airlines,2,2021-Nov
+2021,November,18,56,81,38,1310,Alaska Airlines,3,2021-Nov
+2021,November,18,56,81,38,1310,JetBlue Airways,3,2021-Nov
+2021,November,21,50,73,22,840,JetBlue Airways,1,2021-Nov
+2021,November,22,46,66,33,1528,American Airlines,1,2021-Nov
+2021,November,25,44,57,17,531,American Airlines,3,2021-Nov
+2021,November,26,43,69,44,1171,American Airlines,2,2021-Nov
+2021,November,28,38,76,19,1060,American Airlines,1,2021-Nov
+2021,November,29,39,57,29,2328,American Airlines,3,2021-Nov
+2021,November,29,39,57,29,2328,Alaska Airlines,3,2021-Nov
+2021,November,30,37,62,25,2006,United Air Lines,1,2021-Nov
+2021,December,1,45,54,21,2180,American Airlines,2,2021-Dec
+2021,December,7,41,47,41,2922,JetBlue Airways,3,2021-Dec
+2021,December,7,41,47,41,2922,Delta Air Lines,3,2021-Dec
+2021,December,8,38,70,23,3136,JetBlue Airways,2,2021-Dec
+2021,December,8,38,70,23,3136,Republic Airways,2,2021-Dec
+2021,December,9,36,52,32,3022,American Airlines,2,2021-Dec
+2021,December,9,36,52,32,3022,JetBlue Airways,2,2021-Dec
+2021,December,10,44,65,18,3089,Endeavor Air,4,2021-Dec
+2021,December,10,44,65,18,3089,JetBlue Airways,4,2021-Dec
+2021,December,11,52,94,36,2159,Endeavor Air,4,2021-Dec
+2021,December,11,52,94,36,2159,JetBlue Airways,4,2021-Dec
+2021,December,13,46,42,27,7529,JetBlue Airways,3,2021-Dec
+2021,December,14,46,41,25,10875,JetBlue Airways,1,2021-Dec
+2021,December,15,44,68,28,13167,Endeavor Air,2,2021-Dec
+2021,December,15,44,68,28,13167,JetBlue Airways,2,2021-Dec
+2021,December,16,56,78,25,13866,Alaska Airlines,2,2021-Dec
+2021,December,18,44,81,19,9949,American Airlines,3,2021-Dec
+2021,December,18,44,81,19,9949,Delta Air Lines,3,2021-Dec
+2021,December,18,44,81,19,9949,Republic Airways,3,2021-Dec
+2021,December,20,30,52,25,27953,Delta Air Lines,1,2021-Dec
+2021,December,21,37,63,22,30410,JetBlue Airways,2,2021-Dec
+2021,December,22,42,62,38,31401,JetBlue Airways,2,2021-Dec
+2021,December,23,34,47,33,31819,American Airlines,8,2021-Dec
+2021,December,23,34,47,33,31819,Alaska Airlines,8,2021-Dec
+2021,December,23,34,47,33,31819,JetBlue Airways,8,2021-Dec
+2021,December,24,36,81,16,17475,American Airlines,19,2021-Dec
+2021,December,24,36,81,16,17475,JetBlue Airways,19,2021-Dec
+2021,December,24,36,81,16,17475,Delta Air Lines,19,2021-Dec
+2021,December,25,43,90,20,7796,American Airlines,30,2021-Dec
+2021,December,25,43,90,20,7796,Alaska Airlines,30,2021-Dec
+2021,December,25,43,90,20,7796,JetBlue Airways,30,2021-Dec
+2021,December,25,43,90,20,7796,Delta Air Lines,30,2021-Dec
+2021,December,25,43,90,20,7796,United Air Lines,30,2021-Dec
+2021,December,26,46,55,39,22990,American Airlines,35,2021-Dec
+2021,December,26,46,55,39,22990,Alaska Airlines,35,2021-Dec
+2021,December,26,46,55,39,22990,JetBlue Airways,35,2021-Dec
+2021,December,26,46,55,39,22990,Delta Air Lines,35,2021-Dec
+2021,December,26,46,55,39,22990,United Air Lines,35,2021-Dec
+2021,December,27,36,66,24,51244,American Airlines,27,2021-Dec
+2021,December,27,36,66,24,51244,Alaska Airlines,27,2021-Dec
+2021,December,27,36,66,24,51244,JetBlue Airways,27,2021-Dec
+2021,December,27,36,66,24,51244,Delta Air Lines,27,2021-Dec
+2021,December,27,36,66,24,51244,United Air Lines,27,2021-Dec
+2021,December,28,42,76,20,49686,American Airlines,19,2021-Dec
+2021,December,28,42,76,20,49686,Alaska Airlines,19,2021-Dec
+2021,December,28,42,76,20,49686,JetBlue Airways,19,2021-Dec
+2021,December,28,42,76,20,49686,Delta Air Lines,19,2021-Dec
+2021,December,28,42,76,20,49686,United Air Lines,19,2021-Dec
+2021,December,29,43,93,15,50503,Alaska Airlines,22,2021-Dec
+2021,December,29,43,93,15,50503,JetBlue Airways,22,2021-Dec
+2021,December,29,43,93,15,50503,Delta Air Lines,22,2021-Dec
+2021,December,29,43,93,15,50503,United Air Lines,22,2021-Dec
+2021,December,30,47,92,13,47450,JetBlue Airways,38,2021-Dec
+2021,December,30,47,92,13,47450,Delta Air Lines,38,2021-Dec
+2021,December,30,47,92,13,47450,United Air Lines,38,2021-Dec
+2021,December,31,49,95,16,29135,American Airlines,29,2021-Dec
+2021,December,31,49,95,16,29135,JetBlue Airways,29,2021-Dec
+2021,December,31,49,95,16,29135,Delta Air Lines,29,2021-Dec
+2022,January,1,51,99,18,12063,Endeavor Air,39,2022-Jan
+2022,January,1,51,99,18,12063,American Airlines,39,2022-Jan
+2022,January,1,51,99,18,12063,Alaska Airlines,39,2022-Jan
+2022,January,1,51,99,18,12063,JetBlue Airways,39,2022-Jan
+2022,January,1,51,99,18,12063,Delta Air Lines,39,2022-Jan
+2022,January,1,51,99,18,12063,United Air Lines,39,2022-Jan
+2022,January,1,51,99,18,12063,Republic Airways,39,2022-Jan
+2022,January,2,49,87,30,32512,Endeavor Air,54,2022-Jan
+2022,January,2,49,87,30,32512,American Airlines,54,2022-Jan
+2022,January,2,49,87,30,32512,Alaska Airlines,54,2022-Jan
+2022,January,2,49,87,30,32512,JetBlue Airways,54,2022-Jan
+2022,January,2,49,87,30,32512,Delta Air Lines,54,2022-Jan
+2022,January,2,49,87,30,32512,Republic Airways,54,2022-Jan
+2022,January,3,31,50,37,54956,Endeavor Air,49,2022-Jan
+2022,January,3,31,50,37,54956,American Airlines,49,2022-Jan
+2022,January,3,31,50,37,54956,Alaska Airlines,49,2022-Jan
+2022,January,3,31,50,37,54956,JetBlue Airways,49,2022-Jan
+2022,January,3,31,50,37,54956,Delta Air Lines,49,2022-Jan
+2022,January,3,31,50,37,54956,United Air Lines,49,2022-Jan
+2022,January,3,31,50,37,54956,Republic Airways,49,2022-Jan
+2022,January,4,26,54,26,49206,Endeavor Air,28,2022-Jan
+2022,January,4,26,54,26,49206,American Airlines,28,2022-Jan
+2022,January,4,26,54,26,49206,Alaska Airlines,28,2022-Jan
+2022,January,4,26,54,26,49206,JetBlue Airways,28,2022-Jan
+2022,January,4,26,54,26,49206,Delta Air Lines,28,2022-Jan
+2022,January,4,26,54,26,49206,United Air Lines,28,2022-Jan
+2022,January,4,26,54,26,49206,Republic Airways,28,2022-Jan
+2022,January,5,38,88,20,40239,American Airlines,6,2022-Jan
+2022,January,5,38,88,20,40239,JetBlue Airways,6,2022-Jan
+2022,January,5,38,88,20,40239,Delta Air Lines,6,2022-Jan
+2022,January,5,38,88,20,40239,Republic Airways,6,2022-Jan
+2022,January,6,38,55,29,36369,Endeavor Air,16,2022-Jan
+2022,January,6,38,55,29,36369,American Airlines,16,2022-Jan
+2022,January,6,38,55,29,36369,Alaska Airlines,16,2022-Jan
+2022,January,6,38,55,29,36369,JetBlue Airways,16,2022-Jan
+2022,January,6,38,55,29,36369,Delta Air Lines,16,2022-Jan
+2022,January,6,38,55,29,36369,Republic Airways,16,2022-Jan
+2022,January,7,30,68,38,23205,Endeavor Air,127,2022-Jan
+2022,January,7,30,68,38,23205,American Airlines,127,2022-Jan
+2022,January,7,30,68,38,23205,Alaska Airlines,127,2022-Jan
+2022,January,7,30,68,38,23205,JetBlue Airways,127,2022-Jan
+2022,January,7,30,68,38,23205,Delta Air Lines,127,2022-Jan
+2022,January,7,30,68,38,23205,Republic Airways,127,2022-Jan
+2022,January,8,26,50,36,16191,American Airlines,11,2022-Jan
+2022,January,8,26,50,36,16191,Alaska Airlines,11,2022-Jan
+2022,January,8,26,50,36,16191,JetBlue Airways,11,2022-Jan
+2022,January,8,26,50,36,16191,Delta Air Lines,11,2022-Jan
+2022,January,8,26,50,36,16191,Republic Airways,11,2022-Jan
+2022,January,9,35,78,30,14351,American Airlines,8,2022-Jan
+2022,January,9,35,78,30,14351,Alaska Airlines,8,2022-Jan
+2022,January,9,35,78,30,14351,JetBlue Airways,8,2022-Jan
+2022,January,9,35,78,30,14351,Delta Air Lines,8,2022-Jan
+2022,January,10,33,46,35,25034,Alaska Airlines,9,2022-Jan
+2022,January,10,33,46,35,25034,JetBlue Airways,9,2022-Jan
+2022,January,10,33,46,35,25034,Delta Air Lines,9,2022-Jan
+2022,January,11,20,41,38,18537,American Airlines,5,2022-Jan
+2022,January,11,20,41,38,18537,JetBlue Airways,5,2022-Jan
+2022,January,12,28,55,32,18439,Endeavor Air,5,2022-Jan
+2022,January,12,28,55,32,18439,American Airlines,5,2022-Jan
+2022,January,12,28,55,32,18439,JetBlue Airways,5,2022-Jan
+2022,January,13,39,68,12,16095,Alaska Airlines,3,2022-Jan
+2022,January,13,39,68,12,16095,Delta Air Lines,3,2022-Jan
+2022,January,14,33,68,48,13290,JetBlue Airways,2,2022-Jan
+2022,January,14,33,68,48,13290,Delta Air Lines,2,2022-Jan
+2022,January,15,16,43,35,6759,Endeavor Air,6,2022-Jan
+2022,January,15,16,43,35,6759,American Airlines,6,2022-Jan
+2022,January,15,16,43,35,6759,JetBlue Airways,6,2022-Jan
+2022,January,16,26,66,41,6893,Endeavor Air,57,2022-Jan
+2022,January,16,26,66,41,6893,American Airlines,57,2022-Jan
+2022,January,16,26,66,41,6893,Alaska Airlines,57,2022-Jan
+2022,January,16,26,66,41,6893,JetBlue Airways,57,2022-Jan
+2022,January,16,26,66,41,6893,Delta Air Lines,57,2022-Jan
+2022,January,16,26,66,41,6893,Republic Airways,57,2022-Jan
+2022,January,17,41,76,56,9828,Endeavor Air,15,2022-Jan
+2022,January,17,41,76,56,9828,American Airlines,15,2022-Jan
+2022,January,17,41,76,56,9828,Alaska Airlines,15,2022-Jan
+2022,January,17,41,76,56,9828,JetBlue Airways,15,2022-Jan
+2022,January,17,41,76,56,9828,Republic Airways,15,2022-Jan
+2022,January,18,32,47,42,10921,JetBlue Airways,6,2022-Jan
+2022,January,18,32,47,42,10921,Republic Airways,6,2022-Jan
+2022,January,19,36,64,33,9030,American Airlines,4,2022-Jan
+2022,January,19,36,64,33,9030,JetBlue Airways,4,2022-Jan
+2022,January,20,33,68,30,7043,Endeavor Air,17,2022-Jan
+2022,January,20,33,68,30,7043,American Airlines,17,2022-Jan
+2022,January,20,33,68,30,7043,Alaska Airlines,17,2022-Jan
+2022,January,20,33,68,30,7043,JetBlue Airways,17,2022-Jan
+2022,January,20,33,68,30,7043,United Air Lines,17,2022-Jan
+2022,January,20,33,68,30,7043,Republic Airways,17,2022-Jan
+2022,January,21,19,44,31,5797,Endeavor Air,21,2022-Jan
+2022,January,21,19,44,31,5797,JetBlue Airways,21,2022-Jan
+2022,January,21,19,44,31,5797,Republic Airways,21,2022-Jan
+2022,January,22,23,54,24,3632,Alaska Airlines,5,2022-Jan
+2022,January,22,23,54,24,3632,JetBlue Airways,5,2022-Jan
+2022,January,22,23,54,24,3632,Republic Airways,5,2022-Jan
+2022,January,23,31,52,23,3397,JetBlue Airways,3,2022-Jan
+2022,January,23,31,52,23,3397,Delta Air Lines,3,2022-Jan
+2022,January,23,31,52,23,3397,Republic Airways,3,2022-Jan
+2022,January,24,33,70,24,6017,American Airlines,2,2022-Jan
+2022,January,24,33,70,24,6017,JetBlue Airways,2,2022-Jan
+2022,January,25,37,59,25,4763,American Airlines,3,2022-Jan
+2022,January,25,37,59,25,4763,Delta Air Lines,3,2022-Jan
+2022,January,26,24,38,30,4199,American Airlines,2,2022-Jan
+2022,January,26,24,38,30,4199,JetBlue Airways,2,2022-Jan
+2022,January,27,23,54,20,3634,American Airlines,2,2022-Jan
+2022,January,27,23,54,20,3634,Republic Airways,2,2022-Jan
+2022,January,28,32,76,26,2725,Endeavor Air,52,2022-Jan
+2022,January,28,32,76,26,2725,American Airlines,52,2022-Jan
+2022,January,28,32,76,26,2725,JetBlue Airways,52,2022-Jan
+2022,January,28,32,76,26,2725,Delta Air Lines,52,2022-Jan
+2022,January,28,32,76,26,2725,Republic Airways,52,2022-Jan
+2022,January,29,21,72,46,512,Endeavor Air,333,2022-Jan
+2022,January,29,21,72,46,512,American Airlines,333,2022-Jan
+2022,January,29,21,72,46,512,Alaska Airlines,333,2022-Jan
+2022,January,29,21,72,46,512,JetBlue Airways,333,2022-Jan
+2022,January,29,21,72,46,512,Delta Air Lines,333,2022-Jan
+2022,January,29,21,72,46,512,United Air Lines,333,2022-Jan
+2022,January,29,21,72,46,512,Republic Airways,333,2022-Jan
+2022,January,30,19,50,36,1425,Endeavor Air,206,2022-Jan
+2022,January,30,19,50,36,1425,American Airlines,206,2022-Jan
+2022,January,30,19,50,36,1425,Alaska Airlines,206,2022-Jan
+2022,January,30,19,50,36,1425,JetBlue Airways,206,2022-Jan
+2022,January,30,19,50,36,1425,Delta Air Lines,206,2022-Jan
+2022,January,30,19,50,36,1425,United Air Lines,206,2022-Jan
+2022,January,30,19,50,36,1425,Republic Airways,206,2022-Jan
+2022,January,31,24,51,12,3112,Endeavor Air,33,2022-Jan
+2022,January,31,24,51,12,3112,JetBlue Airways,33,2022-Jan
+2022,January,31,24,51,12,3112,Delta Air Lines,33,2022-Jan

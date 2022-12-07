@@ -219,7 +219,7 @@ cancel_airline %>%
 Total number of cancellation in each airline
 
 ``` r
-write_csv(cancel_airline, "tidied_data/cancel_tidy.csv")
+write_csv(cancel_airline, "tidied_data/cancel_airline.csv")
 ```
 
 ``` r
