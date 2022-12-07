@@ -15,12 +15,14 @@ navbar:
         href: xx.html
       - text: "Predictive Model"
         href: xx.html
+    - text: "Dashboard"
+      href: xx.html
       
   right:
     - text: "What to do"
       href: what_to_do_JFK.html
     - text: "About Us"
-      href: About-us.html
+      href: about_us.html
     - icon: fa-envelope fa-lg
       href: mailto:<jc5457@cumc.columbia.edu>
     - icon: fa-github fa-lg
@@ -29,3 +31,4 @@ navbar:
 output:
   html_document:
     theme: journal
+    always_allow_html: true

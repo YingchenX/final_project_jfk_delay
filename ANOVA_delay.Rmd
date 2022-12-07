@@ -1,6 +1,5 @@
 ---
 title: "ANOVA_delay"
-author: "Fengyi Ma"
 output: github_document
 ---
 

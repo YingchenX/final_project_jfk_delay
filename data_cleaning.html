@@ -11,7 +11,7 @@
 
 
 
-<title>The Flight Delay Issue</title>
+<title>data_cleaning</title>
 
 <script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -29,14 +29,9 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
-<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -231,69 +226,6 @@ $(document).ready(function () {
 
 
 
-<style type="text/css">
-
-#TOC {
-  margin: 25px 0px 20px 0px;
-}
-@media (max-width: 768px) {
-#TOC {
-  position: relative;
-  width: 100%;
-}
-}
-
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
-
-.toc-content {
-  padding-left: 30px;
-  padding-right: 40px;
-}
-
-div.main-container {
-  max-width: 1200px;
-}
-
-div.tocify {
-  width: 20%;
-  max-width: 260px;
-  max-height: 85%;
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  div.tocify {
-    width: 25%;
-  }
-}
-
-@media (max-width: 767px) {
-  div.tocify {
-    width: 100%;
-    max-width: none;
-  }
-}
-
-.tocify ul, .tocify li {
-  line-height: 20px;
-}
-
-.tocify-subheader .tocify-item {
-  font-size: 0.90em;
-}
-
-.tocify .list-group-item {
-  border-radius: 0px;
-}
-
-
-</style>
-
-
 
 </head>
 
@@ -301,16 +233,6 @@ div.tocify {
 
 
 <div class="container-fluid main-container">
-
-
-<!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row">
-<div class="col-xs-12 col-sm-4 col-md-3">
-<div id="TOC" class="tocify">
-</div>
-</div>
-
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -330,9 +252,10 @@ div.tocify {
         <li>
   <a href="project_report.html">Project Report</a>
 </li>
+<li class="dropdown-header">Analysis</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Analysis
+    Dashboard
      
     <span class="caret"></span>
   </a>
@@ -351,16 +274,13 @@ div.tocify {
     </li>
   </ul>
 </li>
-<li>
-  <a href="xx.html">Dashboard</a>
-</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="what_to_do_JFK.html">What to do</a>
 </li>
 <li>
-  <a href="about_us.html">About Us</a>
+  <a href="About-us.html">About Us</a>
 </li>
 <li>
   <a href="mailto:&lt;jc5457@cumc.columbia.edu&gt;">
@@ -383,82 +303,176 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">The Flight Delay Issue</h1>
 
 </div>
 
 
-<style type="text/css">
+<div id="data-cleaning" class="section level1">
+<h1>Data Cleaning</h1>
+<div id="data-cleaning-1" class="section level2">
+<h2>Data Cleaning</h2>
+<div id="weather-condition" class="section level3">
+<h3>Weather Condition</h3>
+<pre class="r"><code>noaa = read_csv(&quot;data/weather.csv&quot;, na = c(&quot;&quot;,&quot;NA&quot;))
 
-h1.title {
-  text-align: center;
+noaa_df = noaa %&gt;%
+  janitor::clean_names() %&gt;% 
+  select(date, starts_with(&quot;hourly&quot;)) %&gt;% 
+  mutate(
+    date = str_replace_all(date, &quot;T&quot;, &quot;-&quot;)
+  ) %&gt;% 
+  separate(date, c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;, &quot;hour&quot;, &quot;minute&quot;, &quot;second&quot;), remove = FALSE) %&gt;% 
+  filter(minute == &quot;51&quot;) %&gt;% 
+  select(-minute, -second) %&gt;% 
+  mutate(
+    date = as.Date(str_left(date, n = 10), format = &quot;%Y-%m-%d&quot;),
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day),
+    hour = as.numeric(hour)
+  )
+
+daily_weather_condition = noaa %&gt;%
+  janitor::clean_names() %&gt;% 
+  select(date, daily_weather) %&gt;% 
+  filter(!is.na(daily_weather)) %&gt;% 
+  mutate(
+    date = str_replace_all(date, &quot;T&quot;, &quot;-&quot;)
+  ) %&gt;% 
+  separate(date, c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;, &quot;hour&quot;, &quot;minute&quot;, &quot;second&quot;)) %&gt;% 
+  select(-c(hour:second)) %&gt;% 
+  mutate(
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day)
+  )
+
+noaa_df = left_join(noaa_df, daily_weather_condition, by = c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;))
+
+daily_weather = noaa %&gt;%
+  janitor::clean_names() %&gt;% 
+  select(date, starts_with(&quot;daily&quot;)) %&gt;% 
+  mutate(
+    date = str_replace_all(date, &quot;T&quot;, &quot;-&quot;)
+  ) %&gt;% 
+  separate(date, c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;, &quot;hour&quot;, &quot;minute&quot;, &quot;second&quot;), remove = FALSE) %&gt;% 
+  filter(minute == &quot;59&quot;) %&gt;% 
+  select(-c(hour:second)) %&gt;% 
+  mutate(
+    date = as.Date(str_left(date, n = 10), format = &quot;%Y-%m-%d&quot;),
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day)
+  ) %&gt;% 
+  drop_na(daily_average_dew_point_temperature)</code></pre>
+</div>
+<div id="covid" class="section level3">
+<h3>COVID</h3>
+<pre class="r"><code>covid = 
+  GET(&quot;https://data.cityofnewyork.us/resource/rc75-m7u3.csv&quot;) %&gt;% 
+  content(&quot;parsed&quot;) 
+
+covid_df = covid %&gt;% 
+  select(date = date_of_interest, case_count) %&gt;%
+  filter(date &lt; &quot;2022-01-31&quot; &amp; date &gt;= &quot;2021-10-31&quot;) %&gt;% 
+  separate(date, c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), remove = FALSE) %&gt;% 
+  mutate(
+    date = as.Date(date, format = &quot;%Y-%m-%d&quot;)
+  ) %&gt;% 
+  mutate_if(is.character, as.numeric)</code></pre>
+</div>
+<div id="delay" class="section level3">
+<h3>Delay</h3>
+<pre class="r"><code>read_csv_function = function(path) {
+  
+  df = read_csv(path, 
+                skip = 7, 
+                cols(.default = &quot;c&quot;)) %&gt;%
+    janitor::row_to_names(1) %&gt;% 
+    janitor::clean_names()
+  
+  df
+  
 }
 
-</style>
-<p> </p>
-<div class="figure" style="text-align: center">
-<img src="pictures/Jialu_Cheng_a_colorful_the_united_states_flight_route_map.png" alt="(generated via [Midjourney](https://midjourney.com/))" width="100%" />
-<p class="caption">
-(generated via <a href="https://midjourney.com/">Midjourney</a>)
-</p>
+delay_cancel = 
+  tibble(
+    files = list.files(&quot;data/delay/&quot;),
+    path = str_c(&quot;data/delay/&quot;, files)
+  ) %&gt;% 
+  mutate(data = map(path, read_csv_function)) %&gt;% 
+  unnest(data) %&gt;% 
+  select(-files, -path) %&gt;%
+  mutate(
+    airline_name = case_when(
+      carrier_code == &quot;9E&quot; ~ &quot;Endeavor Air&quot;,
+      carrier_code == &quot;AA&quot; ~ &quot;American Airlines&quot;,
+      carrier_code == &quot;AS&quot; ~ &quot;Alaska Airlines&quot;,
+      carrier_code == &quot;B6&quot; ~ &quot;JetBlue Airways&quot;,
+      carrier_code == &quot;DL&quot; ~ &quot;Delta Air Lines&quot;,
+      carrier_code == &quot;UA&quot; ~ &quot;United Air Lines&quot;,
+      carrier_code == &quot;YX&quot; ~ &quot;Republic Airways&quot;,
+      TRUE      ~ &quot;&quot;
+    ),
+    scheduled_hour = str_left(scheduled_departure_time, 2)
+  ) %&gt;% 
+  separate(date_mm_dd_yyyy, into = c(&quot;month&quot;, &quot;day&quot;, &quot;year&quot;), sep = &quot;/&quot;, remove = FALSE) %&gt;%
+  mutate(
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day),
+    date_mm_dd_yyyy = as.Date(date_mm_dd_yyyy, format = &quot;%m/%d/%Y&quot;)
+  ) %&gt;%
+  select(airline_name, date = date_mm_dd_yyyy, everything(), -carrier_code, -tail_number, -wheels_off_time) %&gt;% 
+  arrange(date) %&gt;% 
+  relocate(scheduled_hour, .before = scheduled_departure_time)
+
+full_delay_df = 
+  delay_cancel %&gt;% 
+  filter(actual_elapsed_time_minutes != 0) %&gt;% 
+  mutate(
+    delay_minutes = as.numeric(as.POSIXct(actual_departure_time, format = &quot;%H:%M&quot;) - as.POSIXct(scheduled_departure_time, format = &quot;%H:%M&quot;)) / 60,
+    delay_minutes = ifelse(delay_minutes &lt; -100, delay_minutes + 1440, delay_minutes)
+  ) %&gt;% 
+  select(-departure_delay_minutes) %&gt;% 
+  relocate(delay_minutes, .after = actual_departure_time)</code></pre>
 </div>
-<p> </p>
-<div id="website-overview" class="section level2">
-<h2>Website Overview</h2>
-<p>(Insert the video here)</p>
-<p> </p>
-<p>Where are you heading to during the holiday season? As the holiday
-season approaches, the demand for departure flights from NYC is booming.
-However, trip planning is always accompanied by the issue of potential
-flight delay, especially in busy metropolitan airports like JFK. Using
-JFK departed flights as an example, we’re interested in exploring the
-factors that are potentially related with flight delay (e.g., airlines,
-weather, and COVID conditions), in order to give the holiday travelers a
-better sense of what to expect regarding flight delay for this holiday
-season.</p>
-<p>Our analysis focuses on the flight delay data from the Bureau of
-Transportation Statistics (BTS), with the most popular airlines’ data in
-the manually selected time ranges of last holiday season (2021.11.1 -
-2022.1.31). Meanwhile, the weather condition information was obtained
-from the National Oceanic and Atmospheric Administration (NOAA), and
-COVID information from NYC OpenData.</p>
-<p> </p>
+<div id="cancelation" class="section level3">
+<h3>Cancelation</h3>
+<pre class="r"><code>full_cancel_df = 
+  delay_cancel %&gt;% 
+  filter(actual_elapsed_time_minutes == 0) %&gt;% 
+  select(airline_name:scheduled_departure_time, scheduled_elapsed_time_minutes)</code></pre>
 </div>
-<div id="key-questions-we-focused-on" class="section level2">
-<h2>Key Questions We Focused on</h2>
-<p><strong>1. What are the key trends of the flights in JFK during last
-holiday season?</strong></p>
-<ul>
-<li>Exploratory analysis including descriptive table or histogram
-showing criteria’s distribution by categories or by time, and
-interactive maps showing the analyzed flight routes departed from
-JFK</li>
-</ul>
-<p><strong>2. What are the potential factors that contribute to the
-flight delay in JFK during last holiday season?</strong></p>
-<ul>
-<li>Heatmap to visualize the impact of each factor</li>
-<li>Stratified analyses of flight delay data to test the difference
-among categories for each factor</li>
-</ul>
-<p><strong>3. Are there significant associations of multiple factors
-with JFK flight delays during last holiday season?</strong></p>
-<ul>
-<li>Regression analysis</li>
-</ul>
-<p><strong>4. How to spend my time in JFK during the flight
-delay?</strong></p>
-<ul>
-<li>A guidance to spend your time in JFK to wait for the delayed
-flights, and we also generated a bunch of pictures via AI (just for fun)
-as well</li>
-</ul>
+<div id="airport-info" class="section level3">
+<h3>Airport Info</h3>
+<pre class="r"><code>airport = read_csv(&quot;data/us-airports.csv&quot;) %&gt;% 
+  slice(-1) %&gt;% 
+  select(airport = iata_code, name, lat = latitude_deg, long = longitude_deg, region_name, local_region, municipality)
+
+airport_info =
+  delay_cancel %&gt;% 
+  distinct(destination_airport) %&gt;% 
+  rename(airport = destination_airport) %&gt;% 
+  rbind(&quot;JFK&quot;) %&gt;% 
+  arrange(airport)
+
+airport_info = left_join(airport_info, airport, by = &quot;airport&quot;)</code></pre>
+</div>
+</div>
+<div id="export" class="section level2">
+<h2>Export</h2>
+<pre class="r"><code>write_csv(noaa_df, &quot;tidied_data/hourly_weather.csv&quot;)
+write_csv(daily_weather, &quot;tidied_data/daily_weather.csv&quot;)
+write_csv(covid_df, &quot;tidied_data/covid.csv&quot;)
+write_csv(full_delay_df, &quot;tidied_data/delay.csv&quot;)
+write_csv(full_cancel_df, &quot;tidied_data/cancel.csv&quot;)
+write_csv(airport_info, &quot;tidied_data/airport.csv&quot;)</code></pre>
+</div>
 </div>
 
 
 
-</div>
-</div>
 
 </div>
 
@@ -491,35 +505,6 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
-<script>
-$(document).ready(function ()  {
-
-    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
-    $('.unlisted.unnumbered').addClass('toc-ignore')
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
