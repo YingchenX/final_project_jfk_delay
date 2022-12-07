@@ -65,7 +65,7 @@ server = function(input, output) {
       ) %>% 
       layout(
         xaxis = list(title = "Date"),
-        yaxis = list(title = "Case Counts"),
+        yaxis = list(title = "Case Count"),
         title = "Number of COVID Cases on Each Day"
     )
     
