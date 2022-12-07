@@ -282,7 +282,7 @@ scatterplots to assess the linearity
 
 ### Continuous vars
 
-- temperature
+-   temperature
 
 ``` r
 lrTemp = lm(delay~temperature, data = raw_df)
@@ -312,7 +312,7 @@ plot(delay~temperature, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-15-1.png" width="90%" />
 
-- humidity
+-   humidity
 
 ``` r
 lrHum = lm(delay~humidity, data = raw_df)
@@ -342,7 +342,7 @@ plot(delay~humidity, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-16-1.png" width="90%" />
 
-- visibility
+-   visibility
 
 ``` r
 lrVis = lm(delay~visibility, data = raw_df)
@@ -372,7 +372,7 @@ plot(delay~visibility, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-17-1.png" width="90%" />
 
-- wind speed
+-   wind speed
 
 ``` r
 lrWin = lm(delay~wind_s, data = raw_df)
@@ -402,7 +402,7 @@ plot(delay~wind_s, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-18-1.png" width="90%" />
 
-- carrier delay
+-   carrier delay
 
 ``` r
 lrCar = lm(delay~carrierd, data = raw_df)
@@ -432,7 +432,7 @@ plot(delay~carrierd, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-19-1.png" width="90%" />
 
-- extreme weather delay
+-   extreme weather delay
 
 ``` r
 lrExw = lm(delay~extrmwd, data = raw_df)
@@ -462,7 +462,7 @@ plot(delay~extrmwd, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-20-1.png" width="90%" />
 
-- NAS delay
+-   NAS delay
 
 ``` r
 lrNas = lm(delay~nasd, data = raw_df)
@@ -492,7 +492,7 @@ plot(delay~nasd, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-21-1.png" width="90%" />
 
-- security delay
+-   security delay
 
 ``` r
 lrSec = lm(delay~securityd, data = raw_df)
@@ -522,7 +522,7 @@ plot(delay~securityd, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-22-1.png" width="90%" />
 
-- late arrival delay
+-   late arrival delay
 
 ``` r
 lrLat = lm(delay~latarrd, data = raw_df)
@@ -566,7 +566,7 @@ raw_df =
     )
 ```
 
-- month
+-   month
 
 ``` r
 lrMon = lm(delay~month, data = raw_df)
@@ -591,7 +591,7 @@ summary(lrMon) %>%
     ## 2 month1         10.8  1.05e-62
     ## 3 month12         4.77 1.97e-13
 
-- hour
+-   hour
 
 ``` r
 lrHour = lm(delay~hour_c, data = raw_df)
@@ -617,7 +617,7 @@ summary(lrHour) %>%
     ## 3 hour_cafternoon    -6.21 2.62e- 17
     ## 4 hour_cmorning     -12.1  7.68e- 58
 
-- airline
+-   airline
 
 ``` r
 lrAL = lm(delay~airline, data = raw_df)
