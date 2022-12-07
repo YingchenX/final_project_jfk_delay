@@ -15,6 +15,11 @@ knitr::opts_chunk$set(
   warning = FALSE)
 
 library(tidyverse)
+library(readxl)
+library(stringr)
+library(rvest)
+library(httr)
+library(forstringr)
 ```
 
 <style type="text/css">
