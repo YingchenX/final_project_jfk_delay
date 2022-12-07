@@ -19,37 +19,39 @@ categorical variables: airline, month, hour
 
 
 ## Interaction between categorical variables {.tabset}
-### hour*airline 
-```{r}
-raw_df %>% 
+```{r, include = FALSE}
+hour_air = function(air){
+  raw_df %>% 
   filter(
-    airline == "JetBlue Airways") %>%     
+    airline == air) %>%     
   mutate(
     mean = mean(delay),
     hour_c = fct_reorder(hour_c, delay)
     ) %>% 
-  plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
+  plot_ly(x = ~hour_c, y = ~delay, color = "rgb(255, 65, 54)",
           type = 'box', mode = 'markers', alpha = .5) %>% 
     layout(
       xaxis = list(title = "Hour"),
       yaxis = list(title = "Delay Time (Minutes)"))
+}
 
-
+hour_air_0 = function(air){
 raw_df %>% 
   filter(
     delay == 0:120,
-    airline == "JetBlue Airways") %>%     
+    airline == air) %>%     
   mutate(
     mean = mean(delay),
     hour_c = fct_reorder(hour_c, delay)
     ) %>% 
-  plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
+  plot_ly(x = ~hour_c, y = ~delay, color = "rgb(255, 65, 54)",
           type = 'box', mode = 'markers', alpha = .5) %>% 
     layout(
       xaxis = list(title = "Hour"),
       yaxis = list(title = "Delay Time (Minutes)"))
+}
 
-
+hour_air_120 = function(air){
 raw_df %>% 
   filter(
     delay > 120,
@@ -58,12 +60,92 @@ raw_df %>%
     mean = mean(delay),
     hour_c = fct_reorder(hour_c, delay)
     ) %>% 
-  plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
+  plot_ly(x = ~hour_c, y = ~delay, color = "rgb(255, 65, 54)",
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Hour"),
+      yaxis = list(title = "Delay Time (Minutes)"))
+}
+
+```
+
+### hour*airline 
+
+#### Before stratification
+```{r, echo = FALSE}
+raw_df %>% 
+  mutate(
+    mean = mean(delay),
+    hour_c = fct_reorder(hour_c, delay)
+    ) %>% 
+  plot_ly(x = ~hour_c, y = ~delay, color = "rgb(255, 65, 54)",
           type = 'box', mode = 'markers', alpha = .5) %>% 
     layout(
       xaxis = list(title = "Hour"),
       yaxis = list(title = "Delay Time (Minutes)"))
 
+raw_df %>% 
+  filter(
+    delay == 0:120) %>%     
+  mutate(
+    mean = mean(delay),
+    hour_c = fct_reorder(hour_c, delay)
+    ) %>% 
+  plot_ly(x = ~hour_c, y = ~delay, color = "rgb(255, 65, 54)",
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Hour"),
+      yaxis = list(title = "Delay Time (Minutes)"))
+
+raw_df %>% 
+  filter(
+    delay > 120) %>%     
+  mutate(
+    mean = mean(delay),
+    hour_c = fct_reorder(hour_c, delay)
+    ) %>% 
+  plot_ly(x = ~hour_c, y = ~delay, color = "rgb(255, 65, 54)",
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Hour"),
+      yaxis = list(title = "Delay Time (Minutes)"))
+
+```
+
+#### Stratification by airline {.tabset}
+##### Alaska
+```{r, echo = FALSE}
+hour_air("Alaska Airlines")
+```
+
+##### American
+```{r, echo = FALSE}
+hour_air("American Airlines")
+```
+
+##### Delta
+```{r, echo = FALSE}
+hour_air("Delta Air Lines")
+```
+
+##### Endeavor
+```{r, echo = FALSE}
+hour_air("Endeavor Air")
+```
+
+##### JetBlue
+```{r, echo = FALSE}
+hour_air("JetBlue Airways")
+```
+
+##### Republic
+```{r, echo = FALSE}
+hour_air("Republic Airways")
+```
+
+##### United
+```{r, echo = FALSE}
+hour_air("United Air Lines")
 ```
 
 
