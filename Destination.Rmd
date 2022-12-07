@@ -13,318 +13,101 @@ library(plotly)
 
 delay = read_csv("tidied_data/delay.csv")
 cancel = read_csv("tidied_data/cancel.csv")
+raw_df = read_csv("Reg_data_exp/raw_df.csv")
 
 ```
 
 <br>
 
+```{r, include = FALSE}
+delay_dest = function(dest){
+    delay %>%
+    filter(
+      airline_name == dest
+    ) %>% 
+    group_by(destination_airport) %>% 
+    mutate(
+      count = n()
+      ) %>% 
+  ungroup() %>% 
+  mutate(
+    destination_airport = fct_reorder(destination_airport, count),
+    text_label = str_c("Airline: ", airline_name, "\nCount: ", count)
+      ) %>% 
+  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text", 
+          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
+  layout(
+    xaxis = list(title = "Destination Airport"),
+    yaxis = list(title = "Count"),
+    title = "Distribution of Delay ")
+}
+
+cancel_dest = function(dest){
+  cancel %>%
+    filter(
+      airline_name == dest
+    ) %>% 
+    group_by(destination_airport) %>% 
+    mutate(
+      count = n()
+      ) %>% 
+  ungroup() %>% 
+  mutate(
+    destination_airport = fct_reorder(destination_airport, count),
+    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
+      ) %>% 
+  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text",
+          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
+  layout(
+    xaxis = list(title = "Destination Airport"),
+    yaxis = list(title = "Count"),
+    title = "Distribution of Cancelation")
+}
+```
+
+
 ## Airlines {.tabset}
 ### Alaska Airlines
 ```{r, echo = FALSE}
-  delay %>%
-    filter(
-      airline_name == "Alaska Airlines"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text", 
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Delay ")
-
-  cancel %>%
-    filter(
-      airline_name == "Alaska Airlines"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text",
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Cancelation")
-
+delay_dest("Alaska Airlines")
+cancel_dest("Alaska Airlines")
 ```
+
 
 ### American Airlines 
 ```{r, echo = FALSE}
-  delay %>%
-    filter(
-      airline_name == "American Airlines"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text", 
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Delay ")
-
-  cancel %>%
-    filter(
-      airline_name == "American Airlines"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text",
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Cancelation")
-
+delay_dest("American Airlines")
+cancel_dest("American Airlines")
 ```
 
 ### Delta Air Lines 
 ```{r, echo = FALSE}
-  delay %>%
-    filter(
-      airline_name == "Delta Air Lines"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text", 
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Delay ")
-
-  cancel %>%
-    filter(
-      airline_name == "Delta Air Lines"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text",
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Cancelation")
-
+delay_dest("Delta Air Lines")
+cancel_dest("Delta Air Lines")
 ```
 
 ### Endeavor Air  
 ```{r, echo = FALSE}
-  delay %>%
-    filter(
-      airline_name == "Endeavor Air"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text", 
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Delay ")
-
-  cancel %>%
-    filter(
-      airline_name == "Endeavor Air"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text",
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Cancelation")
-
+delay_dest("Endeavor Air")
+cancel_dest("Endeavor Air")
 ```
-   
+
 ### JetBlue Airways
 ```{r, echo = FALSE}
-  delay %>%
-    filter(
-      airline_name == "JetBlue Airways"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text", 
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Delay ")
-
-  cancel %>%
-    filter(
-      airline_name == "JetBlue Airways"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text",
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Cancelation")
-
+delay_dest("JetBlue Airways")
+cancel_dest("JetBlue Airways")
 ```
 
 ### Republic Airways
 ```{r, echo = FALSE}
-  delay %>%
-    filter(
-      airline_name == "Republic Airways"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text", 
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Delay ")
-
-  cancel %>%
-    filter(
-      airline_name == "Republic Airways"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text",
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Cancelation")
-
+delay_dest("Republic Airways")
+cancel_dest("Republic Airways")
 ```
 
 ### United Air Lines
 ```{r, echo = FALSE}
-  delay %>%
-    filter(
-      airline_name == "United Air Lines"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text", 
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Delay ")
-
-  cancel %>%
-    filter(
-      airline_name == "United Air Lines"
-    ) %>% 
-    group_by(destination_airport) %>% 
-    mutate(
-      count = n()
-      ) %>% 
-  ungroup() %>% 
-  mutate(
-    destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
-      ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text",
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Cancelation")
-
+delay_dest("United Air Lines")
+cancel_dest("United Air Lines")
 ```
 
 
