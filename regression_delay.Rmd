@@ -42,7 +42,7 @@ set.seed(1)
 
 ```{r}
 delay = read.csv("./tidied_data/delay.csv") %>% 
-  janitor::clean_names() 
+  janitor::clean_names() %>% filter(delay_minutes > 0)
 
 h_weather = read.csv("./tidied_data/hourly_weather.csv") %>% 
   janitor::clean_names() 
