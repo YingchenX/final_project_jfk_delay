@@ -71,7 +71,11 @@ renderPlotly({
             size = ~count, sizes = c(10, 100), text = ~text_label,
             hoverinfo = "text",
             type = "scatter", mode = "markers", opacity = .7
-            )
+    ) %>% 
+    layout(
+      xaxis = list(title = "Date"),
+      yaxis = list(title = "Count")
+    )
 })
 ```
 
@@ -90,7 +94,10 @@ renderPlotly({
     plot_ly(x = ~date, y = ~case_count, color = "rgb(255, 65, 54)",
             text = ~text_label, hoverinfo = "text",
             type = "scatter", mode = "lines", opacity = .7
-            )
+    ) %>% 
+    layout(
+      xaxis = list(title = "Date"),
+      yaxis = list(title = "Case Counts"))
 })
 ```
 
