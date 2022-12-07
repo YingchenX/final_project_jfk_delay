@@ -94,18 +94,24 @@ Column {data-width=600}
 ### Distribution of Delay Time on Each Day
 
 ```{r}
-renderPlot({
-  delay %>% 
+renderPlotly({
+   delay %>% 
     filter(
       airline_name == input[["airline_choice"]],
       month == input[["month_choice"]]
     ) %>% 
-    ggplot(aes(x = as.factor(day), y = delay_minutes)) +
-    geom_boxplot()
+    mutate(
+      text_label = str_c("Date: ", date)
+    ) %>% 
+    plot_ly(x = ~day, y = ~delay_minutes, text = ~text_label, hoverinfo = "text",
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Day"),
+      yaxis = list(title = "Delay Time (Minutes)"))
 })
 ```
 
-```{r}
+```{r, eval = FALSE}
 mutate(
   text_label = str_c("Date: ", date, "\nCount: ", count)
 ) %>% 
