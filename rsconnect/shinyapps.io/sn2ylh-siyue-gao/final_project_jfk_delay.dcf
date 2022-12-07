@@ -1,0 +1,14 @@
+name: final_project_jfk_delay
+title: final_project_jfk_delay
+username:
+account: sn2ylh-siyue-gao
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7833611
+bundleId: 6601964
+url: https://sn2ylh-siyue-gao.shinyapps.io/final_project_jfk_delay/
+when: 1670376886.57267
+lastSyncTime: 1670376886.57269
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: About us.Rmd|About-us.html|cancel_dashboard.html|cancel_dashboard.Rmd|connection_map_files/.DS_Store|connection_map_files/figure-gfm/unnamed-chunk-2-1.png|connection_map.md|connection_map.Rmd|data_cleaning.md|data_cleaning.Rmd|delay_dashboard.html|delay_dashboard.Rmd|index.html|index.Rmd|pictures/delay-reason.jpg|pictures/jfk-crowd.webp|pictures/jfk.gif|pictures/Jialu_Cheng_a_colorful_the_united_states_flight_route_map.png|pictures/operation-flow.png|poisson_model.md|poisson_model.Rmd|Project Report.Rmd|project_proposal.md|project_proposal.Rmd|Project-Report.html|README.md|regression_delay.md|regression_delay.Rmd|scraped_data_restaurants_shops/EWR_Shops-Restaurants-Services-Amenities.csv|scraped_data_restaurants_shops/JFK_Shops-Restaurants-Services-Amenities.csv|scraped_data_restaurants_shops/LGA_Shops-Restaurants-Services-Amenities.csv|scraped_data_restaurants_shops/Scraping sources.docx|scraping_data.md|scraping_data.Rmd|shiny_example.R|viz_and_eda.md|viz_and_eda.Rmd

@@ -58,6 +58,7 @@ delay = delay %>%
     securityd = delay_security_minutes,
     latarrd = delay_late_aircraft_arrival_minutes) %>% 
   mutate(hour = as.numeric(hour)) %>% 
+  mutate(month = month.abb[month]) %>% 
   select(airline, date, month, hour, delay, carrierd, extrmwd, nasd, securityd, latarrd)
 ```
 
@@ -84,8 +85,9 @@ h_weather = h_weather %>%
     humidity = hourly_relative_humidity,
     visibility = hourly_visibility,
     wind_s = hourly_wind_speed,
-    hour = as.numeric(hour)) %>% 
-      select(date, month, hour, temperature, humidity, visibility, wind_s)
+    hour = as.numeric(hour)) %>%
+  mutate(month = month.abb[month]) %>% 
+  select(date, month, hour, temperature, humidity, visibility, wind_s)
 ```
 
 check ‘NA’
@@ -157,26 +159,26 @@ cat_sum = raw_df %>%
 cat_sum
 ```
 
-    ##               airline      month      hour     
-    ##  Alaska Airlines  :  888   1 : 9931   5 : 165  
-    ##  American Airlines: 3976   11:10042   6 :1180  
-    ##  Delta Air Lines  : 5513   12: 9752   7 :2035  
-    ##  Endeavor Air     : 3711              8 :3311  
-    ##  JetBlue Airways  :10199              9 :2065  
-    ##  Republic Airways : 5094              10: 987  
-    ##  United Air Lines :  344              11:1503  
-    ##                                       12:1280  
-    ##                                       13:1697  
-    ##                                       14:1780  
-    ##                                       15:2212  
-    ##                                       16:1689  
-    ##                                       17:1795  
-    ##                                       18:1871  
-    ##                                       19:2148  
-    ##                                       20:1815  
-    ##                                       21:1487  
-    ##                                       22: 619  
-    ##                                       23:  86
+    ##               airline      month       hour     
+    ##  Alaska Airlines  :  888   Dec: 9752   5 : 165  
+    ##  American Airlines: 3976   Jan: 9931   6 :1180  
+    ##  Delta Air Lines  : 5513   Nov:10042   7 :2035  
+    ##  Endeavor Air     : 3711               8 :3311  
+    ##  JetBlue Airways  :10199               9 :2065  
+    ##  Republic Airways : 5094               10: 987  
+    ##  United Air Lines :  344               11:1503  
+    ##                                        12:1280  
+    ##                                        13:1697  
+    ##                                        14:1780  
+    ##                                        15:2212  
+    ##                                        16:1689  
+    ##                                        17:1795  
+    ##                                        18:1871  
+    ##                                        19:2148  
+    ##                                        20:1815  
+    ##                                        21:1487  
+    ##                                        22: 619  
+    ##                                        23:  86
 
 ### Independent variables / predictors (continuous)
 
@@ -586,8 +588,8 @@ summary(lrMon) %>%
     ##   term        estimate  p.value
     ##   <chr>          <dbl>    <dbl>
     ## 1 (Intercept)     6.53 1.69e-46
-    ## 2 month1         10.8  1.05e-62
-    ## 3 month12         4.77 1.97e-13
+    ## 2 monthJan       10.8  1.05e-62
+    ## 3 monthDec        4.77 1.97e-13
 
 -   hour
 
@@ -746,8 +748,8 @@ summary(lm_all)
     ## Coefficients:
     ##                           Estimate Std. Error t value Pr(>|t|)    
     ## (Intercept)               1.817474   0.693937   2.619 0.008821 ** 
-    ## month1                   -0.014309   0.207595  -0.069 0.945048    
-    ## month12                   0.559148   0.157783   3.544 0.000395 ***
+    ## monthJan                 -0.014309   0.207595  -0.069 0.945048    
+    ## monthDec                  0.559148   0.157783   3.544 0.000395 ***
     ## airlineDelta Air Lines   -0.853021   0.179019  -4.765 1.90e-06 ***
     ## airlineRepublic Airways  -6.817158   0.184339 -36.982  < 2e-16 ***
     ## airlineAmerican Airlines -1.775304   0.199506  -8.899  < 2e-16 ***
@@ -812,8 +814,8 @@ summary(lm_10)
     ## Coefficients:
     ##                           Estimate Std. Error t value Pr(>|t|)    
     ## (Intercept)               1.547322   0.590098   2.622 0.008742 ** 
-    ## month1                   -0.041123   0.204769  -0.201 0.840834    
-    ## month12                   0.556387   0.157480   3.533 0.000411 ***
+    ## monthJan                 -0.041123   0.204769  -0.201 0.840834    
+    ## monthDec                  0.556387   0.157480   3.533 0.000411 ***
     ## airlineDelta Air Lines   -0.850964   0.178994  -4.754 2.00e-06 ***
     ## airlineRepublic Airways  -6.814635   0.184303 -36.975  < 2e-16 ***
     ## airlineAmerican Airlines -1.776285   0.199482  -8.904  < 2e-16 ***
@@ -913,7 +915,7 @@ which.max(sum.bestsub.lm$rsq)
 sum.bestsub.lm$which[18,]
 ```
 
-    ##              (Intercept)                   month1                  month12 
+    ##              (Intercept)                 monthJan                 monthDec 
     ##                     TRUE                     TRUE                     TRUE 
     ##   airlineDelta Air Lines  airlineRepublic Airways airlineAmerican Airlines 
     ##                     TRUE                     TRUE                     TRUE 
@@ -953,8 +955,8 @@ summary(Best_lm) %>%
     ##    term                     estimate   p.value
     ##    <chr>                       <dbl>     <dbl>
     ##  1 (Intercept)                1.55   8.74e-  3
-    ##  2 month1                    -0.0411 8.41e-  1
-    ##  3 month12                    0.556  4.11e-  4
+    ##  2 monthJan                  -0.0411 8.41e-  1
+    ##  3 monthDec                   0.556  4.11e-  4
     ##  4 airlineDelta Air Lines    -0.851  2.00e-  6
     ##  5 airlineRepublic Airways   -6.81   1.25e-292
     ##  6 airlineAmerican Airlines  -1.78   5.66e- 19
@@ -1049,9 +1051,9 @@ nest_lm_m %>%
 
 | month | (Intercept) | carrierd | extrmwd |  nasd | securityd | latarrd | temperature | visibility |
 |:------|------------:|---------:|--------:|------:|----------:|--------:|------------:|-----------:|
-| 11    |      -7.645 |    1.072 |   0.896 | 0.457 |     1.074 |   1.081 |      -0.044 |      0.835 |
-| 12    |      -2.538 |    1.048 |   1.020 | 0.465 |     1.249 |   1.064 |      -0.021 |      0.274 |
-| 1     |      -1.592 |    1.058 |   1.024 | 0.284 |     1.139 |   1.062 |      -0.051 |      0.286 |
+| Nov   |      -7.645 |    1.072 |   0.896 | 0.457 |     1.074 |   1.081 |      -0.044 |      0.835 |
+| Dec   |      -2.538 |    1.048 |   1.020 | 0.465 |     1.249 |   1.064 |      -0.021 |      0.274 |
+| Jan   |      -1.592 |    1.058 |   1.024 | 0.284 |     1.139 |   1.062 |      -0.051 |      0.286 |
 
 ## Fit airline-specific model
 
@@ -1089,8 +1091,8 @@ nest_lm_a %>%
 
 ## Fit hour-specific model
 
-we can nest within airlines and fit airline-specific models associating
-delay with the rest of variables
+we can nest within hour categories and fit hour-specific models
+associating delay with the rest of variables
 
 ``` r
 nest_lm_h =

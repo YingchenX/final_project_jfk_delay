@@ -60,19 +60,38 @@ delay %>%
   geom_smooth(se = FALSE)
 
 delay %>% 
+  group_by(month, airline_name) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  ggplot(aes(x = date, y = count, color = airline_name)) +
+  geom_bar()
+
+
+delay %>% 
   group_by(month) %>% 
   filter(delay_minutes > 0) %>% 
   ggplot(aes(x = as.factor(month), y = delay_minutes)) +
   geom_violin()
 
 cancel %>% 
-  group_by(date) %>% 
+  group_by(date, airline_name) %>% 
   summarize(
     count = n()
   ) %>% 
-  ggplot(aes(x = date, y = count)) +
+  ggplot(aes(x = date, y = count, color = airline_name)) +
   geom_point(alpha = .3) +
   geom_smooth(se = FALSE)
+
+
+cancel %>% 
+  ggplot(aes(x = date, fill = month)) +
+  geom_histogram()
+
+covid %>% 
+  ggplot(aes(x = date, y = case_count, color = month)) +
+  geom_col()
+  
 
 
 ```

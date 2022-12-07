@@ -121,7 +121,7 @@ cancel_airline %>%
   head() %>% 
   knitr::kable(digits = 2, caption = "Total number of cancellation in each airline") 
 
-write_csv(cancel_airline, "tidied_data/cancel_airline.csv")
+write_csv(cancel_airline, "tidied_data/cancel_tidy.csv")
 ```
 
 ```{r}

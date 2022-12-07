@@ -166,6 +166,8 @@ cancel_tidy <- cancel_tidy%>%
     year_month = paste(year, month2, sep="-")) %>% 
     filter(!is.na(cancel_count))  %>% 
     select(-month2, -date.y, -date.x, -date)
+
+write_csv(cancel_tidy, "tidied_data/cancel_tidy.csv")
 ```
 
 # Check distribution
@@ -215,6 +217,10 @@ cancel_airline %>%
 | 2022-Jan   |              1047 |             977 |            1121 |            1039 |         1058 |             1047 |              672 |
 
 Total number of cancellation in each airline
+
+``` r
+write_csv(cancel_airline, "tidied_data/cancel_airline.csv")
+```
 
 ``` r
 plot_cancel_airline <- cancel_airline %>%
@@ -350,7 +356,7 @@ poisson_by_month %>%
                     ymax = CI_upper)) +
   labs(
     title = "Estimated OR with 95% CI in Cancellation Count Data by Month",
-    x = "Airline",
+    x = "Month",
     y = "Estimated OR with CI"
   ) +
   theme(legend.position="right", legend.title = element_blank(),
