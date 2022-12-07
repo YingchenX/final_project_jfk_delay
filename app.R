@@ -22,46 +22,46 @@ cancel =
   cancel %>% 
   group_by(month, day, airline_name) %>% 
   mutate(
-    count = n()
+    cancel_count = n()
   ) %>% 
-  ungroup()
+  ungroup() 
 
-airline = delay %>% distinct(airline_name) %>% pull()
+covid_cancel = right_join(cancel, covid, by = c("year", "month", "day")) %>% 
+  select(-date.x) %>% 
+  rename(date = date.y)
+
+covid_cancel = 
+  covid_cancel %>% 
+  mutate(
+    month = recode(month, "11" = "Nov, 2021", "12" = "Dec, 2021", "1" = "Jan, 2022")
+  )
+
+airlines = cancel %>% arrange(airline_name) %>% distinct(airline_name) %>% pull()
 months = delay %>% distinct(month) %>% pull()
-airlines = cancel %>% distinct(airline_name) %>% pull()
 
 ui = fluidPage(
-  
-  headerPanel("Flight Delay and Cancelation Dashboard"),
-  
-  sidebarLayout(
-    sidebarPanel(
-    conditionalPanel(
-      condition = "input.tabselected == 1",
-      selectInput(
-        inputId = "airline_choice",
-        label = h3("Airline"),
-        choices = airline,
-        selected = "JetBlue Airways"),
-      radioButtons(
-        inputId = "month_choice",
-        label = h3("Month"),
-        choices = months,
-        selected = "Nov, 2021")),
-    conditionalPanel(
-      condition = "input.tabselected == 2",
-      selectInput(
-        inputId = "airline_choice",
-        label = h3("Airline"),
-        choices = airlines,
-        selected = "JetBlue Airways"))),
-    
+  headerPanel(h3("Flight Delay and Cancelation")),
+  sidebarPanel(
+    selectInput(
+      inputId = "airline_choice",
+      label = h4("Airline"),
+      choices = airlines,
+      selected = "JetBlue Airways"
+    ),
+    radioButtons(
+      inputId = "month_choice",
+      label = h4("Month"),
+      choices = months,
+      selected = "Dec, 2021")
+   ),
   mainPanel(
-    tabsetPanel(type = "tabs", id = "tabselected", selected = 1,
-      tabPanel("Delay", fluidRow(plotlyOutput("delay_count"), plotlyOutput("delay_minute"), value = 1)),
-      tabPanel("Cancelation", fluidRow(plotlyOutput("cancel_plot"), plotlyOutput("covid_plot")), value = 2))))
-    
+    tabsetPanel(type = "tabs",
+                tabPanel("Delay", fluidRow(br(), plotlyOutput("delay_count"), br(),
+                                           br(), plotlyOutput("delay_minute"))),
+                tabPanel("Cancelation", fluidRow(br(), plotlyOutput("cancel_plot"), br(),
+                                                 br(), plotlyOutput("covid_plot"))))
   )
+)
 
 server = function(input, output) {
 
@@ -103,36 +103,42 @@ server = function(input, output) {
   })
   
   output$cancel_plot = renderPlotly({
-    cancel %>% 
+    covid_cancel %>% 
+      distinct(airline_name, date, month, day, year, cancel_count) %>% 
       filter(
-        airline_name == input[["airline_choice"]]
+        airline_name == input[["airline_choice"]],
+        month == input[["month_choice"]]
       ) %>% 
       mutate(
-        text_label = str_c("Date: ", date, "\nCount: ", count)
+        text_label = str_c("Date: ", date, "\nCount: ", cancel_count)
       ) %>% 
-      plot_ly(x = ~date, y = ~count, color = "rgb(255, 65, 54)",
-              size = ~count, sizes = c(10, 100), text = ~text_label,
+      plot_ly(x = ~day, y = ~cancel_count, color = "rgb(255, 65, 54)",
+              size = ~cancel_count, sizes = c(10, 100), text = ~text_label,
               hoverinfo = "text",
               type = "scatter", mode = "markers", opacity = .7
       ) %>% 
       layout(
-        xaxis = list(title = "Date"),
+        xaxis = list(title = "Day"),
         yaxis = list(title = "Count"),
         title = "Number of Cancelations on Each Day"
       )
   })
     
   output$covid_plot = renderPlotly({
-    covid %>% 
+    covid_cancel %>% 
+      filter(
+        month == input[["month_choice"]]
+      ) %>%
       mutate(
         text_label = str_c("Date: ", date, "\nCase Count: ", case_count)
       ) %>% 
-      plot_ly(x = ~date, y = ~case_count, color = "rgb(255, 65, 54)",
+      plot_ly(x = ~day, y = ~case_count, color = "rgb(255, 65, 54)",
+              size = ~case_count, sizes = c(10, 100),
               text = ~text_label, hoverinfo = "text",
-              type = "scatter", mode = "lines", opacity = .7
+              type = "scatter", mode = "markers", opacity = .7
       ) %>% 
       layout(
-        xaxis = list(title = "Date"),
+        xaxis = list(title = "Day"),
         yaxis = list(title = "Case Count"),
         title = "Number of COVID Cases on Each Day"
     )
