@@ -18,9 +18,9 @@ navbar:
       
   right:
     
-    - text: About Us
+    - text: "About Us""
       href: About-us.html
-    - text: "What to do"
+    - text: "What to do""
       href: what_to_do_JFK.html
     - icon: fa-envelope fa-lg
       href: mailto:<jc5457@cumc.columbia.edu>
