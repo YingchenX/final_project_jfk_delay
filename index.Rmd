@@ -1,5 +1,5 @@
 ---
-title: "The Flight Delay Issue"
+title: "Flight Delay and Cancelation"
 output: 
   html_document:
     toc: true

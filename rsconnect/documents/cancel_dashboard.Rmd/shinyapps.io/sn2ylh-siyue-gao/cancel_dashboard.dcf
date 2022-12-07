@@ -1,0 +1,14 @@
+name: cancel_dashboard
+title: cancel_dashboard
+username:
+account: sn2ylh-siyue-gao
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7833468
+bundleId: 6602730
+url: https://sn2ylh-siyue-gao.shinyapps.io/cancel_dashboard/
+when: 1670388032.55662
+lastSyncTime: 1670388032.55663
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: tidied_data/cancel.csv|tidied_data/covid.csv
