@@ -15,6 +15,14 @@ knitr::opts_chunk$set(
   warning = FALSE)
 ```
 
+<style type="text/css">
+
+h1.title {
+  text-align: center;
+}
+
+</style>
+
 &nbsp;
 
 ```{r, echo=FALSE, out.width="100%", fig.cap="(generated via [Midjourney](https://midjourney.com/))", fig.align = 'center'}
@@ -55,4 +63,4 @@ Our analysis focuses on the flight delay data from the Bureau of Transportation 
 
 **4. How to spend my time in JFK during the flight delay?**
 
-  *  A guidance to spend your time in JFK to wait for the delayed flights (see book icon)
+  *  A guidance to spend your time in JFK to wait for the delayed flights, and we also generated a bunch of pictures via AI (just for fun) as well
