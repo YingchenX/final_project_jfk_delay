@@ -17,7 +17,6 @@ navbar:
         href: xx.html
       
   right:
-    
     - text: "About Us""
       href: About-us.html
     - text: "What to do""
