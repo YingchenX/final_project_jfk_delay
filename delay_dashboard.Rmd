@@ -7,17 +7,6 @@ output:
 runtime: shiny
 ---
 
-<style>                     
-.navbar {
-  background-color:white;
-  border-color:white;
-}
-.navbar-brand {
-color:black!important;
-}
-</style> 
-
-
 ```{r setup, include = FALSE}
 library(flexdashboard)
 library(tidyverse)
@@ -41,10 +30,7 @@ delay =
 ```
 
 
-Column {.sidebar}
------------------------------------------------------------------------
-
-```{r}
+```{r, echo = FALSE}
 airlines = delay %>% distinct(airline_name) %>% pull()
 
 selectInput(
@@ -68,15 +54,12 @@ radioButtons(
 ```
 
 
-Column {data-width=600}
------------------------------------------------------------------------
 
 ### Number of Delays on Each Day 
 
-```{r}
+```{r, echo = FALSE}
 renderPlotly({
   delay %>%
-    distinct(airline_name, date, month, day, year, count) %>% 
     filter(
       airline_name == input[["airline_choice"]],
       month == input[["month_choice"]]
@@ -84,8 +67,8 @@ renderPlotly({
 mutate(
   text_label = str_c("Date: ", date, "\nCount: ", count)
 ) %>% 
-  plot_ly(x = ~day, y = ~count, text = ~text_label, hoverinfo = "text",
-          type = "bar", mode = "markers", alpha = .5) %>% 
+  plot_ly(x = ~day, text = ~text_label, hoverinfo = "text",
+          type = "histogram", mode = "markers", alpha = .5) %>% 
   layout(
     xaxis = list(title = "Day"),
     yaxis = list(title = "Count"))
@@ -94,25 +77,20 @@ mutate(
 ```
 
 
-Column {data-width=600}
------------------------------------------------------------------------
 
 ### Distribution of Delay Time on Each Day
 
-```{r}
+```{r, echo = FALSE}
 renderPlotly({
-<<<<<<< HEAD
+
   delay %>% 
-=======
-   delay %>% 
->>>>>>> d69bf693a373ebe551a923063941bd0e1fbb93e4
+
     filter(
       airline_name == input[["airline_choice"]],
       month == input[["month_choice"]]
     ) %>% 
     mutate(
-<<<<<<< HEAD
-=======
+
       text_label = str_c("Date: ", date)
     ) %>% 
     plot_ly(x = ~day, y = ~delay_minutes, text = ~text_label, hoverinfo = "text",
@@ -123,7 +101,7 @@ renderPlotly({
 })
 ```
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, echo = FALSE}
 mutate(
   text_label = str_c("Date: ", date, "\nCount: ", count)
 ) %>% 

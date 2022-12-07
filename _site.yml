@@ -8,7 +8,7 @@ navbar:
       - text: "Delay & Cancel"
         href:  https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/
       - text: "Destination"
-        href:  
+        href:  Destination.html
     - text: "Analysis"
       menu:
       - text: "Visualization"
