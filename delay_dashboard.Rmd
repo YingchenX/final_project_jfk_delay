@@ -74,21 +74,16 @@ Column {data-width=600}
 ### Number of Delays on Each Day 
 
 ```{r}
-renderPlotly({
+renderPlot({
   delay %>%
     distinct(airline_name, date, month, day, year, count) %>% 
     filter(
       airline_name == input[["airline_choice"]],
       month == input[["month_choice"]]
     ) %>% 
-    mutate(
-      text_label = str_c("Date: ", date, "\nCount: ", count)
-    ) %>% 
-    plot_ly(x = ~day, y = ~count, text = ~text_label, hoverinfo = "text",
-            type = "bar", mode = "markers", alpha = .5) %>% 
-    layout(
-      xaxis = list(title = "Day"),
-      yaxis = list(title = "Count"))
+    ggplot(aes(x = day, y = count)) +
+    geom_col()
+
 })
 ```
 
@@ -99,21 +94,35 @@ Column {data-width=600}
 ### Distribution of Delay Time on Each Day
 
 ```{r}
-renderPlotly({
+renderPlot({
   delay %>% 
     filter(
       airline_name == input[["airline_choice"]],
       month == input[["month_choice"]]
     ) %>% 
-    mutate(
-      text_label = str_c("Date: ", date)
-    ) %>% 
-    plot_ly(x = ~day, y = ~delay_minutes, text = ~text_label, hoverinfo = "text",
-          type = 'box', mode = 'markers', alpha = .5) %>% 
-    layout(
-      xaxis = list(title = "Day"),
-      yaxis = list(title = "Delay Time (Minutes)"))
+    ggplot(aes(x = as.factor(day), y = delay_minutes)) +
+    geom_boxplot()
 })
 ```
 
+```{r}
+mutate(
+  text_label = str_c("Date: ", date, "\nCount: ", count)
+) %>% 
+  plot_ly(x = ~day, y = ~count, text = ~text_label, hoverinfo = "text",
+          type = "bar", mode = "markers", alpha = .5) %>% 
+  layout(
+    xaxis = list(title = "Day"),
+    yaxis = list(title = "Count"))
+
+
+mutate(
+  text_label = str_c("Date: ", date)
+) %>% 
+plot_ly(x = ~day, y = ~delay_minutes, text = ~text_label, hoverinfo = "text",
+        type = 'box', mode = 'markers', alpha = .5) %>% 
+  layout(
+    xaxis = list(title = "Day"),
+    yaxis = list(title = "Delay Time (Minutes)"))
+```
 
