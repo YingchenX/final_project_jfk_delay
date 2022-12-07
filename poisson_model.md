@@ -159,13 +159,17 @@ cancel_tidy <- cancel_tidy%>%
     windspeed = as.numeric(windspeed),
     covid_case = as.numeric(covid_case),
     airline_name = as_factor(airline_name),
-    month = ifelse(month == 11, "November", 
+    month1 = ifelse(month == 11, "November", 
                         ifelse(month == 12, "December", "January")),
     month2 = ifelse(month == "November", "Nov", 
                         ifelse(month == "December", "Dec", "Jan")),
     year_month = paste(year, month2, sep="-")) %>% 
     filter(!is.na(cancel_count))  %>% 
     select(-month2, -date.y, -date.x, -date)
+
+cancel_tidy <- cancel_tidy%>% 
+    mutate(year_month = fct_reorder(year_month, month)) %>% 
+    select(-month1)
 
 write_csv(cancel_tidy, "tidied_data/cancel_tidy.csv")
 ```
@@ -212,8 +216,7 @@ cancel_airline %>%
 
 | year_month | American Airlines | Alaska Airlines | JetBlue Airways | Delta Air Lines | Endeavor Air | Republic Airways | United Air Lines |
 |:-----------|------------------:|----------------:|----------------:|----------------:|-------------:|-----------------:|-----------------:|
-| 2021-Nov   |                42 |              23 |              11 |               8 |            3 |                8 |                1 |
-| 2021-Dec   |               174 |             143 |             252 |             226 |           10 |                5 |              171 |
+| 2021-Jan   |               216 |             166 |             263 |             234 |           13 |               13 |              172 |
 | 2022-Jan   |              1047 |             977 |            1121 |            1039 |         1058 |             1047 |              672 |
 
 Total number of cancellation in each airline
@@ -296,11 +299,11 @@ cancel_tidy %>%
   knitr::kable(digits = 6, caption = "Poisson model nested by month")
 ```
 
-| month    | (Intercept) | temperature |  humidity | windspeed | covid_case |
-|:---------|------------:|------------:|----------:|----------:|-----------:|
-| November |    0.073197 |    0.057638 | -0.041925 |  0.028955 |   -8.6e-05 |
-| December |   -0.902469 |    0.006326 |  0.026320 |  0.035434 |    2.3e-05 |
-| January  |    2.407321 |   -0.133471 |  0.064321 |  0.033555 |    9.0e-06 |
+| month | (Intercept) | temperature |  humidity | windspeed | covid_case |
+|------:|------------:|------------:|----------:|----------:|-----------:|
+|    11 |    0.073197 |    0.057638 | -0.041925 |  0.028955 |   -8.6e-05 |
+|    12 |   -0.902469 |    0.006326 |  0.026320 |  0.035434 |    2.3e-05 |
+|     1 |    2.407321 |   -0.133471 |  0.064321 |  0.033555 |    9.0e-06 |
 
 Poisson model nested by month
 
@@ -328,20 +331,20 @@ poisson_by_month %>%
   knitr::kable(digits = 3, align = "llccc", col.names = c("Month", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"))
 ```
 
-| Month    | Terms       | Estimated adjusted OR | CI lower bound | CI upper bound | P-value   |
-|:---------|:------------|:---------------------:|:--------------:|:--------------:|:----------|
-| November | temperature |         1.059         |     1.020      |     1.100      | 2.52e-03  |
-| November | humidity    |         0.959         |     0.936      |     0.983      | 7.29e-04  |
-| November | windspeed   |         1.029         |     1.002      |     1.058      | 3.73e-02  |
-| November | covid_case  |         1.000         |     0.999      |     1.001      | 7.77e-01  |
-| December | temperature |         1.006         |     0.989      |     1.024      | 4.85e-01  |
-| December | humidity    |         1.027         |     1.019      |     1.035      | 1.73e-11  |
-| December | windspeed   |         1.036         |     1.022      |     1.050      | 1.42e-07  |
-| December | covid_case  |         1.000         |     1.000      |     1.000      | 1.96e-29  |
-| January  | temperature |         0.875         |     0.871      |     0.879      | 0.00e+00  |
-| January  | humidity    |         1.066         |     1.064      |     1.069      | 0.00e+00  |
-| January  | windspeed   |         1.034         |     1.031      |     1.037      | 5.43e-105 |
-| January  | covid_case  |         1.000         |     1.000      |     1.000      | 2.55e-18  |
+| Month | Terms       | Estimated adjusted OR | CI lower bound | CI upper bound | P-value   |
+|:------|:------------|:---------------------:|:--------------:|:--------------:|:----------|
+| 11    | temperature |         1.059         |     1.020      |     1.100      | 2.52e-03  |
+| 11    | humidity    |         0.959         |     0.936      |     0.983      | 7.29e-04  |
+| 11    | windspeed   |         1.029         |     1.002      |     1.058      | 3.73e-02  |
+| 11    | covid_case  |         1.000         |     0.999      |     1.001      | 7.77e-01  |
+| 12    | temperature |         1.006         |     0.989      |     1.024      | 4.85e-01  |
+| 12    | humidity    |         1.027         |     1.019      |     1.035      | 1.73e-11  |
+| 12    | windspeed   |         1.036         |     1.022      |     1.050      | 1.42e-07  |
+| 12    | covid_case  |         1.000         |     1.000      |     1.000      | 1.96e-29  |
+| 1     | temperature |         0.875         |     0.871      |     0.879      | 0.00e+00  |
+| 1     | humidity    |         1.066         |     1.064      |     1.069      | 0.00e+00  |
+| 1     | windspeed   |         1.034         |     1.031      |     1.037      | 5.43e-105 |
+| 1     | covid_case  |         1.000         |     1.000      |     1.000      | 2.55e-18  |
 
 ## Plot
 
