@@ -551,6 +551,83 @@ plot(Best_lm, 3)
 ```
 
 
+# Step 4: Fit stratum-specific models
+
+Stratum of interest: 
+
+1. month
+
+2. airline
+
+3. hour_c
+
+## Fit month-specific model
+
+we can nest within months and fit month-specific models associating delay with the rest of variables
+
+```{r}
+nest_lm_m =
+  raw_df_10 %>% 
+  select(-airline, -hour_c) %>% 
+  nest(data = -month) %>% 
+  mutate(
+    models = map(data, ~lm(delay ~ ., data = .x)),
+    results = map(models, broom::tidy)) %>% 
+  select(-data, -models) %>% 
+  unnest(results)
+
+nest_lm_m %>% 
+  select(month, term, estimate) %>% 
+  mutate(term = fct_inorder(term)) %>% 
+  pivot_wider(
+    names_from = term, values_from = estimate) %>% 
+  knitr::kable(digits = 3)
+```
+
+## Fit airline-specific model
+
+we can nest within airlines and fit airline-specific models associating delay with the rest of variables
+
+```{r}
+nest_lm_a =
+  raw_df_10 %>% 
+  select(-month, -hour_c) %>% 
+  nest(data = -airline) %>% 
+  mutate(
+    models = map(data, ~lm(delay ~ ., data = .x)),
+    results = map(models, broom::tidy)) %>% 
+  select(-data, -models) %>% 
+  unnest(results)
+
+nest_lm_a %>% 
+  select(airline, term, estimate) %>% 
+  mutate(term = fct_inorder(term)) %>% 
+  pivot_wider(
+    names_from = term, values_from = estimate) %>% 
+  knitr::kable(digits = 3)
+```
 
 
+## Fit hour-specific model
+
+we can nest within airlines and fit airline-specific models associating delay with the rest of variables
+
+```{r}
+nest_lm_h =
+  raw_df_10 %>% 
+  select(-airline, -month) %>% 
+  nest(data = -hour_c) %>% 
+  mutate(
+    models = map(data, ~lm(delay ~ ., data = .x)),
+    results = map(models, broom::tidy)) %>% 
+  select(-data, -models) %>% 
+  unnest(results)
+
+nest_lm_h %>% 
+  select(hour_c, term, estimate) %>% 
+  mutate(term = fct_inorder(term)) %>% 
+  pivot_wider(
+    names_from = term, values_from = estimate) %>% 
+  knitr::kable(digits = 3)
+```
 

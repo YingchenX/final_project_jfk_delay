@@ -280,7 +280,7 @@ scatterplots to assess the linearity
 
 ### Continuous vars
 
-- temperature
+-   temperature
 
 ``` r
 lrTemp = lm(delay~temperature, data = raw_df)
@@ -310,7 +310,7 @@ plot(delay~temperature, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-15-1.png" width="90%" />
 
-- humidity
+-   humidity
 
 ``` r
 lrHum = lm(delay~humidity, data = raw_df)
@@ -340,7 +340,7 @@ plot(delay~humidity, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-16-1.png" width="90%" />
 
-- visibility
+-   visibility
 
 ``` r
 lrVis = lm(delay~visibility, data = raw_df)
@@ -370,7 +370,7 @@ plot(delay~visibility, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-17-1.png" width="90%" />
 
-- wind speed
+-   wind speed
 
 ``` r
 lrWin = lm(delay~wind_s, data = raw_df)
@@ -400,7 +400,7 @@ plot(delay~wind_s, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-18-1.png" width="90%" />
 
-- carrier delay
+-   carrier delay
 
 ``` r
 lrCar = lm(delay~carrierd, data = raw_df)
@@ -430,7 +430,7 @@ plot(delay~carrierd, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-19-1.png" width="90%" />
 
-- extreme weather delay
+-   extreme weather delay
 
 ``` r
 lrExw = lm(delay~extrmwd, data = raw_df)
@@ -460,7 +460,7 @@ plot(delay~extrmwd, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-20-1.png" width="90%" />
 
-- NAS delay
+-   NAS delay
 
 ``` r
 lrNas = lm(delay~nasd, data = raw_df)
@@ -490,7 +490,7 @@ plot(delay~nasd, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-21-1.png" width="90%" />
 
-- security delay
+-   security delay
 
 ``` r
 lrSec = lm(delay~securityd, data = raw_df)
@@ -520,7 +520,7 @@ plot(delay~securityd, data = raw_df)
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-22-1.png" width="90%" />
 
-- late arrival delay
+-   late arrival delay
 
 ``` r
 lrLat = lm(delay~latarrd, data = raw_df)
@@ -564,7 +564,7 @@ raw_df =
     )
 ```
 
-- month
+-   month
 
 ``` r
 lrMon = lm(delay~month, data = raw_df)
@@ -589,7 +589,7 @@ summary(lrMon) %>%
     ## 2 month1         10.8  1.05e-62
     ## 3 month12         4.77 1.97e-13
 
-- hour
+-   hour
 
 ``` r
 lrHour = lm(delay~hour_c, data = raw_df)
@@ -615,7 +615,7 @@ summary(lrHour) %>%
     ## 3 hour_cafternoon    -6.21 2.62e- 17
     ## 4 hour_cmorning     -12.1  7.68e- 58
 
-- airline
+-   airline
 
 ``` r
 lrAL = lm(delay~airline, data = raw_df)
@@ -1012,3 +1012,108 @@ plot(Best_lm, 3)
 ```
 
 <img src="regression_delay_files/figure-gfm/unnamed-chunk-38-1.png" width="90%" />
+
+# Step 4: Fit stratum-specific models
+
+Stratum of interest:
+
+1.  month
+
+2.  airline
+
+3.  hour_c
+
+## Fit month-specific model
+
+we can nest within months and fit month-specific models associating
+delay with the rest of variables
+
+``` r
+nest_lm_m =
+  raw_df_10 %>% 
+  select(-airline, -hour_c) %>% 
+  nest(data = -month) %>% 
+  mutate(
+    models = map(data, ~lm(delay ~ ., data = .x)),
+    results = map(models, broom::tidy)) %>% 
+  select(-data, -models) %>% 
+  unnest(results)
+
+nest_lm_m %>% 
+  select(month, term, estimate) %>% 
+  mutate(term = fct_inorder(term)) %>% 
+  pivot_wider(
+    names_from = term, values_from = estimate) %>% 
+  knitr::kable(digits = 3)
+```
+
+| month | (Intercept) | carrierd | extrmwd |  nasd | securityd | latarrd | temperature | visibility |
+|:------|------------:|---------:|--------:|------:|----------:|--------:|------------:|-----------:|
+| 11    |      -7.645 |    1.072 |   0.896 | 0.457 |     1.074 |   1.081 |      -0.044 |      0.835 |
+| 12    |      -2.538 |    1.048 |   1.020 | 0.465 |     1.249 |   1.064 |      -0.021 |      0.274 |
+| 1     |      -1.592 |    1.058 |   1.024 | 0.284 |     1.139 |   1.062 |      -0.051 |      0.286 |
+
+## Fit airline-specific model
+
+we can nest within airlines and fit airline-specific models associating
+delay with the rest of variables
+
+``` r
+nest_lm_a =
+  raw_df_10 %>% 
+  select(-month, -hour_c) %>% 
+  nest(data = -airline) %>% 
+  mutate(
+    models = map(data, ~lm(delay ~ ., data = .x)),
+    results = map(models, broom::tidy)) %>% 
+  select(-data, -models) %>% 
+  unnest(results)
+
+nest_lm_a %>% 
+  select(airline, term, estimate) %>% 
+  mutate(term = fct_inorder(term)) %>% 
+  pivot_wider(
+    names_from = term, values_from = estimate) %>% 
+  knitr::kable(digits = 3)
+```
+
+| airline           | (Intercept) | carrierd | extrmwd |  nasd | securityd | latarrd | temperature | visibility |
+|:------------------|------------:|---------:|--------:|------:|----------:|--------:|------------:|-----------:|
+| JetBlue Airways   |       1.050 |    1.047 |   1.034 | 0.390 |     1.046 |   1.071 |      -0.082 |      0.410 |
+| Endeavor Air      |     -14.745 |    1.068 |   0.965 | 0.765 |     1.534 |   1.063 |       0.011 |      1.040 |
+| Delta Air Lines   |      -0.682 |    1.073 |   1.027 | 0.292 |     1.623 |   1.126 |      -0.023 |      0.227 |
+| American Airlines |      -1.337 |    1.033 |   1.036 | 0.212 |     1.034 |   1.044 |      -0.008 |      0.188 |
+| Republic Airways  |      -4.601 |    1.064 |   1.058 | 0.091 |     1.188 |   1.056 |       0.012 |     -0.022 |
+| Alaska Airlines   |     -10.861 |    1.105 |   1.149 | 0.230 |        NA |   1.059 |       0.108 |      0.177 |
+| United Air Lines  |      -7.223 |    1.007 |   0.804 | 0.477 |        NA |   1.135 |       0.069 |      0.217 |
+
+## Fit hour-specific model
+
+we can nest within airlines and fit airline-specific models associating
+delay with the rest of variables
+
+``` r
+nest_lm_h =
+  raw_df_10 %>% 
+  select(-airline, -month) %>% 
+  nest(data = -hour_c) %>% 
+  mutate(
+    models = map(data, ~lm(delay ~ ., data = .x)),
+    results = map(models, broom::tidy)) %>% 
+  select(-data, -models) %>% 
+  unnest(results)
+
+nest_lm_h %>% 
+  select(hour_c, term, estimate) %>% 
+  mutate(term = fct_inorder(term)) %>% 
+  pivot_wider(
+    names_from = term, values_from = estimate) %>% 
+  knitr::kable(digits = 3)
+```
+
+| hour_c    | (Intercept) | carrierd | extrmwd |  nasd | securityd | latarrd | temperature | visibility |
+|:----------|------------:|---------:|--------:|------:|----------:|--------:|------------:|-----------:|
+| noon      |      -4.138 |    1.054 |   1.037 | 0.383 |     1.125 |   1.035 |      -0.022 |      0.372 |
+| afternoon |      -4.010 |    1.040 |   0.980 | 0.610 |     1.062 |   1.054 |      -0.047 |      0.491 |
+| night     |       2.940 |    1.057 |   1.036 | 0.147 |     1.196 |   1.103 |      -0.063 |      0.069 |
+| morning   |      -2.324 |    1.080 |   0.998 | 0.310 |     1.247 |   1.057 |      -0.027 |      0.126 |
