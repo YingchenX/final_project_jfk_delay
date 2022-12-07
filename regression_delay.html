@@ -13,7 +13,7 @@
 
 <title>Regression_delay</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
@@ -180,8 +180,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -189,16 +189,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -251,8 +244,20 @@ $(document).ready(function () {
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li>
-  <a href="project_report.html">Project Report</a>
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Explore
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/">Delay &amp; Cancel</a>
+    </li>
+    <li>
+      <a href="Destination.html">Destination</a>
+    </li>
+  </ul>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -276,7 +281,7 @@ $(document).ready(function () {
   </ul>
 </li>
 <li>
-  <a href="xx.html">Dashboard</a>
+  <a href="project_report.html">Project Report</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -285,12 +290,6 @@ $(document).ready(function () {
 </li>
 <li>
   <a href="about_us.html">About Us</a>
-</li>
-<li>
-  <a href="mailto:&lt;jc5457@cumc.columbia.edu&gt;">
-    <span class="fa fa-envelope fa-lg"></span>
-     
-  </a>
 </li>
 <li>
   <a href="https://github.com/YingchenX/final_project_nycairport">
@@ -317,7 +316,7 @@ $(document).ready(function () {
 <div id="data-import" class="section level2">
 <h2>Data import</h2>
 <pre class="r"><code>delay = read.csv(&quot;./tidied_data/delay.csv&quot;) %&gt;% 
-  janitor::clean_names() 
+  janitor::clean_names() %&gt;% filter(delay_minutes &gt; 0)
 
 h_weather = read.csv(&quot;./tidied_data/hourly_weather.csv&quot;) %&gt;% 
   janitor::clean_names() </code></pre>
@@ -327,17 +326,17 @@ h_weather = read.csv(&quot;./tidied_data/hourly_weather.csv&quot;) %&gt;%
 <p>Check how many airlines</p>
 <pre class="r"><code>unique(delay$airline_name)</code></pre>
 <pre><code>## [1] &quot;Endeavor Air&quot;      &quot;American Airlines&quot; &quot;Alaska Airlines&quot;  
-## [4] &quot;JetBlue Airways&quot;   &quot;Delta Air Lines&quot;   &quot;United Air Lines&quot; 
-## [7] &quot;Republic Airways&quot;</code></pre>
+## [4] &quot;JetBlue Airways&quot;   &quot;Delta Air Lines&quot;   &quot;Republic Airways&quot; 
+## [7] &quot;United Air Lines&quot;</code></pre>
 <p><em>7</em> -&gt; ok, keep</p>
 <p>Check how many destinations</p>
 <pre class="r"><code>unique(delay$destination_airport)</code></pre>
-<pre><code>##  [1] &quot;MSP&quot; &quot;DTW&quot; &quot;RDU&quot; &quot;BTV&quot; &quot;BNA&quot; &quot;ROC&quot; &quot;IND&quot; &quot;RIC&quot; &quot;CLE&quot; &quot;SYR&quot; &quot;BUF&quot; &quot;CHS&quot;
-## [13] &quot;PWM&quot; &quot;SAV&quot; &quot;CVG&quot; &quot;BGR&quot; &quot;PIT&quot; &quot;LAX&quot; &quot;SFO&quot; &quot;MIA&quot; &quot;ORD&quot; &quot;CLT&quot; &quot;SNA&quot; &quot;DCA&quot;
-## [25] &quot;PHX&quot; &quot;SAT&quot; &quot;FLL&quot; &quot;DFW&quot; &quot;AUS&quot; &quot;SEA&quot; &quot;SAN&quot; &quot;PDX&quot; &quot;PBI&quot; &quot;ABQ&quot; &quot;SLC&quot; &quot;MCO&quot;
-## [37] &quot;DEN&quot; &quot;BOS&quot; &quot;TPA&quot; &quot;SRQ&quot; &quot;SJU&quot; &quot;RSW&quot; &quot;ONT&quot; &quot;BUR&quot; &quot;MSY&quot; &quot;SJC&quot; &quot;ORH&quot; &quot;JAX&quot;
-## [49] &quot;LAS&quot; &quot;BQN&quot; &quot;ATL&quot; &quot;PSP&quot; &quot;IAH&quot; &quot;EYW&quot; &quot;IAD&quot; &quot;STT&quot; &quot;SMF&quot; &quot;BWI&quot; &quot;ORF&quot; &quot;PHL&quot;
-## [61] &quot;CMH&quot; &quot;RNO&quot; &quot;JAC&quot; &quot;EGE&quot; &quot;PSE&quot; &quot;BZN&quot;</code></pre>
+<pre><code>##  [1] &quot;RDU&quot; &quot;DTW&quot; &quot;MSP&quot; &quot;SAV&quot; &quot;LAX&quot; &quot;MIA&quot; &quot;ORD&quot; &quot;DCA&quot; &quot;PHX&quot; &quot;FLL&quot; &quot;DFW&quot; &quot;SFO&quot;
+## [13] &quot;AUS&quot; &quot;SEA&quot; &quot;SAN&quot; &quot;PDX&quot; &quot;ABQ&quot; &quot;TPA&quot; &quot;SRQ&quot; &quot;ROC&quot; &quot;MCO&quot; &quot;SJU&quot; &quot;ONT&quot; &quot;PBI&quot;
+## [25] &quot;RSW&quot; &quot;ORH&quot; &quot;BUF&quot; &quot;LAS&quot; &quot;BOS&quot; &quot;BQN&quot; &quot;ATL&quot; &quot;CHS&quot; &quot;JAX&quot; &quot;BTV&quot; &quot;PSP&quot; &quot;IAH&quot;
+## [37] &quot;SLC&quot; &quot;CLT&quot; &quot;STT&quot; &quot;DEN&quot; &quot;BUR&quot; &quot;MSY&quot; &quot;BNA&quot; &quot;SYR&quot; &quot;BWI&quot; &quot;IND&quot; &quot;ORF&quot; &quot;PIT&quot;
+## [49] &quot;RIC&quot; &quot;PHL&quot; &quot;SJC&quot; &quot;SAT&quot; &quot;CLE&quot; &quot;IAD&quot; &quot;BGR&quot; &quot;SMF&quot; &quot;PWM&quot; &quot;CVG&quot; &quot;EYW&quot; &quot;CMH&quot;
+## [61] &quot;SNA&quot; &quot;RNO&quot; &quot;EGE&quot; &quot;JAC&quot; &quot;PSE&quot; &quot;BZN&quot;</code></pre>
 <p><em>66</em> -&gt; too many, remove</p>
 <p>Keep variables of interest and <code>date</code> for merge purpose
 (which will be removed later)</p>
@@ -424,26 +423,26 @@ class="section level3">
   summary(maxsum = 24)
 
 cat_sum</code></pre>
-<pre><code>##               airline      month       hour     
-##  Alaska Airlines  :  888   Dec: 9752   5 : 165  
-##  American Airlines: 3976   Jan: 9931   6 :1180  
-##  Delta Air Lines  : 5513   Nov:10042   7 :2035  
-##  Endeavor Air     : 3711               8 :3311  
-##  JetBlue Airways  :10199               9 :2065  
-##  Republic Airways : 5094               10: 987  
-##  United Air Lines :  344               11:1503  
-##                                        12:1280  
-##                                        13:1697  
-##                                        14:1780  
-##                                        15:2212  
-##                                        16:1689  
-##                                        17:1795  
-##                                        18:1871  
-##                                        19:2148  
-##                                        20:1815  
-##                                        21:1487  
-##                                        22: 619  
-##                                        23:  86</code></pre>
+<pre><code>##               airline     month      hour    
+##  Alaska Airlines  : 227   Dec:3730   5 : 51  
+##  American Airlines:1361   Jan:3861   6 :312  
+##  Delta Air Lines  :2058   Nov:3156   7 :496  
+##  Endeavor Air     : 568              8 :896  
+##  JetBlue Airways  :5489              9 :656  
+##  Republic Airways : 961              10:346  
+##  United Air Lines :  83              11:436  
+##                                      12:361  
+##                                      13:642  
+##                                      14:577  
+##                                      15:858  
+##                                      16:611  
+##                                      17:724  
+##                                      18:824  
+##                                      19:965  
+##                                      20:942  
+##                                      21:650  
+##                                      22:349  
+##                                      23: 51</code></pre>
 </div>
 <div id="independent-variables-predictors-continuous"
 class="section level3">
@@ -469,18 +468,18 @@ con_sum = skim(con_sum_df) %&gt;%
 
 con_sum</code></pre>
 <pre><code>## # A tibble: 10 × 10
-##    var            mean   min    q1 median    q3   max    sd histogram skim_type
-##    &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;    
-##  1 delay       11.7      -27    -5     -2     9  1252 45.8  ▇▁▁▁▁     numeric  
-##  2 carrierd     7.31       0     0      0     0  1225 32.3  ▇▁▁▁▁     numeric  
-##  3 extrmwd      0.614      0     0      0     0   850 12.2  ▇▁▁▁▁     numeric  
-##  4 nasd         2.63       0     0      0     0   731 11.4  ▇▁▁▁▁     numeric  
-##  5 securityd    0.0447     0     0      0     0   137  1.48 ▇▁▁▁▁     numeric  
-##  6 latarrd      3.07       0     0      0     0   714 19.0  ▇▁▁▁▁     numeric  
-##  7 temperature 41.4       10    35     42    49    68 10.8  ▁▃▇▆▂     numeric  
-##  8 humidity    59.6       16    45     56    73   100 18.5  ▁▇▇▅▃     numeric  
-##  9 visibility   9.42       0    10     10    10    10  1.95 ▁▁▁▁▇     numeric  
-## 10 wind_s      11.9        0     7     11    16    32  6.22 ▅▇▇▃▁     numeric</code></pre>
+##    var           mean   min    q1 median    q3   max    sd histogram skim_type
+##    &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;    
+##  1 delay       40.8       1     7     18    48  1252 66.8  ▇▁▁▁▁     numeric  
+##  2 carrierd    20.2       0     0      0    21  1225 51.2  ▇▁▁▁▁     numeric  
+##  3 extrmwd      1.70      0     0      0     0   850 20.2  ▇▁▁▁▁     numeric  
+##  4 nasd         4.72      0     0      0     0   731 16.4  ▇▁▁▁▁     numeric  
+##  5 securityd    0.124     0     0      0     0   137  2.46 ▇▁▁▁▁     numeric  
+##  6 latarrd      8.50      0     0      0     0   714 30.8  ▇▁▁▁▁     numeric  
+##  7 temperature 40.5      10    34     41    48    68 10.7  ▁▃▇▆▁     numeric  
+##  8 humidity    61.1      16    47     57    76   100 18.9  ▁▇▇▅▅     numeric  
+##  9 visibility   9.27      0    10     10    10    10  2.18 ▁▁▁▁▇     numeric  
+## 10 wind_s      12.0       0     7     11    16    32  6.50 ▅▇▇▃▁     numeric</code></pre>
 <p>Next, as mentioned above, we want to further categorize variable
 <code>hour</code>.</p>
 <p><em>Motivation:</em></p>
@@ -506,7 +505,7 @@ categories:</p>
 <p>As usual, check if it was done properly</p>
 <pre class="r"><code>summary(as.factor(raw_df$hour_c))</code></pre>
 <pre><code>##   morning      noon afternoon     night 
-##      6691      7532      7476      8026</code></pre>
+##      1755      2441      2770      3781</code></pre>
 <pre class="r"><code>sum(is.na(raw_df))</code></pre>
 <pre><code>## [1] 0</code></pre>
 <p><em>0</em> ‘NA’ and the distribution looks good.</p>
@@ -532,15 +531,15 @@ summary(lrTemp) %&gt;% broom::glance()</code></pre>
 <pre><code>## # A tibble: 1 × 8
 ##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1   0.00696       0.00693  45.7      208. 4.60e-47     1       29723 29725</code></pre>
+## 1    0.0112        0.0111  66.5      121. 4.35e-28     1       10745 10747</code></pre>
 <pre class="r"><code>summary(lrTemp) %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value)</code></pre>
 <pre><code>## # A tibble: 2 × 3
 ##   term        estimate   p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)   26.4   2.00e-137
-## 2 temperature   -0.355 4.60e- 47</code></pre>
+## 1 (Intercept)   67.6   4.74e-154
+## 2 temperature   -0.662 4.35e- 28</code></pre>
 <pre class="r"><code>plot(delay~temperature, data = raw_df)</code></pre>
 <p><img src="regression_delay_files/figure-html/unnamed-chunk-15-1.png" width="90%" /></p>
 <ul>
@@ -549,17 +548,17 @@ summary(lrTemp) %&gt;% broom::glance()</code></pre>
 <pre class="r"><code>lrHum = lm(delay~humidity, data = raw_df)
 summary(lrHum) %&gt;% broom::glance()</code></pre>
 <pre><code>## # A tibble: 1 × 8
-##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
-##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1   0.00285       0.00282  45.8      85.0 3.16e-20     1       29723 29725</code></pre>
+##   r.squared adj.r.squared sigma statistic   p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1   0.00163       0.00154  66.8      17.5 0.0000283     1       10745 10747</code></pre>
 <pre class="r"><code>summary(lrHum) %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value)</code></pre>
 <pre><code>## # A tibble: 2 × 3
 ##   term        estimate  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)    3.80  2.26e- 5
-## 2 humidity       0.133 3.16e-20</code></pre>
+## 1 (Intercept)   32.1   1.44e-48
+## 2 humidity       0.143 2.83e- 5</code></pre>
 <pre class="r"><code>plot(delay~humidity, data = raw_df)</code></pre>
 <p><img src="regression_delay_files/figure-html/unnamed-chunk-16-1.png" width="90%" /></p>
 <ul>
@@ -570,15 +569,15 @@ summary(lrVis) %&gt;% broom::glance()</code></pre>
 <pre><code>## # A tibble: 1 × 8
 ##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1   0.00663       0.00660  45.7      198. 6.70e-45     1       29723 29725</code></pre>
+## 1   0.00739       0.00729  66.6      80.0 4.45e-19     1       10745 10747</code></pre>
 <pre class="r"><code>summary(lrVis) %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value)</code></pre>
 <pre><code>## # A tibble: 2 × 3
 ##   term        estimate   p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)    29.7  1.45e-113
-## 2 visibility     -1.91 6.70e- 45</code></pre>
+## 1 (Intercept)    65.3  1.75e-116
+## 2 visibility     -2.64 4.45e- 19</code></pre>
 <pre class="r"><code>plot(delay~visibility, data = raw_df)</code></pre>
 <p><img src="regression_delay_files/figure-html/unnamed-chunk-17-1.png" width="90%" /></p>
 <ul>
@@ -587,17 +586,17 @@ summary(lrVis) %&gt;% broom::glance()</code></pre>
 <pre class="r"><code>lrWin = lm(delay~wind_s, data = raw_df)
 summary(lrWin) %&gt;% broom::glance()</code></pre>
 <pre><code>## # A tibble: 1 × 8
-##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
-##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1  0.000404      0.000370  45.8      12.0 0.000529     1       29723 29725</code></pre>
+##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1  0.000961      0.000868  66.8      10.3 0.00131     1       10745 10747</code></pre>
 <pre class="r"><code>summary(lrWin) %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value)</code></pre>
 <pre><code>## # A tibble: 2 × 3
-##   term        estimate  p.value
-##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)    9.94  1.34e-66
-## 2 wind_s         0.148 5.29e- 4</code></pre>
+##   term        estimate   p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   37.0   1.95e-159
+## 2 wind_s         0.319 1.31e-  3</code></pre>
 <pre class="r"><code>plot(delay~wind_s, data = raw_df)</code></pre>
 <p><img src="regression_delay_files/figure-html/unnamed-chunk-18-1.png" width="90%" /></p>
 <ul>
@@ -608,15 +607,15 @@ summary(lrCar) %&gt;% broom::glance()</code></pre>
 <pre><code>## # A tibble: 1 × 8
 ##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1     0.654         0.654  27.0    56271.       0     1       29723 29725</code></pre>
+## 1     0.633         0.633  40.5    18524.       0     1       10745 10747</code></pre>
 <pre class="r"><code>summary(lrCar) %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value)</code></pre>
 <pre><code>## # A tibble: 2 × 3
-##   term        estimate  p.value
-##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)     3.31 3.30e-94
-## 2 carrierd        1.15 0</code></pre>
+##   term        estimate p.value
+##   &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)    19.8        0
+## 2 carrierd        1.04       0</code></pre>
 <pre class="r"><code>plot(delay~carrierd, data = raw_df)</code></pre>
 <p><img src="regression_delay_files/figure-html/unnamed-chunk-19-1.png" width="90%" /></p>
 <ul>
@@ -625,17 +624,17 @@ summary(lrCar) %&gt;% broom::glance()</code></pre>
 <pre class="r"><code>lrExw = lm(delay~extrmwd, data = raw_df)
 summary(lrExw) %&gt;% broom::glance()</code></pre>
 <pre><code>## # A tibble: 1 × 8
-##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
-##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1    0.0805        0.0805  44.0     2603.       0     1       29723 29725</code></pre>
+##   r.squared adj.r.squared sigma statistic   p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1    0.0829        0.0828  64.0      971. 3.43e-204     1       10745 10747</code></pre>
 <pre class="r"><code>summary(lrExw) %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value)</code></pre>
 <pre><code>## # A tibble: 2 × 3
-##   term        estimate p.value
-##   &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;
-## 1 (Intercept)    11.1        0
-## 2 extrmwd         1.07       0</code></pre>
+##   term        estimate   p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   39.2   0        
+## 2 extrmwd        0.951 3.43e-204</code></pre>
 <pre class="r"><code>plot(delay~extrmwd, data = raw_df)</code></pre>
 <p><img src="regression_delay_files/figure-html/unnamed-chunk-20-1.png" width="90%" /></p>
 <ul>
@@ -644,17 +643,17 @@ summary(lrExw) %&gt;% broom::glance()</code></pre>
 <pre class="r"><code>lrNas = lm(delay~nasd, data = raw_df)
 summary(lrNas) %&gt;% broom::glance()</code></pre>
 <pre><code>## # A tibble: 1 × 8
-##   r.squared adj.r.squared sigma statistic   p.value    df df.residual  nobs
-##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1    0.0299        0.0299  45.2      917. 2.05e-198     1       29723 29725</code></pre>
+##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1    0.0196        0.0195  66.2      215. 3.15e-48     1       10745 10747</code></pre>
 <pre class="r"><code>summary(lrNas) %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value)</code></pre>
 <pre><code>## # A tibble: 2 × 3
-##   term        estimate   p.value
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)    9.89  6.55e-290
-## 2 nasd           0.694 2.05e-198</code></pre>
+##   term        estimate  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)   38.1   0       
+## 2 nasd           0.572 3.15e-48</code></pre>
 <pre class="r"><code>plot(delay~nasd, data = raw_df)</code></pre>
 <p><img src="regression_delay_files/figure-html/unnamed-chunk-21-1.png" width="90%" /></p>
 <ul>
@@ -663,17 +662,17 @@ summary(lrNas) %&gt;% broom::glance()</code></pre>
 <pre class="r"><code>lrSec = lm(delay~securityd, data = raw_df)
 summary(lrSec) %&gt;% broom::glance()</code></pre>
 <pre><code>## # A tibble: 1 × 8
-##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
-##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1   0.00204       0.00200  45.8      60.7 6.92e-15     1       29723 29725</code></pre>
+##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1  0.000878      0.000785  66.8      9.44 0.00213     1       10745 10747</code></pre>
 <pre class="r"><code>summary(lrSec) %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value) </code></pre>
 <pre><code>## # A tibble: 2 × 3
-##   term        estimate  p.value
-##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)    11.6  0       
-## 2 securityd       1.40 6.92e-15</code></pre>
+##   term        estimate p.value
+##   &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)   40.7   0      
+## 2 securityd      0.805 0.00213</code></pre>
 <pre class="r"><code>plot(delay~securityd, data = raw_df)</code></pre>
 <p><img src="regression_delay_files/figure-html/unnamed-chunk-22-1.png" width="90%" /></p>
 <ul>
@@ -684,15 +683,15 @@ summary(lrLat) %&gt;% broom::glance()</code></pre>
 <pre><code>## # A tibble: 1 × 8
 ##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1     0.310         0.310  38.1    13339.       0     1       29723 29725</code></pre>
+## 1     0.281         0.281  56.7     4193.       0     1       10745 10747</code></pre>
 <pre class="r"><code>summary(lrLat) %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value)</code></pre>
 <pre><code>## # A tibble: 2 × 3
-##   term        estimate   p.value
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)     7.57 3.65e-246
-## 2 latarrd         1.35 0</code></pre>
+##   term        estimate p.value
+##   &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)    31.0        0
+## 2 latarrd         1.15       0</code></pre>
 <pre class="r"><code>plot(delay~latarrd, data = raw_df)</code></pre>
 <p><img src="regression_delay_files/figure-html/unnamed-chunk-23-1.png" width="90%" /></p>
 </div>
@@ -714,16 +713,16 @@ summary(lrMon) %&gt;% broom::glance()</code></pre>
 <pre><code>## # A tibble: 1 × 8
 ##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1   0.00939       0.00933  45.6      141. 1.23e-61     2       29722 29725</code></pre>
+## 1    0.0196        0.0195  66.2      108. 5.32e-47     2       10744 10747</code></pre>
 <pre class="r"><code>summary(lrMon) %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value)</code></pre>
 <pre><code>## # A tibble: 3 × 3
 ##   term        estimate  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)     6.53 1.69e-46
-## 2 monthJan       10.8  1.05e-62
-## 3 monthDec        4.77 1.97e-13</code></pre>
+## 1 (Intercept)     53.0 0       
+## 2 monthDec       -16.4 4.89e-27
+## 3 monthNov       -22.0 3.33e-43</code></pre>
 <ul>
 <li>hour</li>
 </ul>
@@ -732,39 +731,39 @@ summary(lrHour) %&gt;% broom::glance()</code></pre>
 <pre><code>## # A tibble: 1 × 8
 ##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1   0.00934       0.00924  45.6      93.4 3.65e-60     3       29721 29725</code></pre>
+## 1   0.00189       0.00161  66.8      6.78 0.000146     3       10743 10747</code></pre>
 <pre class="r"><code>summary(lrHour) %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value)</code></pre>
 <pre><code>## # A tibble: 4 × 3
 ##   term            estimate   p.value
 ##   &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)        18.2  7.34e-273
-## 2 hour_cnoon         -8.54 2.39e- 31
-## 3 hour_cafternoon    -6.21 2.62e- 17
-## 4 hour_cmorning     -12.1  7.68e- 58</code></pre>
+## 1 (Intercept)        44.1  0        
+## 2 hour_cafternoon    -3.98 0.0173   
+## 3 hour_cnoon         -4.00 0.0212   
+## 4 hour_cmorning      -8.48 0.0000112</code></pre>
 <ul>
 <li>airline</li>
 </ul>
 <pre class="r"><code>lrAL = lm(delay~airline, data = raw_df)
 summary(lrAL) %&gt;% broom::glance()</code></pre>
 <pre><code>## # A tibble: 1 × 8
-##   r.squared adj.r.squared sigma statistic   p.value    df df.residual  nobs
-##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1    0.0368        0.0366  45.0      189. 2.90e-237     6       29718 29725</code></pre>
+##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1    0.0107        0.0102  66.5      19.4 1.32e-22     6       10740 10747</code></pre>
 <pre class="r"><code>summary(lrAL) %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value)</code></pre>
 <pre><code>## # A tibble: 7 × 3
-##   term                     estimate   p.value
-##   &lt;chr&gt;                       &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)                  23.1 0        
-## 2 airlineDelta Air Lines      -14.0 1.08e- 76
-## 3 airlineRepublic Airways     -21.0 2.81e-161
-## 4 airlineAmerican Airlines    -13.3 5.48e- 56
-## 5 airlineEndeavor Air         -21.6 7.83e-137
-## 6 airlineAlaska Airlines      -19.8 3.88e- 36
-## 7 airlineUnited Air Lines     -12.9 1.85e-  7</code></pre>
+##   term                     estimate  p.value
+##   &lt;chr&gt;                       &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)                  46.9 0       
+## 2 airlineDelta Air Lines      -16.3 3.30e-21
+## 3 airlineAmerican Airlines    -10.5 1.74e- 7
+## 4 airlineRepublic Airways     -10.1 1.35e- 5
+## 5 airlineEndeavor Air         -10.6 3.04e- 4
+## 6 airlineAlaska Airlines      -13.3 3.07e- 3
+## 7 airlineUnited Air Lines      13.2 7.22e- 2</code></pre>
 <p>The above results were not very straightforward, but give us a sense
 that we could include <code>carrierd</code> and <code>latarrd</code> in
 to the final model, according to the R-squared values.</p>
@@ -794,31 +793,31 @@ predictors <code>month</code>, <code>airline</code>, or
 
 round(cor, 2)</code></pre>
 <pre><code>##             month airline carrierd extrmwd  nasd securityd latarrd temperature
-## month        1.00    0.00     0.04    0.01  0.05      0.00    0.01       -0.15
-## airline      0.00    1.00    -0.12    0.00  0.00     -0.02   -0.04        0.01
-## carrierd     0.04   -0.12     1.00   -0.01  0.05      0.00    0.14       -0.05
-## extrmwd      0.01    0.00    -0.01    1.00  0.07      0.00    0.03       -0.04
-## nasd         0.05    0.00     0.05    0.07  1.00      0.00    0.04       -0.01
-## securityd    0.00   -0.02     0.00    0.00  0.00      1.00    0.01        0.00
-## latarrd      0.01   -0.04     0.14    0.03  0.04      0.01    1.00       -0.05
-## temperature -0.15    0.01    -0.05   -0.04 -0.01      0.00   -0.05        1.00
-## humidity     0.09   -0.02     0.04    0.02  0.13      0.01    0.03        0.22
-## visibility  -0.18    0.00    -0.06   -0.06 -0.16      0.00   -0.04       -0.10
-## wind_s      -0.06    0.00     0.00    0.01  0.02     -0.01    0.04       -0.04
-## hour_c       0.01    0.04    -0.05   -0.01  0.00      0.00   -0.06       -0.03
+## month        1.00    0.02    -0.08   -0.07 -0.04      0.01   -0.09        0.61
+## airline      0.02    1.00    -0.09    0.03  0.07     -0.02    0.03        0.04
+## carrierd    -0.08   -0.09     1.00   -0.03  0.01     -0.01    0.08       -0.06
+## extrmwd     -0.07    0.03    -0.03    1.00  0.07      0.00    0.02       -0.06
+## nasd        -0.04    0.07     0.01    0.07  1.00      0.00    0.01        0.01
+## securityd    0.01   -0.02    -0.01    0.00  0.00      1.00    0.00        0.01
+## latarrd     -0.09    0.03     0.08    0.02  0.01      0.00    1.00       -0.07
+## temperature  0.61    0.04    -0.06   -0.06  0.01      0.01   -0.07        1.00
+## humidity    -0.03    0.04     0.04    0.03  0.14      0.01    0.02        0.27
+## visibility   0.14   -0.02    -0.07   -0.08 -0.16      0.00   -0.05       -0.14
+## wind_s      -0.06    0.01     0.00    0.02  0.02     -0.01    0.06       -0.04
+## hour_c      -0.01    0.06     0.00   -0.01  0.03     -0.01   -0.06       -0.03
 ##             humidity visibility wind_s hour_c
-## month           0.09      -0.18  -0.06   0.01
-## airline        -0.02       0.00   0.00   0.04
-## carrierd        0.04      -0.06   0.00  -0.05
-## extrmwd         0.02      -0.06   0.01  -0.01
-## nasd            0.13      -0.16   0.02   0.00
-## securityd       0.01       0.00  -0.01   0.00
-## latarrd         0.03      -0.04   0.04  -0.06
-## temperature     0.22      -0.10  -0.04  -0.03
-## humidity        1.00      -0.54  -0.16   0.07
-## visibility     -0.54       1.00   0.07  -0.05
-## wind_s         -0.16       0.07   1.00   0.01
-## hour_c          0.07      -0.05   0.01   1.00</code></pre>
+## month          -0.03       0.14  -0.06  -0.01
+## airline         0.04      -0.02   0.01   0.06
+## carrierd        0.04      -0.07   0.00   0.00
+## extrmwd         0.03      -0.08   0.02  -0.01
+## nasd            0.14      -0.16   0.02   0.03
+## securityd       0.01       0.00  -0.01  -0.01
+## latarrd         0.02      -0.05   0.06  -0.06
+## temperature     0.27      -0.14  -0.04  -0.03
+## humidity        1.00      -0.57  -0.15   0.02
+## visibility     -0.57       1.00   0.10  -0.07
+## wind_s         -0.15       0.10   1.00   0.02
+## hour_c          0.02      -0.07   0.02   1.00</code></pre>
 <pre class="r"><code>color = colorRampPalette(c(&quot;Blue&quot;, &quot;white&quot;, &quot;Red&quot;))(20)
 heatmap(x = cor, col = color, symm = TRUE)</code></pre>
 <p><img src="regression_delay_files/figure-html/unnamed-chunk-29-1.png" width="90%" /></p>
@@ -850,37 +849,37 @@ summary(lm_all)</code></pre>
 ## 
 ## Residuals:
 ##    Min     1Q Median     3Q    Max 
-## -72.31  -5.46  -1.80   2.96 466.00 
+## -78.48  -7.66  -1.55   6.63 421.82 
 ## 
 ## Coefficients:
 ##                           Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)               1.817474   0.693937   2.619 0.008821 ** 
-## monthJan                 -0.014309   0.207595  -0.069 0.945048    
-## monthDec                  0.559148   0.157783   3.544 0.000395 ***
-## airlineDelta Air Lines   -0.853021   0.179019  -4.765 1.90e-06 ***
-## airlineRepublic Airways  -6.817158   0.184339 -36.982  &lt; 2e-16 ***
-## airlineAmerican Airlines -1.775304   0.199506  -8.899  &lt; 2e-16 ***
-## airlineEndeavor Air      -5.330495   0.205239 -25.972  &lt; 2e-16 ***
-## airlineAlaska Airlines   -6.551832   0.372406 -17.593  &lt; 2e-16 ***
-## airlineUnited Air Lines  -3.367266   0.582855  -5.777 7.67e-09 ***
-## carrierd                  1.046131   0.001951 536.255  &lt; 2e-16 ***
-## extrmwd                   1.013910   0.005062 200.309  &lt; 2e-16 ***
-## nasd                      0.399336   0.005482  72.842  &lt; 2e-16 ***
-## securityd                 1.081225   0.041482  26.065  &lt; 2e-16 ***
-## latarrd                   1.058872   0.003298 321.033  &lt; 2e-16 ***
-## temperature              -0.037177   0.008367  -4.443 8.88e-06 ***
-## humidity                 -0.002925   0.004312  -0.678 0.497590    
-## visibility                0.295628   0.038703   7.638 2.27e-14 ***
-## wind_s                   -0.005066   0.010165  -0.498 0.618192    
-## hour_cnoon               -2.034640   0.177463 -11.465  &lt; 2e-16 ***
-## hour_cafternoon          -0.801831   0.175172  -4.577 4.73e-06 ***
-## hour_cmorning            -3.278425   0.179473 -18.267  &lt; 2e-16 ***
+## (Intercept)               7.362272   1.273973   5.779 7.72e-09 ***
+## monthDec                 -2.319200   0.396448  -5.850 5.06e-09 ***
+## monthNov                 -2.071826   0.455361  -4.550 5.43e-06 ***
+## airlineDelta Air Lines    0.455295   0.362431   1.256  0.20906    
+## airlineAmerican Airlines  0.080387   0.423943   0.190  0.84961    
+## airlineRepublic Airways  -6.008516   0.490342 -12.254  &lt; 2e-16 ***
+## airlineEndeavor Air      -2.708775   0.615832  -4.399 1.10e-05 ***
+## airlineAlaska Airlines   -3.658351   0.939559  -3.894 9.93e-05 ***
+## airlineUnited Air Lines   3.412906   1.533660   2.225  0.02608 *  
+## carrierd                  0.999808   0.002643 378.315  &lt; 2e-16 ***
+## extrmwd                   0.983812   0.006653 147.878  &lt; 2e-16 ***
+## nasd                      0.451126   0.008329  54.162  &lt; 2e-16 ***
+## securityd                 0.951665   0.054210  17.555  &lt; 2e-16 ***
+## latarrd                   1.007422   0.004408 228.533  &lt; 2e-16 ***
+## temperature               0.029591   0.018509   1.599  0.10992    
+## humidity                 -0.048752   0.009360  -5.209 1.94e-07 ***
+## visibility                0.674235   0.077329   8.719  &lt; 2e-16 ***
+## wind_s                   -0.061330   0.021109  -2.905  0.00368 ** 
+## hour_cafternoon          -1.043555   0.355508  -2.935  0.00334 ** 
+## hour_cnoon               -1.508072   0.372626  -4.047 5.22e-05 ***
+## hour_cmorning            -1.943501   0.409750  -4.743 2.13e-06 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 10.59 on 29704 degrees of freedom
-## Multiple R-squared:  0.9467, Adjusted R-squared:  0.9467 
-## F-statistic: 2.639e+04 on 20 and 29704 DF,  p-value: &lt; 2.2e-16</code></pre>
+## Residual standard error: 13.82 on 10726 degrees of freedom
+## Multiple R-squared:  0.9573, Adjusted R-squared:  0.9573 
+## F-statistic: 1.204e+04 on 20 and 10726 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p><em>Note:</em></p>
 <p>R-squared = 0.9467 -&gt; good</p>
 <p>F-statistic: F-value = 2.639e+04 -&gt; large, variance between
@@ -905,35 +904,35 @@ summary(lm_10)</code></pre>
 ## 
 ## Residuals:
 ##    Min     1Q Median     3Q    Max 
-## -72.27  -5.46  -1.80   2.96 466.11 
+## -77.42  -7.63  -1.58   6.61 422.98 
 ## 
 ## Coefficients:
 ##                           Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)               1.547322   0.590098   2.622 0.008742 ** 
-## monthJan                 -0.041123   0.204769  -0.201 0.840834    
-## monthDec                  0.556387   0.157480   3.533 0.000411 ***
-## airlineDelta Air Lines   -0.850964   0.178994  -4.754 2.00e-06 ***
-## airlineRepublic Airways  -6.814635   0.184303 -36.975  &lt; 2e-16 ***
-## airlineAmerican Airlines -1.776285   0.199482  -8.904  &lt; 2e-16 ***
-## airlineEndeavor Air      -5.327340   0.205146 -25.969  &lt; 2e-16 ***
-## airlineAlaska Airlines   -6.554049   0.372371 -17.601  &lt; 2e-16 ***
-## airlineUnited Air Lines  -3.362436   0.582786  -5.770 8.03e-09 ***
-## carrierd                  1.046114   0.001951 536.308  &lt; 2e-16 ***
-## extrmwd                   1.013883   0.005061 200.323  &lt; 2e-16 ***
-## nasd                      0.399011   0.005466  72.993  &lt; 2e-16 ***
-## securityd                 1.081295   0.041479  26.068  &lt; 2e-16 ***
-## latarrd                   1.058777   0.003296 321.271  &lt; 2e-16 ***
-## temperature              -0.038891   0.008037  -4.839 1.31e-06 ***
-## visibility                0.307304   0.033640   9.135  &lt; 2e-16 ***
-## hour_cnoon               -2.014486   0.172905 -11.651  &lt; 2e-16 ***
-## hour_cafternoon          -0.784077   0.172651  -4.541 5.61e-06 ***
-## hour_cmorning            -3.292524   0.178558 -18.440  &lt; 2e-16 ***
+## (Intercept)               2.892919   0.989343   2.924 0.003462 ** 
+## monthDec                 -1.972147   0.390423  -5.051 4.46e-07 ***
+## monthNov                 -1.605897   0.448512  -3.580 0.000344 ***
+## airlineDelta Air Lines    0.470515   0.362932   1.296 0.194855    
+## airlineAmerican Airlines  0.049241   0.424303   0.116 0.907615    
+## airlineRepublic Airways  -6.073889   0.490836 -12.375  &lt; 2e-16 ***
+## airlineEndeavor Air      -2.767276   0.616555  -4.488 7.25e-06 ***
+## airlineAlaska Airlines   -3.703884   0.940844  -3.937 8.31e-05 ***
+## airlineUnited Air Lines   3.455044   1.535783   2.250 0.024488 *  
+## carrierd                  0.999673   0.002646 377.757  &lt; 2e-16 ***
+## extrmwd                   0.983465   0.006661 147.650  &lt; 2e-16 ***
+## nasd                      0.447300   0.008314  53.804  &lt; 2e-16 ***
+## securityd                 0.952767   0.054281  17.553  &lt; 2e-16 ***
+## latarrd                   1.006363   0.004408 228.313  &lt; 2e-16 ***
+## temperature              -0.002240   0.017625  -0.127 0.898892    
+## visibility                0.858347   0.066606  12.887  &lt; 2e-16 ***
+## hour_cafternoon          -0.776806   0.351867  -2.208 0.027288 *  
+## hour_cnoon               -1.133680   0.364407  -3.111 0.001869 ** 
+## hour_cmorning            -2.144557   0.408761  -5.246 1.58e-07 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 10.58 on 29706 degrees of freedom
-## Multiple R-squared:  0.9467, Adjusted R-squared:  0.9467 
-## F-statistic: 2.932e+04 on 18 and 29706 DF,  p-value: &lt; 2.2e-16</code></pre>
+## Residual standard error: 13.84 on 10728 degrees of freedom
+## Multiple R-squared:  0.9572, Adjusted R-squared:  0.9571 
+## F-statistic: 1.334e+04 on 18 and 10728 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p><em>Note:</em></p>
 <p>R-squared = 0.9467 -&gt; same, good</p>
 <p>F-statistic: F-value = 2.932e+04 -&gt; close, large, variance between
@@ -965,31 +964,31 @@ or both.</p>
     r2 = summary(bestsub.lm)$rsq,
     BIC = summary(bestsub.lm)$bic
 )</code></pre>
-<pre><code>##                 Cp        r2       BIC
-##  [1,] 162974.57340 0.6543593 -31557.92
-##  [2,]  50807.45804 0.8555586 -57483.45
-##  [3,]   8320.51509 0.9317716 -79767.28
-##  [4,]   3112.94055 0.9411161 -84135.26
-##  [5,]   2161.15122 0.9428269 -85001.40
-##  [6,]   1443.34944 0.9441180 -85670.06
-##  [7,]    974.92935 0.9449618 -86112.02
-##  [8,]    704.72935 0.9454501 -86366.59
-##  [9,]    426.64945 0.9459524 -86631.31
-## [10,]    292.63274 0.9461964 -86755.50
-## [11,]    195.17830 0.9463748 -86843.92
-## [12,]    138.09244 0.9464808 -86892.43
-## [13,]    101.27835 0.9465504 -86920.82
-## [14,]     75.07943 0.9466010 -86938.66
-## [15,]     52.67099 0.9466448 -86952.74
-## [16,]     33.22710 0.9466832 -86963.88
-## [17,]     17.04033 0.9467159 -86971.77
-## [18,]     19.00000 0.9467159 -86961.52</code></pre>
+<pre><code>##                Cp        r2       BIC
+##  [1,] 81314.30483 0.6328931 -10751.03
+##  [2,] 26384.86466 0.8519492 -20501.07
+##  [3,]  3407.14997 0.9435879 -30861.26
+##  [4,]   769.68666 0.9541135 -33071.38
+##  [5,]   457.37074 0.9553670 -33359.75
+##  [6,]   266.25418 0.9561371 -33537.52
+##  [7,]   109.50813 0.9567701 -33684.47
+##  [8,]    92.85219 0.9568445 -33693.70
+##  [9,]    75.06306 0.9569234 -33704.09
+## [10,]    56.56372 0.9570052 -33715.22
+## [11,]    40.36667 0.9570778 -33724.09
+## [12,]    25.29379 0.9571458 -33731.87
+## [13,]    20.35882 0.9571735 -33729.52
+## [14,]    17.45621 0.9571930 -33725.15
+## [15,]    14.72969 0.9572119 -33720.60
+## [16,]    15.02914 0.9572187 -33713.02
+## [17,]    17.01347 0.9572187 -33703.75
+## [18,]    19.00000 0.9572188 -33694.49</code></pre>
 <pre class="r"><code>which.max(sum.bestsub.lm$rsq)</code></pre>
 <pre><code>## [1] 18</code></pre>
 <pre class="r"><code>sum.bestsub.lm$which[18,]</code></pre>
-<pre><code>##              (Intercept)                 monthJan                 monthDec 
+<pre><code>##              (Intercept)                 monthDec                 monthNov 
 ##                     TRUE                     TRUE                     TRUE 
-##   airlineDelta Air Lines  airlineRepublic Airways airlineAmerican Airlines 
+##   airlineDelta Air Lines airlineAmerican Airlines  airlineRepublic Airways 
 ##                     TRUE                     TRUE                     TRUE 
 ##      airlineEndeavor Air   airlineAlaska Airlines  airlineUnited Air Lines 
 ##                     TRUE                     TRUE                     TRUE 
@@ -997,7 +996,7 @@ or both.</p>
 ##                     TRUE                     TRUE                     TRUE 
 ##                securityd                  latarrd              temperature 
 ##                     TRUE                     TRUE                     TRUE 
-##               visibility               hour_cnoon          hour_cafternoon 
+##               visibility          hour_cafternoon               hour_cnoon 
 ##                     TRUE                     TRUE                     TRUE 
 ##            hour_cmorning 
 ##                     TRUE</code></pre>
@@ -1011,32 +1010,32 @@ summary(Best_lm) %&gt;% broom::glance()</code></pre>
 <pre><code>## # A tibble: 1 × 8
 ##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1     0.947         0.947  10.6    29322.       0    18       29706 29725</code></pre>
+## 1     0.957         0.957  13.8    13335.       0    18       10728 10747</code></pre>
 <pre class="r"><code>summary(Best_lm) %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value)</code></pre>
 <pre><code>## # A tibble: 19 × 3
-##    term                     estimate   p.value
-##    &lt;chr&gt;                       &lt;dbl&gt;     &lt;dbl&gt;
-##  1 (Intercept)                1.55   8.74e-  3
-##  2 monthJan                  -0.0411 8.41e-  1
-##  3 monthDec                   0.556  4.11e-  4
-##  4 airlineDelta Air Lines    -0.851  2.00e-  6
-##  5 airlineRepublic Airways   -6.81   1.25e-292
-##  6 airlineAmerican Airlines  -1.78   5.66e- 19
-##  7 airlineEndeavor Air       -5.33   4.93e-147
-##  8 airlineAlaska Airlines    -6.55   5.44e- 69
-##  9 airlineUnited Air Lines   -3.36   8.03e-  9
-## 10 carrierd                   1.05   0        
-## 11 extrmwd                    1.01   0        
-## 12 nasd                       0.399  0        
-## 13 securityd                  1.08   3.89e-148
-## 14 latarrd                    1.06   0        
-## 15 temperature               -0.0389 1.31e-  6
-## 16 visibility                 0.307  6.95e- 20
-## 17 hour_cnoon                -2.01   2.66e- 31
-## 18 hour_cafternoon           -0.784  5.61e-  6
-## 19 hour_cmorning             -3.29   1.67e- 75</code></pre>
+##    term                     estimate  p.value
+##    &lt;chr&gt;                       &lt;dbl&gt;    &lt;dbl&gt;
+##  1 (Intercept)               2.89    3.46e- 3
+##  2 monthDec                 -1.97    4.46e- 7
+##  3 monthNov                 -1.61    3.44e- 4
+##  4 airlineDelta Air Lines    0.471   1.95e- 1
+##  5 airlineAmerican Airlines  0.0492  9.08e- 1
+##  6 airlineRepublic Airways  -6.07    6.21e-35
+##  7 airlineEndeavor Air      -2.77    7.25e- 6
+##  8 airlineAlaska Airlines   -3.70    8.31e- 5
+##  9 airlineUnited Air Lines   3.46    2.45e- 2
+## 10 carrierd                  1.00    0       
+## 11 extrmwd                   0.983   0       
+## 12 nasd                      0.447   0       
+## 13 securityd                 0.953   5.05e-68
+## 14 latarrd                   1.01    0       
+## 15 temperature              -0.00224 8.99e- 1
+## 16 visibility                0.858   1.02e-37
+## 17 hour_cafternoon          -0.777   2.73e- 2
+## 18 hour_cnoon               -1.13    1.87e- 3
+## 19 hour_cmorning            -2.14    1.58e- 7</code></pre>
 </div>
 <div id="check-for-residual-normality" class="section level2">
 <h2>Check for residual normality</h2>
@@ -1117,36 +1116,36 @@ nest_lm_m %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">Nov</td>
-<td align="right">-7.645</td>
-<td align="right">1.072</td>
-<td align="right">0.896</td>
-<td align="right">0.457</td>
-<td align="right">1.074</td>
-<td align="right">1.081</td>
-<td align="right">-0.044</td>
-<td align="right">0.835</td>
+<td align="right">-11.232</td>
+<td align="right">1.002</td>
+<td align="right">0.754</td>
+<td align="right">0.520</td>
+<td align="right">0.940</td>
+<td align="right">0.994</td>
+<td align="right">0.036</td>
+<td align="right">1.770</td>
 </tr>
 <tr class="even">
 <td align="left">Dec</td>
-<td align="right">-2.538</td>
-<td align="right">1.048</td>
-<td align="right">1.020</td>
-<td align="right">0.465</td>
-<td align="right">1.249</td>
-<td align="right">1.064</td>
-<td align="right">-0.021</td>
-<td align="right">0.274</td>
+<td align="right">1.884</td>
+<td align="right">0.989</td>
+<td align="right">0.994</td>
+<td align="right">0.531</td>
+<td align="right">0.987</td>
+<td align="right">0.993</td>
+<td align="right">-0.010</td>
+<td align="right">0.628</td>
 </tr>
 <tr class="odd">
 <td align="left">Jan</td>
-<td align="right">-1.592</td>
-<td align="right">1.058</td>
-<td align="right">1.024</td>
-<td align="right">0.284</td>
-<td align="right">1.139</td>
-<td align="right">1.062</td>
-<td align="right">-0.051</td>
-<td align="right">0.286</td>
+<td align="right">3.907</td>
+<td align="right">1.007</td>
+<td align="right">0.991</td>
+<td align="right">0.282</td>
+<td align="right">0.971</td>
+<td align="right">1.008</td>
+<td align="right">-0.050</td>
+<td align="right">0.808</td>
 </tr>
 </tbody>
 </table>
@@ -1199,80 +1198,80 @@ nest_lm_a %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">JetBlue Airways</td>
-<td align="right">1.050</td>
-<td align="right">1.047</td>
-<td align="right">1.034</td>
-<td align="right">0.390</td>
-<td align="right">1.046</td>
-<td align="right">1.071</td>
-<td align="right">-0.082</td>
-<td align="right">0.410</td>
+<td align="right">6.039</td>
+<td align="right">0.993</td>
+<td align="right">1.004</td>
+<td align="right">0.374</td>
+<td align="right">0.937</td>
+<td align="right">1.021</td>
+<td align="right">-0.073</td>
+<td align="right">0.656</td>
 </tr>
 <tr class="even">
-<td align="left">Endeavor Air</td>
-<td align="right">-14.745</td>
-<td align="right">1.068</td>
-<td align="right">0.965</td>
-<td align="right">0.765</td>
-<td align="right">1.534</td>
-<td align="right">1.063</td>
-<td align="right">0.011</td>
-<td align="right">1.040</td>
-</tr>
-<tr class="odd">
 <td align="left">Delta Air Lines</td>
-<td align="right">-0.682</td>
-<td align="right">1.073</td>
-<td align="right">1.027</td>
-<td align="right">0.292</td>
-<td align="right">1.623</td>
-<td align="right">1.126</td>
-<td align="right">-0.023</td>
-<td align="right">0.227</td>
-</tr>
-<tr class="even">
-<td align="left">American Airlines</td>
-<td align="right">-1.337</td>
-<td align="right">1.033</td>
-<td align="right">1.036</td>
-<td align="right">0.212</td>
-<td align="right">1.034</td>
-<td align="right">1.044</td>
-<td align="right">-0.008</td>
-<td align="right">0.188</td>
+<td align="right">4.530</td>
+<td align="right">1.022</td>
+<td align="right">0.998</td>
+<td align="right">0.338</td>
+<td align="right">1.323</td>
+<td align="right">1.039</td>
+<td align="right">-0.038</td>
+<td align="right">0.664</td>
 </tr>
 <tr class="odd">
 <td align="left">Republic Airways</td>
-<td align="right">-4.601</td>
-<td align="right">1.064</td>
-<td align="right">1.058</td>
-<td align="right">0.091</td>
-<td align="right">1.188</td>
-<td align="right">1.056</td>
-<td align="right">0.012</td>
-<td align="right">-0.022</td>
+<td align="right">7.032</td>
+<td align="right">0.992</td>
+<td align="right">0.988</td>
+<td align="right">0.000</td>
+<td align="right">0.995</td>
+<td align="right">0.983</td>
+<td align="right">-0.048</td>
+<td align="right">0.143</td>
+</tr>
+<tr class="even">
+<td align="left">American Airlines</td>
+<td align="right">8.372</td>
+<td align="right">1.004</td>
+<td align="right">0.875</td>
+<td align="right">0.227</td>
+<td align="right">0.557</td>
+<td align="right">1.009</td>
+<td align="right">-0.105</td>
+<td align="right">0.578</td>
+</tr>
+<tr class="odd">
+<td align="left">Endeavor Air</td>
+<td align="right">-32.538</td>
+<td align="right">0.970</td>
+<td align="right">0.961</td>
+<td align="right">0.855</td>
+<td align="right">1.043</td>
+<td align="right">0.965</td>
+<td align="right">0.131</td>
+<td align="right">3.398</td>
 </tr>
 <tr class="even">
 <td align="left">Alaska Airlines</td>
-<td align="right">-10.861</td>
-<td align="right">1.105</td>
-<td align="right">1.149</td>
-<td align="right">0.230</td>
+<td align="right">1.704</td>
+<td align="right">1.003</td>
+<td align="right">1.061</td>
+<td align="right">0.224</td>
 <td align="right">NA</td>
-<td align="right">1.059</td>
-<td align="right">0.108</td>
-<td align="right">0.177</td>
+<td align="right">0.980</td>
+<td align="right">0.024</td>
+<td align="right">0.419</td>
 </tr>
 <tr class="odd">
 <td align="left">United Air Lines</td>
-<td align="right">-7.223</td>
-<td align="right">1.007</td>
-<td align="right">0.804</td>
-<td align="right">0.477</td>
+<td align="right">-7.333</td>
+<td align="right">0.991</td>
+<td align="right">0.747</td>
+<td align="right">0.392</td>
 <td align="right">NA</td>
-<td align="right">1.135</td>
-<td align="right">0.069</td>
-<td align="right">0.217</td>
+<td align="right">1.066</td>
+<td align="right">0.197</td>
+<td align="right">1.199</td>
 </tr>
 </tbody>
 </table>
@@ -1325,47 +1324,47 @@ nest_lm_h %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">noon</td>
-<td align="right">-4.138</td>
-<td align="right">1.054</td>
-<td align="right">1.037</td>
-<td align="right">0.383</td>
-<td align="right">1.125</td>
-<td align="right">1.035</td>
-<td align="right">-0.022</td>
-<td align="right">0.372</td>
+<td align="right">-0.491</td>
+<td align="right">0.997</td>
+<td align="right">0.999</td>
+<td align="right">0.440</td>
+<td align="right">0.755</td>
+<td align="right">0.988</td>
+<td align="right">-0.004</td>
+<td align="right">0.938</td>
 </tr>
 <tr class="even">
 <td align="left">afternoon</td>
-<td align="right">-4.010</td>
-<td align="right">1.040</td>
-<td align="right">0.980</td>
-<td align="right">0.610</td>
-<td align="right">1.062</td>
-<td align="right">1.054</td>
-<td align="right">-0.047</td>
-<td align="right">0.491</td>
+<td align="right">2.139</td>
+<td align="right">0.990</td>
+<td align="right">0.954</td>
+<td align="right">0.655</td>
+<td align="right">0.965</td>
+<td align="right">0.993</td>
+<td align="right">-0.112</td>
+<td align="right">1.037</td>
 </tr>
 <tr class="odd">
 <td align="left">night</td>
-<td align="right">2.940</td>
-<td align="right">1.057</td>
-<td align="right">1.036</td>
-<td align="right">0.147</td>
-<td align="right">1.196</td>
-<td align="right">1.103</td>
-<td align="right">-0.063</td>
-<td align="right">0.069</td>
+<td align="right">11.990</td>
+<td align="right">1.009</td>
+<td align="right">1.012</td>
+<td align="right">0.103</td>
+<td align="right">0.988</td>
+<td align="right">1.030</td>
+<td align="right">-0.127</td>
+<td align="right">0.331</td>
 </tr>
 <tr class="even">
 <td align="left">morning</td>
-<td align="right">-2.324</td>
-<td align="right">1.080</td>
-<td align="right">0.998</td>
-<td align="right">0.310</td>
-<td align="right">1.247</td>
-<td align="right">1.057</td>
-<td align="right">-0.027</td>
-<td align="right">0.126</td>
+<td align="right">1.453</td>
+<td align="right">1.012</td>
+<td align="right">0.925</td>
+<td align="right">0.379</td>
+<td align="right">0.975</td>
+<td align="right">1.006</td>
+<td align="right">-0.001</td>
+<td align="right">0.626</td>
 </tr>
 </tbody>
 </table>
