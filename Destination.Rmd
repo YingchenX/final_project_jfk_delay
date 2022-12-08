@@ -13,7 +13,7 @@ library(plotly)
 
 delay = read_csv("tidied_data/delay.csv")
 cancel = read_csv("tidied_data/cancel.csv")
-raw_df = read_csv("Reg_data_exp/raw_df.csv")
+raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 
 ```
 
