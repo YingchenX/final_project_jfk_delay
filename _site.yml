@@ -9,9 +9,9 @@ navbar:
         href: xx.html
       - text: "Cancel & Delay"
         href: https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/
-      - text: "Categorical Variables"
+      - text: "Categorical Predictors"
         href: xx.html
-      - text: "Continuous Variables"
+      - text: "Continuous Predictors"
         href: xx.html
       - text: "Fun Facts"
         href: Destination.html
