@@ -10,9 +10,9 @@ navbar:
       - text: "Cancel & Delay"
         href: https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/
       - text: "Categorical Predictors"
-        href: xx.html
+        href: delay_interaction_c.html
       - text: "Continuous Predictors"
-        href: xx.html
+        href: delay_interaction_cont.html
       - text: "Fun Facts"
         href: Destination.html
     - text: "Analysis"

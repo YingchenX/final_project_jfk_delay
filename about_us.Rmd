@@ -1,9 +1,7 @@
 ---
 title: "About Us"
 output: 
-  html_document:
-    toc: true
-    toc_float: true
+  html_document
 ---
 
 ```{r setup, include=FALSE}
