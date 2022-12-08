@@ -1,5 +1,5 @@
 ---
-title: "Delay Data Exploration for Categorical Variables"
+title: "Delay Data Exploration for Categorical Predictors"
 output: html_document
 ---
 
@@ -17,7 +17,7 @@ raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 <br>
 
 
-## Interaction between Categorical Variables {.tabset}
+## Interaction between Categorical Predictors {.tabset}
 ```{r, include = FALSE}
 hour_air = function(air){
   raw_df %>% 
@@ -31,7 +31,7 @@ hour_air = function(air){
           type = 'box', mode = 'markers', alpha = .5) %>% 
     layout(
       xaxis = list(title = "Hour"),
-      yaxis = list(title = "Delay Time (Minutes)"))
+      yaxis = list(title = "Delay Time (minutes)"))
 }
 
 month_air = function(air){
@@ -45,7 +45,7 @@ month_air = function(air){
           type = 'box', mode = 'markers', alpha = .5) %>% 
     layout(
       xaxis = list(title = "Month"),
-      yaxis = list(title = "Delay Time (Minutes)"))
+      yaxis = list(title = "Delay Time (minutes)"))
 }
 
 hour_month = function(mon){
@@ -59,7 +59,7 @@ raw_df %>%
           type = 'box', mode = 'markers', alpha = .5) %>% 
     layout(
       xaxis = list(title = "Hour"),
-      yaxis = list(title = "Delay Time (Minutes)"))
+      yaxis = list(title = "Delay Time (minutes)"))
 }
 
 hour_month_air = function(air){
@@ -67,18 +67,18 @@ hour_month_air = function(air){
     filter(
       airline == air) %>%
     mutate(
-      month = factor(sort(month))
-    ) %>% 
+      month = fct_reorder(month, date)) %>% 
     plot_ly(x = ~hour_c, y = ~delay, color = ~month,
             type = 'box', mode = 'markers', alpha = .5) %>% 
     layout(
       boxmode = "group",
       xaxis = list(title = "Hour"),
-      yaxis = list(title = "Delay Time (Minutes)"))
+      yaxis = list(title = "Delay Time (minutes)"))
 }
 
 ```
 
+<br>
 
 ### Hour*Airline 
 
@@ -93,7 +93,7 @@ raw_df %>%
           type = 'box', mode = 'markers', alpha = .5) %>% 
     layout(
       xaxis = list(title = "Hour"),
-      yaxis = list(title = "Delay Time (Minutes)"))
+      yaxis = list(title = "Delay Time (minutes)"))
 ```
 
 #### Stratification by Airline {.tabset}
@@ -144,7 +144,7 @@ raw_df %>%
           type = 'box', mode = 'markers', alpha = .5) %>% 
     layout(
       xaxis = list(title = "Month"),
-      yaxis = list(title = "Delay Time (Minutes)"))
+      yaxis = list(title = "Delay Time (minutes)"))
 
 ```
 
@@ -197,7 +197,7 @@ raw_df %>%
           type = 'box', mode = 'markers', alpha = .5) %>% 
     layout(
       xaxis = list(title = "Hour"),
-      yaxis = list(title = "Delay Time (Minutes)"))
+      yaxis = list(title = "Delay Time (minutes)"))
 
 ```
 
@@ -222,14 +222,13 @@ hour_month("Jan")
 ```{r, echo = FALSE}
 raw_df %>% 
   mutate(
-    month = factor(sort(month))
-  ) %>% 
+    month = fct_reorder(month, date)) %>% 
   plot_ly(x = ~hour_c, y = ~delay, color = ~month,
           type = 'box', mode = 'markers', alpha = .5) %>% 
     layout(
       boxmode = "group",
       xaxis = list(title = "Hour"),
-      yaxis = list(title = "Delay Time (Minutes)"))
+      yaxis = list(title = "Delay Time (minutes)"))
 ```
 
 #### Stratification by Airline {.tabset}
