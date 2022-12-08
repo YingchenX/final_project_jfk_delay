@@ -1,5 +1,5 @@
 ---
-title: "Delay Exploration for Categorical Variables"
+title: "Delay Data Exploration for Categorical Variables"
 output: html_document
 ---
 
@@ -61,6 +61,22 @@ raw_df %>%
       xaxis = list(title = "Hour"),
       yaxis = list(title = "Delay Time (Minutes)"))
 }
+
+hour_month_air = function(air){
+  raw_df %>% 
+    filter(
+      airline == air) %>%
+    mutate(
+      month = factor(sort(month))
+    ) %>% 
+    plot_ly(x = ~hour_c, y = ~delay, color = ~month,
+            type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      boxmode = "group",
+      xaxis = list(title = "Hour"),
+      yaxis = list(title = "Delay Time (Minutes)"))
+}
+
 ```
 
 ```{r, eval = FALSE, include = FALSE}
@@ -153,7 +169,7 @@ raw_df %>%
 
 ### Hour*Airline 
 
-#### Before Stratification
+#### Before Stratification by Airline
 ```{r, echo = FALSE}
 raw_df %>% 
   mutate(
@@ -205,7 +221,7 @@ hour_air("United Air Lines")
 
 
 ### Month*Airline
-#### Before Stratification
+#### Before Stratification by Airline
 ```{r, echo = FALSE}
 raw_df %>% 
   mutate(
@@ -258,7 +274,7 @@ month_air("United Air Lines")
 
 
 ### Month*Hour
-#### Before Stratification
+#### Before Stratification by Month
 ```{r, echo = FALSE}
 raw_df %>% 
   mutate(
@@ -288,8 +304,55 @@ hour_month("Dec")
 hour_month("Jan")
 ```
 
+### Three-ways Interaction
+#### Before Stratification by Airline
+```{r, echo = FALSE}
+raw_df %>% 
+  mutate(
+    month = factor(sort(month))
+  ) %>% 
+  plot_ly(x = ~hour_c, y = ~delay, color = ~month,
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      boxmode = "group",
+      xaxis = list(title = "Hour"),
+      yaxis = list(title = "Delay Time (Minutes)"))
+```
 
+#### Stratification by Airline {.tabset}
+##### Alaska
+```{r, echo = FALSE}
+hour_month_air("Alaska Airlines")
+```
 
+##### American
+```{r, echo = FALSE}
+hour_month_air("American Airlines")
+```
 
+##### Delta
+```{r, echo = FALSE}
+hour_month_air("Delta Air Lines")
+```
+
+##### Endeavor
+```{r, echo = FALSE}
+hour_month_air("Endeavor Air")
+```
+
+##### JetBlue
+```{r, echo = FALSE}
+hour_month_air("JetBlue Airways")
+```
+
+##### Republic
+```{r, echo = FALSE}
+hour_month_air("Republic Airways")
+```
+
+##### United
+```{r, echo = FALSE}
+hour_month_air("United Air Lines")
+```
 
 
