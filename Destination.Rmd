@@ -1,5 +1,5 @@
 ---
-title: "Destination Airport"
+title: "Fun Facts: Could Destination Airport Affect Delay and Cancelation?"
 output: html_document
 
 ---
@@ -13,15 +13,33 @@ library(plotly)
 
 delay = read_csv("tidied_data/delay.csv")
 cancel = read_csv("tidied_data/cancel.csv")
-raw_df = read_csv("Reg_data_exp/raw_df.csv")
 
 ```
 
 <br>
 
+## Overall Trend 
+
+```{r}
+delay_plot = delay %>%
+  group_by(destination_airport) %>% 
+  mutate(
+      count = n()
+      ) %>% 
+  ungroup() %>% 
+  mutate(
+    destination_airport = fct_reorder(destination_airport, count)
+      ) 
+
+
+
+
+```
+
+
 ```{r, include = FALSE}
 delay_dest = function(dest){
-    delay %>%
+  delay %>%
     filter(
       airline_name == dest
     ) %>% 
@@ -66,7 +84,7 @@ cancel_dest = function(dest){
 ```
 
 
-## Airlines {.tabset}
+## Airline {.tabset}
 ### Alaska Airlines
 ```{r, echo = FALSE}
 delay_dest("Alaska Airlines")
