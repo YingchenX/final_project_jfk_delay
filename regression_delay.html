@@ -1372,33 +1372,31 @@ nest_lm_h %&gt;%
 </div>
 <div id="step-5-add-interaction-terms" class="section level1">
 <h1>Step 5: Add interaction terms</h1>
-<div id="fit-the-regression-model-1" class="section level2">
-<h2>Fit the regression model</h2>
+<div id="carrier-airline" class="section level2">
+<h2>Carrier * airline</h2>
 <pre class="r"><code>int1_lm = lm(delay ~ . + carrierd*airline,
               data = raw_df_10)
 
-summary(int1_lm) %&gt;% broom::glance()</code></pre>
-<pre><code>## # A tibble: 1 × 8
-##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
-##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
-## 1     0.957         0.957  13.8    10016.       0    24       10722 10747</code></pre>
-<pre class="r"><code>summary(int1_lm) %&gt;% 
-  broom::tidy() %&gt;% 
-  select(term, estimate, p.value)</code></pre>
-<pre><code>## # A tibble: 25 × 3
-##    term                     estimate  p.value
-##    &lt;chr&gt;                       &lt;dbl&gt;    &lt;dbl&gt;
-##  1 (Intercept)                3.11   1.79e- 3
-##  2 monthDec                  -2.01   2.81e- 7
-##  3 monthNov                  -1.69   1.73e- 4
-##  4 airlineDelta Air Lines    -0.0172 9.65e- 1
-##  5 airlineAmerican Airlines  -0.157  7.23e- 1
-##  6 airlineRepublic Airways   -6.12   2.33e-31
-##  7 airlineEndeavor Air       -2.45   2.24e- 4
-##  8 airlineAlaska Airlines    -3.85   1.14e- 4
-##  9 airlineUnited Air Lines    3.63   2.06e- 2
-## 10 carrierd                   0.994  0       
-## # … with 15 more rows</code></pre>
+anova(int1_lm)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: delay
+##                     Df   Sum Sq  Mean Sq    F value    Pr(&gt;F)    
+## month                2   942868   471434 2.4657e+03 &lt; 2.2e-16 ***
+## airline              6   479178    79863 4.1771e+02 &lt; 2.2e-16 ***
+## carrierd             1 29322536 29322536 1.5337e+05 &lt; 2.2e-16 ***
+## extrmwd              1  4507875  4507875 2.3577e+04 &lt; 2.2e-16 ***
+## nasd                 1   556553   556553 2.9109e+03 &lt; 2.2e-16 ***
+## securityd            1    67692    67692 3.5405e+02 &lt; 2.2e-16 ***
+## latarrd              1 10036778 10036778 5.2495e+04 &lt; 2.2e-16 ***
+## temperature          1     2434     2434 1.2730e+01 0.0003614 ***
+## visibility           1    34801    34801 1.8202e+02 &lt; 2.2e-16 ***
+## hour_c               3     5667     1889 9.8800e+00 1.675e-06 ***
+## airline:carrierd     6     3958      660 3.4499e+00 0.0020910 ** 
+## Residuals        10722  2049982      191                         
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>significant</p>
 </div>
 </div>
 
