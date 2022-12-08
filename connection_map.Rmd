@@ -1,6 +1,6 @@
 ---
-title: "Flight Connection Map"
-output: github_document
+title: "Maps"
+output: html_document
 ---
 
 ```{r setup, include = FALSE}
@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE,
 library(tidyverse)
 library(maps)
 library(geosphere)
+library(leaflet)
 ```
 
 
@@ -53,5 +54,57 @@ for (i in (1:dim(dest)[1])) {
   lines(inter, lwd = 0.3, alpha = 0.5, col = "turquoise2")
   
 }
+```
+
+
+```{r}
+airport = read_csv("tidied_data/airport.csv")
+
+delay = read_csv("tidied_data/delay.csv") %>% 
+  select(airline_name:destination_airport) %>% 
+  mutate(
+    category = "delay"
+  )
+
+cancel = read_csv("tidied_data/cancel.csv") %>% 
+  select(airline_name:destination_airport) %>% 
+  mutate(
+    category = "cancel"
+  )
+
+summary = bind_rows(delay, cancel)
+```
+
+
+```{r}
+summary_sub = 
+  summary %>% 
+  group_by(destination_airport) %>% 
+  summarise(
+    count = n()
+  )
+
+airport = 
+  airport %>% 
+  rename(destination_airport = airport)
+
+all = left_join(summary_sub, airport, by = "destination_airport")
+```
+
+
+```{r, out.width = "100%"}
+content = paste(sep = "<br/>",
+  "<b><a href='https://www.jfkairport.com/'>John F. Kennedy International Airport</a></b>",
+  "Jamaica, Queens",
+  "New York, NY 11430"
+)
+
+all %>% 
+  leaflet() %>% 
+  addTiles() %>%
+  setView(-95, 39, zoom = 4) %>% 
+  addCircleMarkers(~ long, ~ lat, radius = ~ scales::rescale(count, c(1, 10)), color = "rgb(255, 65, 54)", 
+                   label = paste("Destination: ", all$municipality, " Count: ", all$count)) %>% 
+  addPopups(-73.77932, 40.63945, content, options = popupOptions(closeButton = TRUE))
 ```
 
