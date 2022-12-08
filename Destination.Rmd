@@ -13,6 +13,10 @@ library(plotly)
 
 delay = read_csv("tidied_data/delay.csv")
 cancel = read_csv("tidied_data/cancel.csv")
+<<<<<<< HEAD
+=======
+raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
+>>>>>>> 38a14bad98bd41ae7ea9c85e8781ae3ee108e9e0
 
 ```
 

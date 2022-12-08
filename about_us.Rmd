@@ -1,9 +1,7 @@
 ---
 title: "About Us"
 output: 
-  html_document:
-    toc: true
-    toc_float: true
+  html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -31,12 +29,12 @@ Our technical skill sets of coding in R would thank to [P8105 Data Science I](ht
 
 ## About Us
 
-* [Fengyi Ma (fm2751)](https://www.linkedin.com/in/fengyi-fiona-ma-945842255/)
+* [Fengyi Ma](https://www.linkedin.com/in/fengyi-fiona-ma-945842255/)
 
-* [Jialu Cheng (jc5457)](https://www.linkedin.com/in/jialu-cheng-b775b61a4/)
+* [Jialu Cheng](https://www.linkedin.com/in/jialu-cheng-b775b61a4/)
 
-* [Siyue Gao (sg3889)](https://www.linkedin.com/in/siyue-gao-944001255/)
+* [Siyue Gao](https://siyuegao1205.github.io/siyuegao_website.github.io/)
 
-* [Yeque Sun (ys3508)](https://www.linkedin.com/in/yequesun/)
+* [Yeque Sun](https://www.linkedin.com/in/yequesun/)
 
-* [Yingchen Xu (yx2711)](https://www.linkedin.com/in/yingchen-xu-bb0558232/)
+* [Yingchen Xu](https://www.linkedin.com/in/yingchen-xu-bb0558232/)
