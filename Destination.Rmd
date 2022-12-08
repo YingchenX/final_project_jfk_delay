@@ -1,5 +1,5 @@
 ---
-title: "Fun Facts: Could Destination Airport Affect Delay and Cancelation?"
+title: "Could Destination Airport Affect Delay and Cancelation?"
 output: html_document
 
 ---
@@ -11,12 +11,9 @@ knitr::opts_chunk$set(echo = TRUE,
 library(tidyverse)
 library(plotly)
 
+
 delay = read_csv("tidied_data/delay.csv")
 cancel = read_csv("tidied_data/cancel.csv")
-<<<<<<< HEAD
-=======
-raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
->>>>>>> 38a14bad98bd41ae7ea9c85e8781ae3ee108e9e0
 
 ```
 
@@ -24,21 +21,41 @@ raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 
 ## Overall Trend 
 
-```{r}
-delay_plot = delay %>%
+<br>
+```{r, echo = FALSE}
+delay %>% 
   group_by(destination_airport) %>% 
+  summarize(
+    count = n()) %>% 
   mutate(
-      count = n()
+    destination_airport = fct_reorder(destination_airport, count),
+    text_label = str_c("Airport: ", destination_airport, "\nCount: ", count)
       ) %>% 
-  ungroup() %>% 
+  plot_ly(x = ~destination_airport, y = ~count, text = ~text_label, hoverinfo = "text",
+          color = "rgb(255, 65, 54)", type = "bar", alpha = .5) %>% 
+  layout(
+    xaxis = list(title = "Destination Airport"),
+    yaxis = list(title = "Count"),
+    title = "Distribution of Delay by Destination Airport")
+  
+cancel %>% 
+  group_by(destination_airport) %>% 
+  summarize(
+    count = n()) %>% 
   mutate(
-    destination_airport = fct_reorder(destination_airport, count)
-      ) 
-
-
+    destination_airport = fct_reorder(destination_airport, count),
+    text_label = str_c("Airport: ", destination_airport, "\nCount: ", count)
+      ) %>% 
+  plot_ly(x = ~destination_airport, y = ~count, text = ~text_label, hoverinfo = "text",
+          color = "rgb(255, 65, 54)", type = "bar", alpha = .5) %>% 
+  layout(
+    xaxis = list(title = "Destination Airport"),
+    yaxis = list(title = "Count"),
+    title = "Distribution of Cancelation by Destination Airport")
 
 
 ```
+
 
 
 ```{r, include = FALSE}
@@ -87,46 +104,47 @@ cancel_dest = function(dest){
 }
 ```
 
+<br>
 
-## Airline {.tabset}
-### Alaska Airlines
+## Stratification by Airline {.tabset}
+### Alaska
 ```{r, echo = FALSE}
 delay_dest("Alaska Airlines")
 cancel_dest("Alaska Airlines")
 ```
 
 
-### American Airlines 
+### American
 ```{r, echo = FALSE}
 delay_dest("American Airlines")
 cancel_dest("American Airlines")
 ```
 
-### Delta Air Lines 
+### Delta
 ```{r, echo = FALSE}
 delay_dest("Delta Air Lines")
 cancel_dest("Delta Air Lines")
 ```
 
-### Endeavor Air  
+### Endeavor
 ```{r, echo = FALSE}
 delay_dest("Endeavor Air")
 cancel_dest("Endeavor Air")
 ```
 
-### JetBlue Airways
+### JetBlue
 ```{r, echo = FALSE}
 delay_dest("JetBlue Airways")
 cancel_dest("JetBlue Airways")
 ```
 
-### Republic Airways
+### Republic
 ```{r, echo = FALSE}
 delay_dest("Republic Airways")
 cancel_dest("Republic Airways")
 ```
 
-### United Air Lines
+### United
 ```{r, echo = FALSE}
 delay_dest("United Air Lines")
 cancel_dest("United Air Lines")
