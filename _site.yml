@@ -21,7 +21,7 @@ navbar:
         href: xx.html
       - text: "Poission Regression"
         href: xx.html
-    - text: "Project Report"
+    - text: "Report"
       href: project_report.html
   right:
     - text: "What to Do"
