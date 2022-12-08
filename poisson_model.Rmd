@@ -80,27 +80,13 @@ cancel_tidy <- cancel_tidy%>%
     windspeed = as.numeric(windspeed),
     covid_case = as.numeric(covid_case),
     airline_name = as_factor(airline_name),
-    month1 = ifelse(month == 11, "November", 
-                        ifelse(month == 12, "December", "January")))
-
-
-
-cancel_tidy <- cancel_tidy%>% 
-    mutate(
-    month2 = ifelse(month1 == "November", "Nov", 
-                        ifelse(month1 == "December", "Dec", "Jan")),
-    year_month = paste(year, month2, sep="-"),
-    year_month = fct_reorder(year_month, month)) %>% 
+    month = ifelse(month == 11, "November", 
+                        ifelse(month == 12, "December", "January")),
+    month1 = ifelse(month == "November", "Nov", 
+                        ifelse(month == "December", "Dec", "Jan")),
+    year_month = paste(year, month1, sep="-")) %>% 
     filter(!is.na(cancel_count))  %>% 
-    select(-month2, -date.y, -date.x, -date)
-
-cancel_tidy <- cancel_tidy%>%
-    mutate(
-    month2 = month)  
-
-cancel_tidy <- cancel_tidy %>%
-    mutate(month = month1) %>% 
-    select(-month1)
+    select(-month1, -date.y, -date.x, -date)
 
 write_csv(cancel_tidy, "tidied_data/cancel_tidy.csv")
  
