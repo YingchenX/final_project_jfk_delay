@@ -117,7 +117,7 @@ hour_air("Delta Air Lines")
 hour_air("Endeavor Air")
 ```
 
-##### JetBlue
+##### JetBlue {.active}
 ```{r, echo = FALSE}
 hour_air("JetBlue Airways")
 ```
@@ -170,7 +170,7 @@ month_air("Delta Air Lines")
 month_air("Endeavor Air")
 ```
 
-##### JetBlue
+##### JetBlue {.active}
 ```{r, echo = FALSE}
 month_air("JetBlue Airways")
 ```
@@ -252,7 +252,7 @@ hour_month_air("Delta Air Lines")
 hour_month_air("Endeavor Air")
 ```
 
-##### JetBlue
+##### JetBlue {.active}
 ```{r, echo = FALSE}
 hour_month_air("JetBlue Airways")
 ```

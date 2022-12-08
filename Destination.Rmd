@@ -132,7 +132,7 @@ delay_dest("Endeavor Air")
 cancel_dest("Endeavor Air")
 ```
 
-### JetBlue
+### JetBlue {.active}
 ```{r, echo = FALSE}
 delay_dest("JetBlue Airways")
 cancel_dest("JetBlue Airways")
