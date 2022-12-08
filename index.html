@@ -11,7 +11,7 @@
 
 
 
-<title>The Flight Delay Issue</title>
+<title>Flight Delay and Cancelation</title>
 
 <script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -327,8 +327,29 @@ div.tocify {
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li>
-  <a href="project_report.html">Project Report</a>
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Explore
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="xx.html">Overview</a>
+    </li>
+    <li>
+      <a href="https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/">Cancel &amp; Delay</a>
+    </li>
+    <li>
+      <a href="delay_interaction_c.html">Categorical Predictors</a>
+    </li>
+    <li>
+      <a href="delay_interaction_cont.html">Continuous Predictors</a>
+    </li>
+    <li>
+      <a href="Destination.html">Fun Facts</a>
+    </li>
+  </ul>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -338,30 +359,27 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="xx.html">Visualization</a>
-    </li>
-    <li>
-      <a href="xx.html">Mapping</a>
+      <a href="xx.html">Linear Regression</a>
     </li>
     <li>
       <a href="xx.html">Poission Regression</a>
     </li>
-    <li>
-      <a href="xx.html">Predictive Model</a>
-    </li>
   </ul>
+</li>
+<li>
+  <a href="project_report.html">Report</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="what_to_do_JFK.html">What to do</a>
+  <a href="what_to_do_JFK.html">What to Do</a>
 </li>
 <li>
-  <a href="About-us.html">About Us</a>
+  <a href="about_us.html">About Us</a>
 </li>
 <li>
-  <a href="mailto:&lt;jc5457@cumc.columbia.edu&gt;">
-    <span class="fa fa-envelope fa-lg"></span>
+  <a href="http://">
+    <span class="fa fa-brands fa-youtube fa-lg"></span>
      
   </a>
 </li>
@@ -380,7 +398,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">The Flight Delay Issue</h1>
+<h1 class="title toc-ignore">Flight Delay and Cancelation</h1>
 
 </div>
 
@@ -394,15 +412,15 @@ h1.title {
 </style>
 <p> </p>
 <div class="figure" style="text-align: center">
-<img src="pictures/Jialu_Cheng_a_colorful_the_united_states_flight_route_map.png" alt="(generated via [Midjourney](https://midjourney.com/))" width="100%" />
+<img src="pictures/Jialu_Cheng_a_colorful_the_united_states_flight_route_map.png" alt="(Generated via [Midjourney](https://midjourney.com/))" width="100%" />
 <p class="caption">
-(generated via <a href="https://midjourney.com/">Midjourney</a>)
+(Generated via <a href="https://midjourney.com/">Midjourney</a>)
 </p>
 </div>
 <p> </p>
 <div id="website-overview" class="section level2">
 <h2>Website Overview</h2>
-<p>(Insert the video here)</p>
+<p><br> (Insert the video here)</p>
 <p> </p>
 <p>Where are you heading to during the holiday season? As the holiday
 season approaches, the demand for departure flights from NYC is booming.
@@ -423,8 +441,8 @@ COVID information from NYC OpenData.</p>
 </div>
 <div id="key-questions-we-focused-on" class="section level2">
 <h2>Key Questions We Focused on</h2>
-<p><strong>1. What are the key trends of the flights in JFK during last
-holiday season?</strong></p>
+<p><br> <strong>1. What are the key trends of the flights in JFK during
+last holiday season?</strong></p>
 <ul>
 <li>Exploratory analysis including descriptive table or histogram
 showing criteria’s distribution by categories or by time, and

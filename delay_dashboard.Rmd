@@ -7,17 +7,6 @@ output:
 runtime: shiny
 ---
 
-<style>                     
-.navbar {
-  background-color:white;
-  border-color:white;
-}
-.navbar-brand {
-color:black!important;
-}
-</style> 
-
-
 ```{r setup, include = FALSE}
 library(flexdashboard)
 library(tidyverse)
@@ -41,10 +30,7 @@ delay =
 ```
 
 
-Column {.sidebar}
------------------------------------------------------------------------
-
-```{r}
+```{r, echo = FALSE}
 airlines = delay %>% distinct(airline_name) %>% pull()
 
 selectInput(
@@ -68,44 +54,54 @@ radioButtons(
 ```
 
 
-Column {data-width=600}
------------------------------------------------------------------------
 
 ### Number of Delays on Each Day 
 
-```{r}
-renderPlot({
+```{r, echo = FALSE}
+renderPlotly({
   delay %>%
-    distinct(airline_name, date, month, day, year, count) %>% 
     filter(
       airline_name == input[["airline_choice"]],
       month == input[["month_choice"]]
     ) %>% 
-    ggplot(aes(x = day, y = count)) +
-    geom_col()
+mutate(
+  text_label = str_c("Date: ", date, "\nCount: ", count)
+) %>% 
+  plot_ly(x = ~day, text = ~text_label, hoverinfo = "text",
+          type = "histogram", mode = "markers", alpha = .5) %>% 
+  layout(
+    xaxis = list(title = "Day"),
+    yaxis = list(title = "Count"))
 
 })
 ```
 
 
-Column {data-width=600}
------------------------------------------------------------------------
 
 ### Distribution of Delay Time on Each Day
 
-```{r}
-renderPlot({
+```{r, echo = FALSE}
+renderPlotly({
+
   delay %>% 
+
     filter(
       airline_name == input[["airline_choice"]],
       month == input[["month_choice"]]
     ) %>% 
-    ggplot(aes(x = as.factor(day), y = delay_minutes)) +
-    geom_boxplot()
+    mutate(
+
+      text_label = str_c("Date: ", date)
+    ) %>% 
+    plot_ly(x = ~day, y = ~delay_minutes, text = ~text_label, hoverinfo = "text",
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Day"),
+      yaxis = list(title = "Delay Time (Minutes)"))
 })
 ```
 
-```{r}
+```{r, eval = FALSE, echo = FALSE}
 mutate(
   text_label = str_c("Date: ", date, "\nCount: ", count)
 ) %>% 
@@ -117,6 +113,7 @@ mutate(
 
 
 mutate(
+>>>>>>> d69bf693a373ebe551a923063941bd0e1fbb93e4
   text_label = str_c("Date: ", date)
 ) %>% 
 plot_ly(x = ~day, y = ~delay_minutes, text = ~text_label, hoverinfo = "text",
@@ -124,5 +121,7 @@ plot_ly(x = ~day, y = ~delay_minutes, text = ~text_label, hoverinfo = "text",
   layout(
     xaxis = list(title = "Day"),
     yaxis = list(title = "Delay Time (Minutes)"))
+})
 ```
+
 

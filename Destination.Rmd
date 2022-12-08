@@ -1,0 +1,154 @@
+---
+title: "Could Destination Airport Affect Delay and Cancelation?"
+output: html_document
+
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
+
+library(tidyverse)
+library(plotly)
+
+
+delay = read_csv("tidied_data/delay.csv")
+cancel = read_csv("tidied_data/cancel.csv")
+
+```
+
+<br>
+
+## Overall Trend 
+
+<br>
+```{r, echo = FALSE}
+delay %>% 
+  group_by(destination_airport) %>% 
+  summarize(
+    count = n()) %>% 
+  mutate(
+    destination_airport = fct_reorder(destination_airport, count),
+    text_label = str_c("Airport: ", destination_airport, "\nCount: ", count)
+      ) %>% 
+  plot_ly(x = ~destination_airport, y = ~count, text = ~text_label, hoverinfo = "text",
+          color = "rgb(255, 65, 54)", type = "bar", alpha = .5) %>% 
+  layout(
+    xaxis = list(title = "Destination Airport"),
+    yaxis = list(title = "Count"),
+    title = "Distribution of Delay by Destination Airport")
+  
+cancel %>% 
+  group_by(destination_airport) %>% 
+  summarize(
+    count = n()) %>% 
+  mutate(
+    destination_airport = fct_reorder(destination_airport, count),
+    text_label = str_c("Airport: ", destination_airport, "\nCount: ", count)
+      ) %>% 
+  plot_ly(x = ~destination_airport, y = ~count, text = ~text_label, hoverinfo = "text",
+          color = "rgb(255, 65, 54)", type = "bar", alpha = .5) %>% 
+  layout(
+    xaxis = list(title = "Destination Airport"),
+    yaxis = list(title = "Count"),
+    title = "Distribution of Cancelation by Destination Airport")
+
+
+```
+
+
+
+```{r, include = FALSE}
+delay_dest = function(dest){
+  delay %>%
+    filter(
+      airline_name == dest
+    ) %>% 
+    group_by(destination_airport) %>% 
+    mutate(
+      count = n()
+      ) %>% 
+  ungroup() %>% 
+  mutate(
+    destination_airport = fct_reorder(destination_airport, count),
+    text_label = str_c("Airline: ", airline_name, "\nCount: ", count)
+      ) %>% 
+  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text", 
+          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
+  layout(
+    xaxis = list(title = "Destination Airport"),
+    yaxis = list(title = "Count"),
+    title = "Distribution of Delay ")
+}
+
+cancel_dest = function(dest){
+  cancel %>%
+    filter(
+      airline_name == dest
+    ) %>% 
+    group_by(destination_airport) %>% 
+    mutate(
+      count = n()
+      ) %>% 
+  ungroup() %>% 
+  mutate(
+    destination_airport = fct_reorder(destination_airport, count),
+    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
+      ) %>% 
+  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text",
+          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
+  layout(
+    xaxis = list(title = "Destination Airport"),
+    yaxis = list(title = "Count"),
+    title = "Distribution of Cancelation")
+}
+```
+
+<br>
+
+## Stratification by Airline {.tabset}
+### Alaska
+```{r, echo = FALSE}
+delay_dest("Alaska Airlines")
+cancel_dest("Alaska Airlines")
+```
+
+
+### American
+```{r, echo = FALSE}
+delay_dest("American Airlines")
+cancel_dest("American Airlines")
+```
+
+### Delta
+```{r, echo = FALSE}
+delay_dest("Delta Air Lines")
+cancel_dest("Delta Air Lines")
+```
+
+### Endeavor
+```{r, echo = FALSE}
+delay_dest("Endeavor Air")
+cancel_dest("Endeavor Air")
+```
+
+### JetBlue {.active}
+```{r, echo = FALSE}
+delay_dest("JetBlue Airways")
+cancel_dest("JetBlue Airways")
+```
+
+### Republic
+```{r, echo = FALSE}
+delay_dest("Republic Airways")
+cancel_dest("Republic Airways")
+```
+
+### United
+```{r, echo = FALSE}
+delay_dest("United Air Lines")
+cancel_dest("United Air Lines")
+```
+
+
+

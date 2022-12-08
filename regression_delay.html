@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Regression_delay</title>
+
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Explore
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/">Delay &amp; Cancel</a>
+    </li>
+    <li>
+      <a href="Destination.html">Destination</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="xx.html">Visualization</a>
+    </li>
+    <li>
+      <a href="xx.html">Mapping</a>
+    </li>
+    <li>
+      <a href="xx.html">Poission Regression</a>
+    </li>
+    <li>
+      <a href="xx.html">Predictive Model</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="project_report.html">Project Report</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="what_to_do_JFK.html">What to do</a>
+</li>
+<li>
+  <a href="about_us.html">About Us</a>
+</li>
+<li>
+  <a href="https://github.com/YingchenX/final_project_nycairport">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Regression_delay</h1>
+
+</div>
+
+
+<div id="step-1-data-wrangling" class="section level1">
+<h1>Step 1: Data Wrangling</h1>
+<div id="data-import" class="section level2">
+<h2>Data import</h2>
+<pre class="r"><code>delay = read.csv(&quot;./tidied_data/delay.csv&quot;) %&gt;% 
+  janitor::clean_names() %&gt;% filter(delay_minutes &gt; 0)
+
+h_weather = read.csv(&quot;./tidied_data/hourly_weather.csv&quot;) %&gt;% 
+  janitor::clean_names() </code></pre>
+</div>
+<div id="clean-dataset-delay" class="section level2">
+<h2>Clean dataset ‘delay’</h2>
+<p>Check how many airlines</p>
+<pre class="r"><code>unique(delay$airline_name)</code></pre>
+<pre><code>## [1] &quot;Endeavor Air&quot;      &quot;American Airlines&quot; &quot;Alaska Airlines&quot;  
+## [4] &quot;JetBlue Airways&quot;   &quot;Delta Air Lines&quot;   &quot;Republic Airways&quot; 
+## [7] &quot;United Air Lines&quot;</code></pre>
+<p><em>7</em> -&gt; ok, keep</p>
+<p>Check how many destinations</p>
+<pre class="r"><code>unique(delay$destination_airport)</code></pre>
+<pre><code>##  [1] &quot;RDU&quot; &quot;DTW&quot; &quot;MSP&quot; &quot;SAV&quot; &quot;LAX&quot; &quot;MIA&quot; &quot;ORD&quot; &quot;DCA&quot; &quot;PHX&quot; &quot;FLL&quot; &quot;DFW&quot; &quot;SFO&quot;
+## [13] &quot;AUS&quot; &quot;SEA&quot; &quot;SAN&quot; &quot;PDX&quot; &quot;ABQ&quot; &quot;TPA&quot; &quot;SRQ&quot; &quot;ROC&quot; &quot;MCO&quot; &quot;SJU&quot; &quot;ONT&quot; &quot;PBI&quot;
+## [25] &quot;RSW&quot; &quot;ORH&quot; &quot;BUF&quot; &quot;LAS&quot; &quot;BOS&quot; &quot;BQN&quot; &quot;ATL&quot; &quot;CHS&quot; &quot;JAX&quot; &quot;BTV&quot; &quot;PSP&quot; &quot;IAH&quot;
+## [37] &quot;SLC&quot; &quot;CLT&quot; &quot;STT&quot; &quot;DEN&quot; &quot;BUR&quot; &quot;MSY&quot; &quot;BNA&quot; &quot;SYR&quot; &quot;BWI&quot; &quot;IND&quot; &quot;ORF&quot; &quot;PIT&quot;
+## [49] &quot;RIC&quot; &quot;PHL&quot; &quot;SJC&quot; &quot;SAT&quot; &quot;CLE&quot; &quot;IAD&quot; &quot;BGR&quot; &quot;SMF&quot; &quot;PWM&quot; &quot;CVG&quot; &quot;EYW&quot; &quot;CMH&quot;
+## [61] &quot;SNA&quot; &quot;RNO&quot; &quot;EGE&quot; &quot;JAC&quot; &quot;PSE&quot; &quot;BZN&quot;</code></pre>
+<p><em>66</em> -&gt; too many, remove</p>
+<p>Keep variables of interest and <code>date</code> for merge purpose
+(which will be removed later)</p>
+<pre class="r"><code>delay = delay %&gt;% 
+  mutate(
+    airline = airline_name,
+    hour = scheduled_hour,
+    delay = delay_minutes,
+    carrierd = delay_carrier_minutes,
+    extrmwd = delay_weather_minutes,
+    nasd = delay_national_aviation_system_minutes,
+    securityd = delay_security_minutes,
+    latarrd = delay_late_aircraft_arrival_minutes) %&gt;% 
+  mutate(hour = as.numeric(hour)) %&gt;% 
+  mutate(month = month.abb[month]) %&gt;% 
+  select(airline, date, month, hour, delay, carrierd, extrmwd, nasd, securityd, latarrd)</code></pre>
+<p>check ‘NA’</p>
+<pre class="r"><code>sum(is.na(delay))</code></pre>
+<p><em>0</em> -&gt; good</p>
+</div>
+<div id="clean-dataset-h_weather" class="section level2">
+<h2>Clean dataset ‘h_weather’</h2>
+<p>About the measure of temperature: Since the dry bulb temperature is
+the ambient air temperature measured by regular thermometers, that is,
+the temperature often mentioned in our general weather forecast. Thus,
+we decide to use the variable <code>hourly_dry_bulb_temperature</code>
+to represent temperature.</p>
+<pre class="r"><code>h_weather = h_weather %&gt;% 
+  mutate(
+    temperature = hourly_dry_bulb_temperature,
+    humidity = hourly_relative_humidity,
+    visibility = hourly_visibility,
+    wind_s = hourly_wind_speed,
+    hour = as.numeric(hour)) %&gt;%
+  mutate(month = month.abb[month]) %&gt;% 
+  select(date, month, hour, temperature, humidity, visibility, wind_s)</code></pre>
+<p>check ‘NA’</p>
+<pre class="r"><code>sum(is.na(h_weather))</code></pre>
+<p><em>0</em> -&gt; good</p>
+</div>
+<div id="merge-datasets-delay-and-hourly_weather"
+class="section level2">
+<h2>Merge datasets ‘delay’ and ‘hourly_weather’</h2>
+<pre class="r"><code>raw_df = merge(x = delay, y = h_weather, by = c(&quot;date&quot;, &quot;month&quot;, &quot;hour&quot;),
+               all.x = TRUE)</code></pre>
+<p>check ‘NA’</p>
+<pre class="r"><code>sum(is.na(raw_df))</code></pre>
+<p><em>0</em> -&gt; good</p>
+<p>To this step, we have our raw dataset for doing association analysis.
+Since the outcome variable <code>delay</code> is a continuous variable,
+we would do linear regression. However, there might be too many
+variables so far (ignoring <code>date</code> we still got 12 potential
+predictors), so next step will be fitting the model.</p>
+<p>By intuition, I would set:</p>
+<p><code>airline</code> -&gt; categorical <code>month</code> -&gt;
+categorical <code>hour</code> -&gt; categorical (need further
+categorization) and for the rest -&gt; continuous</p>
+</div>
+<div id="inspections-into-the-dataset" class="section level2">
+<h2>Inspections into the dataset</h2>
+<p>Let’s first check how each variable is roughly distributed.</p>
+<div id="dependent-variable-outcome-continuous" class="section level3">
+<h3>Dependent variable / outcome (continuous)</h3>
+<p>See if our dependent variable <code>delay</code> follows a normal
+distribution.</p>
+<pre class="r"><code>hist(raw_df$delay)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-10-1.png" width="90%" /></p>
+<p>No, our dependent variable <code>delay</code> is not normally
+distributed.</p>
+<p>-&gt; It is okay because for linear regression, dependent variable
+does not have to be normally distributed. On the other hand, the model’s
+residuals, do have to be normally distributed.</p>
+</div>
+<div id="independent-variables-predictors-categorical"
+class="section level3">
+<h3>Independent variables / predictors (categorical)</h3>
+<pre class="r"><code>cat_sum = raw_df %&gt;% 
+  select(airline, month, hour) %&gt;% 
+  mutate(
+    airline = as.factor(airline),
+    month = as.factor(month),
+    hour = as.factor(hour)
+    ) %&gt;% 
+  summary(maxsum = 24)
+
+cat_sum</code></pre>
+<pre><code>##               airline     month      hour    
+##  Alaska Airlines  : 227   Dec:3730   5 : 51  
+##  American Airlines:1361   Jan:3861   6 :312  
+##  Delta Air Lines  :2058   Nov:3156   7 :496  
+##  Endeavor Air     : 568              8 :896  
+##  JetBlue Airways  :5489              9 :656  
+##  Republic Airways : 961              10:346  
+##  United Air Lines :  83              11:436  
+##                                      12:361  
+##                                      13:642  
+##                                      14:577  
+##                                      15:858  
+##                                      16:611  
+##                                      17:724  
+##                                      18:824  
+##                                      19:965  
+##                                      20:942  
+##                                      21:650  
+##                                      22:349  
+##                                      23: 51</code></pre>
+</div>
+<div id="independent-variables-predictors-continuous"
+class="section level3">
+<h3>Independent variables / predictors (continuous)</h3>
+<pre class="r"><code>con_sum_df = raw_df %&gt;% 
+  select(-date, -airline, -month, -hour)
+
+con_sum = skim(con_sum_df) %&gt;%
+  dplyr::select(-n_missing, -complete_rate) %&gt;% 
+  mutate(
+    mean = numeric.mean,
+    sd = numeric.sd,
+    histogram = numeric.hist,
+    var = skim_variable,
+    min = numeric.p0,
+    max = numeric.p100,
+    median = numeric.p50,
+    q1 = numeric.p25,
+    q3 = numeric.p75
+  ) %&gt;% 
+  dplyr::select(-numeric.mean, -numeric.sd, -numeric.hist, -skim_variable, -numeric.p0, -numeric.p100, -numeric.p50, -numeric.p25, -numeric.p75) %&gt;% 
+  relocate(var, mean, min, q1, median, q3, max, sd, histogram)
+
+con_sum</code></pre>
+<pre><code>## # A tibble: 10 × 10
+##    var           mean   min    q1 median    q3   max    sd histogram skim_type
+##    &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;    
+##  1 delay       40.8       1     7     18    48  1252 66.8  ▇▁▁▁▁     numeric  
+##  2 carrierd    20.2       0     0      0    21  1225 51.2  ▇▁▁▁▁     numeric  
+##  3 extrmwd      1.70      0     0      0     0   850 20.2  ▇▁▁▁▁     numeric  
+##  4 nasd         4.72      0     0      0     0   731 16.4  ▇▁▁▁▁     numeric  
+##  5 securityd    0.124     0     0      0     0   137  2.46 ▇▁▁▁▁     numeric  
+##  6 latarrd      8.50      0     0      0     0   714 30.8  ▇▁▁▁▁     numeric  
+##  7 temperature 40.5      10    34     41    48    68 10.7  ▁▃▇▆▁     numeric  
+##  8 humidity    61.1      16    47     57    76   100 18.9  ▁▇▇▅▅     numeric  
+##  9 visibility   9.27      0    10     10    10    10  2.18 ▁▁▁▁▇     numeric  
+## 10 wind_s      12.0       0     7     11    16    32  6.50 ▅▇▇▃▁     numeric</code></pre>
+<p>Next, as mentioned above, we want to further categorize variable
+<code>hour</code>.</p>
+<p><em>Motivation:</em></p>
+<p>To increase the power of our model by reducing the number of
+parameters involved and to be more efficient and concise.</p>
+<p><em>Rationale for the categorization of <code>hour</code>:</em></p>
+<p>Based on the previous inspection of variable <code>hour</code>, we
+could see that: except for 5, 8, 10, 22, and 23, the frequencies of the
+other classes are roughly even (between 1000-2000). Take this into
+consideration, our rationale for classification will be a combination of
+convention and the desire to achieve a uniform distribution.</p>
+<p>Thus, we would categorize <code>hour</code> into the following 4
+categories:</p>
+<p><em>morning</em>: 5-8</p>
+<p><em>noon</em>: 9-13</p>
+<p><em>afternoon</em>: 14-17</p>
+<p><em>night</em>:18-23</p>
+<p>Now, we can start categorize <code>hour</code></p>
+<pre class="r"><code>raw_df = raw_df %&gt;% 
+  mutate(hour_c = cut(hour, breaks = c(4, 8, 13, 17, 24),
+                      labels = c(&quot;morning&quot;,&quot;noon&quot;,&quot;afternoon&quot;,&quot;night&quot;))) %&gt;% 
+  select(-hour)</code></pre>
+<p>As usual, check if it was done properly</p>
+<pre class="r"><code>summary(as.factor(raw_df$hour_c))</code></pre>
+<pre><code>##   morning      noon afternoon     night 
+##      1755      2441      2770      3781</code></pre>
+<pre class="r"><code>sum(is.na(raw_df))</code></pre>
+<pre><code>## [1] 0</code></pre>
+<p><em>0</em> ‘NA’ and the distribution looks good.</p>
+<p>Now, since we are not yet able to decide the variable type of the
+rest of the predictors, we need further analysis.</p>
+</div>
+</div>
+</div>
+<div id="step-2-check-assumptions-for-regression"
+class="section level1">
+<h1>Step 2: Check Assumptions for Regression</h1>
+<div id="assumption-1-linearity" class="section level2">
+<h2>Assumption 1: Linearity</h2>
+<p>Do simple linear regression for each independent variable, along with
+scatterplots to assess the linearity</p>
+<div id="continuous-vars" class="section level3">
+<h3>Continuous vars</h3>
+<ul>
+<li>temperature</li>
+</ul>
+<pre class="r"><code>lrTemp = lm(delay~temperature, data = raw_df)
+summary(lrTemp) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1    0.0112        0.0111  66.5      121. 4.35e-28     1       10745 10747</code></pre>
+<pre class="r"><code>summary(lrTemp) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value)</code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   term        estimate   p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   67.6   4.74e-154
+## 2 temperature   -0.662 4.35e- 28</code></pre>
+<pre class="r"><code>plot(delay~temperature, data = raw_df)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-15-1.png" width="90%" /></p>
+<ul>
+<li>humidity</li>
+</ul>
+<pre class="r"><code>lrHum = lm(delay~humidity, data = raw_df)
+summary(lrHum) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic   p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1   0.00163       0.00154  66.8      17.5 0.0000283     1       10745 10747</code></pre>
+<pre class="r"><code>summary(lrHum) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value)</code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   term        estimate  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)   32.1   1.44e-48
+## 2 humidity       0.143 2.83e- 5</code></pre>
+<pre class="r"><code>plot(delay~humidity, data = raw_df)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-16-1.png" width="90%" /></p>
+<ul>
+<li>visibility</li>
+</ul>
+<pre class="r"><code>lrVis = lm(delay~visibility, data = raw_df)
+summary(lrVis) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1   0.00739       0.00729  66.6      80.0 4.45e-19     1       10745 10747</code></pre>
+<pre class="r"><code>summary(lrVis) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value)</code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   term        estimate   p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)    65.3  1.75e-116
+## 2 visibility     -2.64 4.45e- 19</code></pre>
+<pre class="r"><code>plot(delay~visibility, data = raw_df)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-17-1.png" width="90%" /></p>
+<ul>
+<li>wind speed</li>
+</ul>
+<pre class="r"><code>lrWin = lm(delay~wind_s, data = raw_df)
+summary(lrWin) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1  0.000961      0.000868  66.8      10.3 0.00131     1       10745 10747</code></pre>
+<pre class="r"><code>summary(lrWin) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value)</code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   term        estimate   p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   37.0   1.95e-159
+## 2 wind_s         0.319 1.31e-  3</code></pre>
+<pre class="r"><code>plot(delay~wind_s, data = raw_df)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-18-1.png" width="90%" /></p>
+<ul>
+<li>carrier delay</li>
+</ul>
+<pre class="r"><code>lrCar = lm(delay~carrierd, data = raw_df)
+summary(lrCar) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1     0.633         0.633  40.5    18524.       0     1       10745 10747</code></pre>
+<pre class="r"><code>summary(lrCar) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value)</code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   term        estimate p.value
+##   &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)    19.8        0
+## 2 carrierd        1.04       0</code></pre>
+<pre class="r"><code>plot(delay~carrierd, data = raw_df)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-19-1.png" width="90%" /></p>
+<ul>
+<li>extreme weather delay</li>
+</ul>
+<pre class="r"><code>lrExw = lm(delay~extrmwd, data = raw_df)
+summary(lrExw) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic   p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1    0.0829        0.0828  64.0      971. 3.43e-204     1       10745 10747</code></pre>
+<pre class="r"><code>summary(lrExw) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value)</code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   term        estimate   p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   39.2   0        
+## 2 extrmwd        0.951 3.43e-204</code></pre>
+<pre class="r"><code>plot(delay~extrmwd, data = raw_df)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-20-1.png" width="90%" /></p>
+<ul>
+<li>NAS delay</li>
+</ul>
+<pre class="r"><code>lrNas = lm(delay~nasd, data = raw_df)
+summary(lrNas) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1    0.0196        0.0195  66.2      215. 3.15e-48     1       10745 10747</code></pre>
+<pre class="r"><code>summary(lrNas) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value)</code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   term        estimate  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)   38.1   0       
+## 2 nasd           0.572 3.15e-48</code></pre>
+<pre class="r"><code>plot(delay~nasd, data = raw_df)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-21-1.png" width="90%" /></p>
+<ul>
+<li>security delay</li>
+</ul>
+<pre class="r"><code>lrSec = lm(delay~securityd, data = raw_df)
+summary(lrSec) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1  0.000878      0.000785  66.8      9.44 0.00213     1       10745 10747</code></pre>
+<pre class="r"><code>summary(lrSec) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value) </code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   term        estimate p.value
+##   &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)   40.7   0      
+## 2 securityd      0.805 0.00213</code></pre>
+<pre class="r"><code>plot(delay~securityd, data = raw_df)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-22-1.png" width="90%" /></p>
+<ul>
+<li>late arrival delay</li>
+</ul>
+<pre class="r"><code>lrLat = lm(delay~latarrd, data = raw_df)
+summary(lrLat) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1     0.281         0.281  56.7     4193.       0     1       10745 10747</code></pre>
+<pre class="r"><code>summary(lrLat) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value)</code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   term        estimate p.value
+##   &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)    31.0        0
+## 2 latarrd         1.15       0</code></pre>
+<pre class="r"><code>plot(delay~latarrd, data = raw_df)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-23-1.png" width="90%" /></p>
+</div>
+<div id="categorical-vars" class="section level3">
+<h3>Categorical vars</h3>
+<p>First, tell R that they are categorical variables</p>
+<pre class="r"><code>raw_df = 
+  raw_df %&gt;% 
+  mutate(
+    month = fct_infreq(as.factor(month)),
+    hour_c = fct_infreq(hour_c),
+    airline = fct_infreq(airline)
+    )</code></pre>
+<ul>
+<li>month</li>
+</ul>
+<pre class="r"><code>lrMon = lm(delay~month, data = raw_df)
+summary(lrMon) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1    0.0196        0.0195  66.2      108. 5.32e-47     2       10744 10747</code></pre>
+<pre class="r"><code>summary(lrMon) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value)</code></pre>
+<pre><code>## # A tibble: 3 × 3
+##   term        estimate  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)     53.0 0       
+## 2 monthDec       -16.4 4.89e-27
+## 3 monthNov       -22.0 3.33e-43</code></pre>
+<ul>
+<li>hour</li>
+</ul>
+<pre class="r"><code>lrHour = lm(delay~hour_c, data = raw_df)
+summary(lrHour) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1   0.00189       0.00161  66.8      6.78 0.000146     3       10743 10747</code></pre>
+<pre class="r"><code>summary(lrHour) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value)</code></pre>
+<pre><code>## # A tibble: 4 × 3
+##   term            estimate   p.value
+##   &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)        44.1  0        
+## 2 hour_cafternoon    -3.98 0.0173   
+## 3 hour_cnoon         -4.00 0.0212   
+## 4 hour_cmorning      -8.48 0.0000112</code></pre>
+<ul>
+<li>airline</li>
+</ul>
+<pre class="r"><code>lrAL = lm(delay~airline, data = raw_df)
+summary(lrAL) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic  p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1    0.0107        0.0102  66.5      19.4 1.32e-22     6       10740 10747</code></pre>
+<pre class="r"><code>summary(lrAL) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value)</code></pre>
+<pre><code>## # A tibble: 7 × 3
+##   term                     estimate  p.value
+##   &lt;chr&gt;                       &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)                  46.9 0       
+## 2 airlineDelta Air Lines      -16.3 3.30e-21
+## 3 airlineAmerican Airlines    -10.5 1.74e- 7
+## 4 airlineRepublic Airways     -10.1 1.35e- 5
+## 5 airlineEndeavor Air         -10.6 3.04e- 4
+## 6 airlineAlaska Airlines      -13.3 3.07e- 3
+## 7 airlineUnited Air Lines      13.2 7.22e- 2</code></pre>
+<p>The above results were not very straightforward, but give us a sense
+that we could include <code>carrierd</code> and <code>latarrd</code> in
+to the final model, according to the R-squared values.</p>
+</div>
+</div>
+<div id="assumption-2-independence-of-observations"
+class="section level2">
+<h2>Assumption 2: Independence of observations</h2>
+<p>Use correlation to assess the relationship between all independent
+variables and make sure they aren’t too highly correlated.</p>
+<p>First, it’s time to remove variable <code>date</code> as it is not
+one of the predictors</p>
+<pre class="r"><code>raw_df = raw_df %&gt;% 
+  select(-date)</code></pre>
+<p>Correlation matrix</p>
+<p><em>NOTE:</em> This approach is not meaningful for our nominal
+predictors <code>month</code>, <code>airline</code>, or
+<code>hour_c</code>. you can ignore them.</p>
+<pre class="r"><code>cor = raw_df %&gt;% 
+  select(-delay) %&gt;% 
+  mutate(
+    airline = as.numeric(airline),
+    month = as.numeric(month),
+    hour_c = as.numeric(hour_c)
+    ) %&gt;% 
+  cor(method = c(&quot;pearson&quot;, &quot;kendall&quot;, &quot;spearman&quot;))
+
+round(cor, 2)</code></pre>
+<pre><code>##             month airline carrierd extrmwd  nasd securityd latarrd temperature
+## month        1.00    0.02    -0.08   -0.07 -0.04      0.01   -0.09        0.61
+## airline      0.02    1.00    -0.09    0.03  0.07     -0.02    0.03        0.04
+## carrierd    -0.08   -0.09     1.00   -0.03  0.01     -0.01    0.08       -0.06
+## extrmwd     -0.07    0.03    -0.03    1.00  0.07      0.00    0.02       -0.06
+## nasd        -0.04    0.07     0.01    0.07  1.00      0.00    0.01        0.01
+## securityd    0.01   -0.02    -0.01    0.00  0.00      1.00    0.00        0.01
+## latarrd     -0.09    0.03     0.08    0.02  0.01      0.00    1.00       -0.07
+## temperature  0.61    0.04    -0.06   -0.06  0.01      0.01   -0.07        1.00
+## humidity    -0.03    0.04     0.04    0.03  0.14      0.01    0.02        0.27
+## visibility   0.14   -0.02    -0.07   -0.08 -0.16      0.00   -0.05       -0.14
+## wind_s      -0.06    0.01     0.00    0.02  0.02     -0.01    0.06       -0.04
+## hour_c      -0.01    0.06     0.00   -0.01  0.03     -0.01   -0.06       -0.03
+##             humidity visibility wind_s hour_c
+## month          -0.03       0.14  -0.06  -0.01
+## airline         0.04      -0.02   0.01   0.06
+## carrierd        0.04      -0.07   0.00   0.00
+## extrmwd         0.03      -0.08   0.02  -0.01
+## nasd            0.14      -0.16   0.02   0.03
+## securityd       0.01       0.00  -0.01  -0.01
+## latarrd         0.02      -0.05   0.06  -0.06
+## temperature     0.27      -0.14  -0.04  -0.03
+## humidity        1.00      -0.57  -0.15   0.02
+## visibility     -0.57       1.00   0.10  -0.07
+## wind_s         -0.15       0.10   1.00   0.02
+## hour_c          0.02      -0.07   0.02   1.00</code></pre>
+<pre class="r"><code>color = colorRampPalette(c(&quot;Blue&quot;, &quot;white&quot;, &quot;Red&quot;))(20)
+heatmap(x = cor, col = color, symm = TRUE)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-29-1.png" width="90%" /></p>
+<p>Looks good, pretty independent.</p>
+<p>*Could considering removing 1 of (<code>visibility</code> and
+<code>humidity</code>) as they have a moderate correlation coefficient
+(-0.54)</p>
+</div>
+<div id="assumption-3-normality" class="section level2">
+<h2>Assumption 3: Normality</h2>
+<p>Check this after we make the model.</p>
+</div>
+<div id="assumption-4-homoscedasticity" class="section level2">
+<h2>Assumption 4: Homoscedasticity</h2>
+<p>Check this after we make the model.</p>
+</div>
+</div>
+<div id="step-3-building-linear-regression-model"
+class="section level1">
+<h1>Step 3: Building linear regression model</h1>
+<div id="perform-linear-regression-with-all-predictors"
+class="section level2">
+<h2>Perform linear regression with all predictors</h2>
+<pre class="r"><code>lm_all = lm(delay ~ ., data = raw_df)
+summary(lm_all)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = delay ~ ., data = raw_df)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -78.48  -7.66  -1.55   6.63 421.82 
+## 
+## Coefficients:
+##                           Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)               7.362272   1.273973   5.779 7.72e-09 ***
+## monthDec                 -2.319200   0.396448  -5.850 5.06e-09 ***
+## monthNov                 -2.071826   0.455361  -4.550 5.43e-06 ***
+## airlineDelta Air Lines    0.455295   0.362431   1.256  0.20906    
+## airlineAmerican Airlines  0.080387   0.423943   0.190  0.84961    
+## airlineRepublic Airways  -6.008516   0.490342 -12.254  &lt; 2e-16 ***
+## airlineEndeavor Air      -2.708775   0.615832  -4.399 1.10e-05 ***
+## airlineAlaska Airlines   -3.658351   0.939559  -3.894 9.93e-05 ***
+## airlineUnited Air Lines   3.412906   1.533660   2.225  0.02608 *  
+## carrierd                  0.999808   0.002643 378.315  &lt; 2e-16 ***
+## extrmwd                   0.983812   0.006653 147.878  &lt; 2e-16 ***
+## nasd                      0.451126   0.008329  54.162  &lt; 2e-16 ***
+## securityd                 0.951665   0.054210  17.555  &lt; 2e-16 ***
+## latarrd                   1.007422   0.004408 228.533  &lt; 2e-16 ***
+## temperature               0.029591   0.018509   1.599  0.10992    
+## humidity                 -0.048752   0.009360  -5.209 1.94e-07 ***
+## visibility                0.674235   0.077329   8.719  &lt; 2e-16 ***
+## wind_s                   -0.061330   0.021109  -2.905  0.00368 ** 
+## hour_cafternoon          -1.043555   0.355508  -2.935  0.00334 ** 
+## hour_cnoon               -1.508072   0.372626  -4.047 5.22e-05 ***
+## hour_cmorning            -1.943501   0.409750  -4.743 2.13e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 13.82 on 10726 degrees of freedom
+## Multiple R-squared:  0.9573, Adjusted R-squared:  0.9573 
+## F-statistic: 1.204e+04 on 20 and 10726 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p><em>Note:</em></p>
+<p>R-squared = 0.9467 -&gt; good</p>
+<p>F-statistic: F-value = 2.639e+04 -&gt; large, variance between
+&gt;&gt; variance within, good<br />
+p-value &lt; 2.2e-16 -&gt; small, significant, good</p>
+<p><em>The F-test of overall significance indicates whether this current
+linear regression model provides a better fit to the data than a model
+that contains no independent variables.</em></p>
+<p><code>humidity</code> -&gt; p-value = 0.497590 (not significant)
+under this model -&gt; given what’s mentioned above, remove</p>
+<p><code>wind_s</code> -&gt; p-value = 0.618192 (not significant) under
+this model -&gt; remove</p>
+<p>Fit lm without <code>wind_s</code> or <code>humidity</code></p>
+<pre class="r"><code>raw_df_10 = raw_df %&gt;% 
+  select(-humidity, -wind_s)
+
+lm_10 = lm(delay ~ ., data = raw_df_10)
+summary(lm_10)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = delay ~ ., data = raw_df_10)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -77.42  -7.63  -1.58   6.61 422.98 
+## 
+## Coefficients:
+##                           Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)               2.892919   0.989343   2.924 0.003462 ** 
+## monthDec                 -1.972147   0.390423  -5.051 4.46e-07 ***
+## monthNov                 -1.605897   0.448512  -3.580 0.000344 ***
+## airlineDelta Air Lines    0.470515   0.362932   1.296 0.194855    
+## airlineAmerican Airlines  0.049241   0.424303   0.116 0.907615    
+## airlineRepublic Airways  -6.073889   0.490836 -12.375  &lt; 2e-16 ***
+## airlineEndeavor Air      -2.767276   0.616555  -4.488 7.25e-06 ***
+## airlineAlaska Airlines   -3.703884   0.940844  -3.937 8.31e-05 ***
+## airlineUnited Air Lines   3.455044   1.535783   2.250 0.024488 *  
+## carrierd                  0.999673   0.002646 377.757  &lt; 2e-16 ***
+## extrmwd                   0.983465   0.006661 147.650  &lt; 2e-16 ***
+## nasd                      0.447300   0.008314  53.804  &lt; 2e-16 ***
+## securityd                 0.952767   0.054281  17.553  &lt; 2e-16 ***
+## latarrd                   1.006363   0.004408 228.313  &lt; 2e-16 ***
+## temperature              -0.002240   0.017625  -0.127 0.898892    
+## visibility                0.858347   0.066606  12.887  &lt; 2e-16 ***
+## hour_cafternoon          -0.776806   0.351867  -2.208 0.027288 *  
+## hour_cnoon               -1.133680   0.364407  -3.111 0.001869 ** 
+## hour_cmorning            -2.144557   0.408761  -5.246 1.58e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 13.84 on 10728 degrees of freedom
+## Multiple R-squared:  0.9572, Adjusted R-squared:  0.9571 
+## F-statistic: 1.334e+04 on 18 and 10728 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p><em>Note:</em></p>
+<p>R-squared = 0.9467 -&gt; same, good</p>
+<p>F-statistic: F-value = 2.932e+04 -&gt; close, large, variance between
+&gt;&gt; variance within, good p-value &lt; 2.2e-16 -&gt; same, small,
+significant, good</p>
+</div>
+<div id="fit-the-best-subset-linear-model" class="section level2">
+<h2>Fit the best subset linear model</h2>
+<p>The function regsubsets() will produce the best model with 1
+predictor, the best model with 2 predictors, 3 predictors, … up to 14
+predictors(nvmax=14 option).</p>
+<pre class="r"><code>library(leaps)
+
+bestsub.lm &lt;- regsubsets(delay ~ ., 
+                            data = raw_df_10, nvmax = 18)
+
+sum.bestsub.lm = summary(bestsub.lm)</code></pre>
+<p>We have 18 predictor parameters, and the sample size 29725 will be
+sufficient for it (“One in ten” rule)</p>
+<p>Check some measures to select the best subset model</p>
+<p><em>Note:</em></p>
+<p>A small value of Cp means that the model is relatively precise.</p>
+<p>A larger R-squared value means that the independent variables explain
+a larger percentage of the variation in the independent variable.</p>
+<p>A lower BIC implies either fewer explanatory variables, better fit,
+or both.</p>
+<pre class="r"><code>cbind( 
+    Cp = summary(bestsub.lm)$cp,
+    r2 = summary(bestsub.lm)$rsq,
+    BIC = summary(bestsub.lm)$bic
+)</code></pre>
+<pre><code>##                Cp        r2       BIC
+##  [1,] 81314.30483 0.6328931 -10751.03
+##  [2,] 26384.86466 0.8519492 -20501.07
+##  [3,]  3407.14997 0.9435879 -30861.26
+##  [4,]   769.68666 0.9541135 -33071.38
+##  [5,]   457.37074 0.9553670 -33359.75
+##  [6,]   266.25418 0.9561371 -33537.52
+##  [7,]   109.50813 0.9567701 -33684.47
+##  [8,]    92.85219 0.9568445 -33693.70
+##  [9,]    75.06306 0.9569234 -33704.09
+## [10,]    56.56372 0.9570052 -33715.22
+## [11,]    40.36667 0.9570778 -33724.09
+## [12,]    25.29379 0.9571458 -33731.87
+## [13,]    20.35882 0.9571735 -33729.52
+## [14,]    17.45621 0.9571930 -33725.15
+## [15,]    14.72969 0.9572119 -33720.60
+## [16,]    15.02914 0.9572187 -33713.02
+## [17,]    17.01347 0.9572187 -33703.75
+## [18,]    19.00000 0.9572188 -33694.49</code></pre>
+<pre class="r"><code>which.max(sum.bestsub.lm$rsq)</code></pre>
+<pre><code>## [1] 18</code></pre>
+<pre class="r"><code>sum.bestsub.lm$which[18,]</code></pre>
+<pre><code>##              (Intercept)                 monthDec                 monthNov 
+##                     TRUE                     TRUE                     TRUE 
+##   airlineDelta Air Lines airlineAmerican Airlines  airlineRepublic Airways 
+##                     TRUE                     TRUE                     TRUE 
+##      airlineEndeavor Air   airlineAlaska Airlines  airlineUnited Air Lines 
+##                     TRUE                     TRUE                     TRUE 
+##                 carrierd                  extrmwd                     nasd 
+##                     TRUE                     TRUE                     TRUE 
+##                securityd                  latarrd              temperature 
+##                     TRUE                     TRUE                     TRUE 
+##               visibility          hour_cafternoon               hour_cnoon 
+##                     TRUE                     TRUE                     TRUE 
+##            hour_cmorning 
+##                     TRUE</code></pre>
+<p>All true -&gt; keep all</p>
+</div>
+<div id="fit-the-regression-model" class="section level2">
+<h2>Fit the regression model</h2>
+<pre class="r"><code>Best_lm = lm(delay ~  .,
+              data = raw_df_10)
+summary(Best_lm) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1     0.957         0.957  13.8    13335.       0    18       10728 10747</code></pre>
+<pre class="r"><code>summary(Best_lm) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value)</code></pre>
+<pre><code>## # A tibble: 19 × 3
+##    term                     estimate  p.value
+##    &lt;chr&gt;                       &lt;dbl&gt;    &lt;dbl&gt;
+##  1 (Intercept)               2.89    3.46e- 3
+##  2 monthDec                 -1.97    4.46e- 7
+##  3 monthNov                 -1.61    3.44e- 4
+##  4 airlineDelta Air Lines    0.471   1.95e- 1
+##  5 airlineAmerican Airlines  0.0492  9.08e- 1
+##  6 airlineRepublic Airways  -6.07    6.21e-35
+##  7 airlineEndeavor Air      -2.77    7.25e- 6
+##  8 airlineAlaska Airlines   -3.70    8.31e- 5
+##  9 airlineUnited Air Lines   3.46    2.45e- 2
+## 10 carrierd                  1.00    0       
+## 11 extrmwd                   0.983   0       
+## 12 nasd                      0.447   0       
+## 13 securityd                 0.953   5.05e-68
+## 14 latarrd                   1.01    0       
+## 15 temperature              -0.00224 8.99e- 1
+## 16 visibility                0.858   1.02e-37
+## 17 hour_cafternoon          -0.777   2.73e- 2
+## 18 hour_cnoon               -1.13    1.87e- 3
+## 19 hour_cmorning            -2.14    1.58e- 7</code></pre>
+</div>
+<div id="check-for-residual-normality" class="section level2">
+<h2>Check for residual normality</h2>
+<pre class="r"><code>library(&quot;olsrr&quot;)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;olsrr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:datasets&#39;:
+## 
+##     rivers</code></pre>
+<pre class="r"><code>ols_plot_resid_fit(Best_lm)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-37-1.png" width="90%" /></p>
+<pre class="r"><code># residual vs fitted
+plot(Best_lm, 1)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-37-2.png" width="90%" /></p>
+<pre class="r"><code>#qq plot
+plot(Best_lm, 2)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-37-3.png" width="90%" /></p>
+</div>
+<div id="check-for-heteroscadacity" class="section level2">
+<h2>Check for heteroscadacity</h2>
+<pre class="r"><code>plot(Best_lm, 3)</code></pre>
+<p><img src="regression_delay_files/figure-html/unnamed-chunk-38-1.png" width="90%" /></p>
+</div>
+</div>
+<div id="step-4-fit-stratum-specific-models" class="section level1">
+<h1>Step 4: Fit stratum-specific models</h1>
+<p>Stratum of interest:</p>
+<ol style="list-style-type: decimal">
+<li><p>month</p></li>
+<li><p>airline</p></li>
+<li><p>hour_c</p></li>
+</ol>
+<div id="fit-month-specific-model" class="section level2">
+<h2>Fit month-specific model</h2>
+<p>we can nest within months and fit month-specific models associating
+delay with the rest of variables</p>
+<pre class="r"><code>nest_lm_m =
+  raw_df_10 %&gt;% 
+  select(-airline, -hour_c) %&gt;% 
+  nest(data = -month) %&gt;% 
+  mutate(
+    models = map(data, ~lm(delay ~ ., data = .x)),
+    results = map(models, broom::tidy)) %&gt;% 
+  select(-data, -models) %&gt;% 
+  unnest(results)
+
+nest_lm_m %&gt;% 
+  select(month, term, estimate) %&gt;% 
+  mutate(term = fct_inorder(term)) %&gt;% 
+  pivot_wider(
+    names_from = term, values_from = estimate) %&gt;% 
+  knitr::kable(digits = 3)</code></pre>
+<table style="width:100%;">
+<colgroup>
+<col width="7%" />
+<col width="14%" />
+<col width="10%" />
+<col width="9%" />
+<col width="7%" />
+<col width="12%" />
+<col width="9%" />
+<col width="14%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">month</th>
+<th align="right">(Intercept)</th>
+<th align="right">carrierd</th>
+<th align="right">extrmwd</th>
+<th align="right">nasd</th>
+<th align="right">securityd</th>
+<th align="right">latarrd</th>
+<th align="right">temperature</th>
+<th align="right">visibility</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Nov</td>
+<td align="right">-11.232</td>
+<td align="right">1.002</td>
+<td align="right">0.754</td>
+<td align="right">0.520</td>
+<td align="right">0.940</td>
+<td align="right">0.994</td>
+<td align="right">0.036</td>
+<td align="right">1.770</td>
+</tr>
+<tr class="even">
+<td align="left">Dec</td>
+<td align="right">1.884</td>
+<td align="right">0.989</td>
+<td align="right">0.994</td>
+<td align="right">0.531</td>
+<td align="right">0.987</td>
+<td align="right">0.993</td>
+<td align="right">-0.010</td>
+<td align="right">0.628</td>
+</tr>
+<tr class="odd">
+<td align="left">Jan</td>
+<td align="right">3.907</td>
+<td align="right">1.007</td>
+<td align="right">0.991</td>
+<td align="right">0.282</td>
+<td align="right">0.971</td>
+<td align="right">1.008</td>
+<td align="right">-0.050</td>
+<td align="right">0.808</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="fit-airline-specific-model" class="section level2">
+<h2>Fit airline-specific model</h2>
+<p>we can nest within airlines and fit airline-specific models
+associating delay with the rest of variables</p>
+<pre class="r"><code>nest_lm_a =
+  raw_df_10 %&gt;% 
+  select(-month, -hour_c) %&gt;% 
+  nest(data = -airline) %&gt;% 
+  mutate(
+    models = map(data, ~lm(delay ~ ., data = .x)),
+    results = map(models, broom::tidy)) %&gt;% 
+  select(-data, -models) %&gt;% 
+  unnest(results)
+
+nest_lm_a %&gt;% 
+  select(airline, term, estimate) %&gt;% 
+  mutate(term = fct_inorder(term)) %&gt;% 
+  pivot_wider(
+    names_from = term, values_from = estimate) %&gt;% 
+  knitr::kable(digits = 3)</code></pre>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="12%" />
+<col width="9%" />
+<col width="8%" />
+<col width="6%" />
+<col width="10%" />
+<col width="8%" />
+<col width="12%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">airline</th>
+<th align="right">(Intercept)</th>
+<th align="right">carrierd</th>
+<th align="right">extrmwd</th>
+<th align="right">nasd</th>
+<th align="right">securityd</th>
+<th align="right">latarrd</th>
+<th align="right">temperature</th>
+<th align="right">visibility</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">JetBlue Airways</td>
+<td align="right">6.039</td>
+<td align="right">0.993</td>
+<td align="right">1.004</td>
+<td align="right">0.374</td>
+<td align="right">0.937</td>
+<td align="right">1.021</td>
+<td align="right">-0.073</td>
+<td align="right">0.656</td>
+</tr>
+<tr class="even">
+<td align="left">Delta Air Lines</td>
+<td align="right">4.530</td>
+<td align="right">1.022</td>
+<td align="right">0.998</td>
+<td align="right">0.338</td>
+<td align="right">1.323</td>
+<td align="right">1.039</td>
+<td align="right">-0.038</td>
+<td align="right">0.664</td>
+</tr>
+<tr class="odd">
+<td align="left">Republic Airways</td>
+<td align="right">7.032</td>
+<td align="right">0.992</td>
+<td align="right">0.988</td>
+<td align="right">0.000</td>
+<td align="right">0.995</td>
+<td align="right">0.983</td>
+<td align="right">-0.048</td>
+<td align="right">0.143</td>
+</tr>
+<tr class="even">
+<td align="left">American Airlines</td>
+<td align="right">8.372</td>
+<td align="right">1.004</td>
+<td align="right">0.875</td>
+<td align="right">0.227</td>
+<td align="right">0.557</td>
+<td align="right">1.009</td>
+<td align="right">-0.105</td>
+<td align="right">0.578</td>
+</tr>
+<tr class="odd">
+<td align="left">Endeavor Air</td>
+<td align="right">-32.538</td>
+<td align="right">0.970</td>
+<td align="right">0.961</td>
+<td align="right">0.855</td>
+<td align="right">1.043</td>
+<td align="right">0.965</td>
+<td align="right">0.131</td>
+<td align="right">3.398</td>
+</tr>
+<tr class="even">
+<td align="left">Alaska Airlines</td>
+<td align="right">1.704</td>
+<td align="right">1.003</td>
+<td align="right">1.061</td>
+<td align="right">0.224</td>
+<td align="right">NA</td>
+<td align="right">0.980</td>
+<td align="right">0.024</td>
+<td align="right">0.419</td>
+</tr>
+<tr class="odd">
+<td align="left">United Air Lines</td>
+<td align="right">-7.333</td>
+<td align="right">0.991</td>
+<td align="right">0.747</td>
+<td align="right">0.392</td>
+<td align="right">NA</td>
+<td align="right">1.066</td>
+<td align="right">0.197</td>
+<td align="right">1.199</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="fit-hour-specific-model" class="section level2">
+<h2>Fit hour-specific model</h2>
+<p>we can nest within hour categories and fit hour-specific models
+associating delay with the rest of variables</p>
+<pre class="r"><code>nest_lm_h =
+  raw_df_10 %&gt;% 
+  select(-airline, -month) %&gt;% 
+  nest(data = -hour_c) %&gt;% 
+  mutate(
+    models = map(data, ~lm(delay ~ ., data = .x)),
+    results = map(models, broom::tidy)) %&gt;% 
+  select(-data, -models) %&gt;% 
+  unnest(results)
+
+nest_lm_h %&gt;% 
+  select(hour_c, term, estimate) %&gt;% 
+  mutate(term = fct_inorder(term)) %&gt;% 
+  pivot_wider(
+    names_from = term, values_from = estimate) %&gt;% 
+  knitr::kable(digits = 3)</code></pre>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="13%" />
+<col width="10%" />
+<col width="9%" />
+<col width="6%" />
+<col width="11%" />
+<col width="9%" />
+<col width="13%" />
+<col width="12%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">hour_c</th>
+<th align="right">(Intercept)</th>
+<th align="right">carrierd</th>
+<th align="right">extrmwd</th>
+<th align="right">nasd</th>
+<th align="right">securityd</th>
+<th align="right">latarrd</th>
+<th align="right">temperature</th>
+<th align="right">visibility</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">noon</td>
+<td align="right">-0.491</td>
+<td align="right">0.997</td>
+<td align="right">0.999</td>
+<td align="right">0.440</td>
+<td align="right">0.755</td>
+<td align="right">0.988</td>
+<td align="right">-0.004</td>
+<td align="right">0.938</td>
+</tr>
+<tr class="even">
+<td align="left">afternoon</td>
+<td align="right">2.139</td>
+<td align="right">0.990</td>
+<td align="right">0.954</td>
+<td align="right">0.655</td>
+<td align="right">0.965</td>
+<td align="right">0.993</td>
+<td align="right">-0.112</td>
+<td align="right">1.037</td>
+</tr>
+<tr class="odd">
+<td align="left">night</td>
+<td align="right">11.990</td>
+<td align="right">1.009</td>
+<td align="right">1.012</td>
+<td align="right">0.103</td>
+<td align="right">0.988</td>
+<td align="right">1.030</td>
+<td align="right">-0.127</td>
+<td align="right">0.331</td>
+</tr>
+<tr class="even">
+<td align="left">morning</td>
+<td align="right">1.453</td>
+<td align="right">1.012</td>
+<td align="right">0.925</td>
+<td align="right">0.379</td>
+<td align="right">0.975</td>
+<td align="right">1.006</td>
+<td align="right">-0.001</td>
+<td align="right">0.626</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="step-5-add-interaction-terms" class="section level1">
+<h1>Step 5: Add interaction terms</h1>
+<div id="carrier-airline" class="section level2">
+<h2>Carrier * airline</h2>
+<pre class="r"><code>int1_lm = lm(delay ~ . + carrierd*airline,
+              data = raw_df_10)
+
+anova(int1_lm)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: delay
+##                     Df   Sum Sq  Mean Sq    F value    Pr(&gt;F)    
+## month                2   942868   471434 2.4657e+03 &lt; 2.2e-16 ***
+## airline              6   479178    79863 4.1771e+02 &lt; 2.2e-16 ***
+## carrierd             1 29322536 29322536 1.5337e+05 &lt; 2.2e-16 ***
+## extrmwd              1  4507875  4507875 2.3577e+04 &lt; 2.2e-16 ***
+## nasd                 1   556553   556553 2.9109e+03 &lt; 2.2e-16 ***
+## securityd            1    67692    67692 3.5405e+02 &lt; 2.2e-16 ***
+## latarrd              1 10036778 10036778 5.2495e+04 &lt; 2.2e-16 ***
+## temperature          1     2434     2434 1.2730e+01 0.0003614 ***
+## visibility           1    34801    34801 1.8202e+02 &lt; 2.2e-16 ***
+## hour_c               3     5667     1889 9.8800e+00 1.675e-06 ***
+## airline:carrierd     6     3958      660 3.4499e+00 0.0020910 ** 
+## Residuals        10722  2049982      191                         
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>significant</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

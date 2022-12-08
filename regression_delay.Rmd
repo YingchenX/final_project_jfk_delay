@@ -1,6 +1,5 @@
 ---
 title: "Regression_delay"
-author: "Fengyi Ma"
 output: github_document
 ---
 
@@ -43,7 +42,7 @@ set.seed(1)
 
 ```{r}
 delay = read.csv("./tidied_data/delay.csv") %>% 
-  janitor::clean_names() 
+  janitor::clean_names() %>% filter(delay_minutes > 0)
 
 h_weather = read.csv("./tidied_data/hourly_weather.csv") %>% 
   janitor::clean_names() 
@@ -633,4 +632,16 @@ nest_lm_h %>%
     names_from = term, values_from = estimate) %>% 
   knitr::kable(digits = 3)
 ```
+
+
+# Step 5: Add interaction terms
+## Carrier * airline 
+```{r}
+int1_lm = lm(delay ~ . + carrierd*airline,
+              data = raw_df_10)
+
+anova(int1_lm)
+```
+
+significant
 

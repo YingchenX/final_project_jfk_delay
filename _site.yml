@@ -3,29 +3,38 @@ output_dir: "."
 navbar:
   title: "Home"
   left:
-    - text: "Project Report"
-      href: project_report.html
+    - text: "Explore"
+      menu:
+      - text: "Overview"
+        href: xx.html
+      - text: "Cancel & Delay"
+        href: https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/
+      - text: "Categorical Predictors"
+        href: delay_interaction_c.html
+      - text: "Continuous Predictors"
+        href: delay_interaction_cont.html
+      - text: "Fun Facts"
+        href: Destination.html
     - text: "Analysis"
       menu:
-      - text: "Visualization"
-        href: xx.html
-      - text: "Mapping"
+      - text: "Linear Regression"
         href: xx.html
       - text: "Poission Regression"
         href: xx.html
-      - text: "Predictive Model"
-        href: xx.html
-      
+    - text: "Report"
+      href: project_report.html
   right:
-    - text: "What to do"
+    - text: "What to Do"
       href: what_to_do_JFK.html
     - text: "About Us"
-      href: About-us.html
-    - icon: fa-envelope fa-lg
-      href: mailto:<jc5457@cumc.columbia.edu>
+      href: about_us.html
+    - icon: fa-brands fa-youtube fa-lg
+      href: http://
     - icon: fa-github fa-lg
       href: https://github.com/YingchenX/final_project_nycairport
 
 output:
   html_document:
     theme: journal
+    always_allow_html: true
+    

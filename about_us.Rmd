@@ -1,0 +1,40 @@
+---
+title: "About Us"
+output: 
+  html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE)
+```
+
+<style type="text/css">
+
+h1.title {
+  text-align: center;
+}
+
+</style>
+
+## Overview 
+
+We're a group of graduate students at Columbia University Mailman School of Public Health. 
+
+The mutual interest about travel and the shared experience of waiting for delayed flights in JFK united us together to do this project. 
+
+Our technical skill sets of coding in R would thank to [P8105 Data Science I](https://p8105.com/index.html) taught by Prof. Jeff Goldsmith in fall 2022.
+
+## About Us
+
+* [Fengyi Ma](https://www.linkedin.com/in/fengyi-fiona-ma-945842255/)
+
+* [Jialu Cheng](https://www.linkedin.com/in/jialu-cheng-b775b61a4/)
+
+* [Siyue Gao](https://siyuegao1205.github.io/siyuegao_website.github.io/)
+
+* [Yeque Sun](https://www.linkedin.com/in/yequesun/)
+
+* [Yingchen Xu](https://www.linkedin.com/in/yingchen-xu-bb0558232/)

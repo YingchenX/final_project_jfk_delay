@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Maps</title>
+
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="site_libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="site_libs/leaflet-binding-2.1.1/leaflet.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Explore
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="xx.html">Overview</a>
+    </li>
+    <li>
+      <a href="https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/">Cancel &amp; Delay</a>
+    </li>
+    <li>
+      <a href="delay_interaction_c.html">Categorical Predictors</a>
+    </li>
+    <li>
+      <a href="delay_interaction_cont.html">Continuous Predictors</a>
+    </li>
+    <li>
+      <a href="Destination.html">Fun Facts</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="xx.html">Visualization</a>
+    </li>
+    <li>
+      <a href="xx.html">Mapping</a>
+    </li>
+    <li>
+      <a href="xx.html">Poission Regression</a>
+    </li>
+    <li>
+      <a href="xx.html">Predictive Model</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="project_report.html">Project Report</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="what_to_do_JFK.html">What to Do</a>
+</li>
+<li>
+  <a href="about_us.html">About Us</a>
+</li>
+<li>
+  <a href="http://">
+    <span class="fa fa-brands fa-youtube fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://github.com/YingchenX/final_project_nycairport">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Maps</h1>
+
+</div>
+
+
+<div id="data-import" class="section level2">
+<h2>Data Import</h2>
+<pre class="r"><code>airport = read_csv(&quot;tidied_data/airport.csv&quot;)
+
+dest = airport %&gt;% 
+  filter(airport != &quot;JFK&quot;) %&gt;% 
+  drop_na()
+  
+jfk = airport %&gt;% 
+  filter(airport == &quot;JFK&quot;)</code></pre>
+</div>
+<div id="create-flight-connection-map" class="section level2">
+<h2>Create Flight Connection Map</h2>
+<pre class="r"><code>map(&quot;world&quot;,
+    regions = c(&quot;usa&quot;), 
+    fill = TRUE, 
+    col = &quot;grey8&quot;,
+    ylim = c(21.0, 50.0), 
+    xlim = c(-130.0, -65.0)
+    )
+
+points(airport$long,
+       airport$lat, 
+       pch = 3,
+       cex = 0.5,
+       col = &quot;cornsilk&quot;)
+
+for (i in (1:dim(dest)[1])) { 
+  
+  inter = gcIntermediate(c(jfk$long[1], jfk$lat[1]), c(dest$long[i], dest$lat[i]))
+  
+  lines(inter, lwd = 0.3, alpha = 0.5, col = &quot;turquoise2&quot;)
+  
+}</code></pre>
+<p><img src="connection_map_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>airport = read_csv(&quot;tidied_data/airport.csv&quot;)
+
+delay = read_csv(&quot;tidied_data/delay.csv&quot;) %&gt;% 
+  select(airline_name:destination_airport) %&gt;% 
+  mutate(
+    category = &quot;delay&quot;
+  )
+
+cancel = read_csv(&quot;tidied_data/cancel.csv&quot;) %&gt;% 
+  select(airline_name:destination_airport) %&gt;% 
+  mutate(
+    category = &quot;cancel&quot;
+  )
+
+summary = bind_rows(delay, cancel)</code></pre>
+<pre class="r"><code>summary_sub = 
+  summary %&gt;% 
+  group_by(destination_airport) %&gt;% 
+  summarise(
+    count = n()
+  )
+
+airport = 
+  airport %&gt;% 
+  rename(destination_airport = airport)
+
+all = left_join(summary_sub, airport, by = &quot;destination_airport&quot;)</code></pre>
+<pre class="r"><code>content = paste(sep = &quot;&lt;br/&gt;&quot;,
+  &quot;&lt;b&gt;&lt;a href=&#39;https://www.jfkairport.com/&#39;&gt;John F. Kennedy International Airport&lt;/a&gt;&lt;/b&gt;&quot;,
+  &quot;Jamaica, Queens&quot;,
+  &quot;New York, NY 11430&quot;
+)
+
+all %&gt;% 
+  leaflet() %&gt;% 
+  addTiles() %&gt;%
+  setView(-95, 39, zoom = 4) %&gt;% 
+  addCircleMarkers(~ long, ~ lat, radius = ~ scales::rescale(count, c(1, 10)), color = &quot;rgb(255, 65, 54)&quot;, 
+                   label = paste(&quot;Destination: &quot;, all$municipality, &quot; Count: &quot;, all$count)) %&gt;% 
+  addPopups(-73.77932, 40.63945, content, options = popupOptions(closeButton = TRUE))</code></pre>
+<div id="htmlwidget-c0e242525d15bd7e212b" style="width:100%;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c0e242525d15bd7e212b">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addCircleMarkers","args":[[35.040199,33.6367,30.197535,44.8074,36.1245002746582,42.3643,null,44.471901,42.94049835,34.197703,39.1754,45.77750015,32.898602,41.4117012024,35.2140007019043,39.998001,39.048801,38.8521,39.861698150635,32.896801,42.2123985290527,39.64260101,24.556101,26.072599,38.9445,29.9843997955322,39.7173,43.6072998046875,30.4941005706787,36.083361,33.942501,28.4293994903564,25.7931995391846,44.882,29.9934005737305,34.0559997558594,41.9786,36.8946,42.2673,26.6832008361816,45.58869934,39.871898651123,33.435302,40.49150085,null,33.8297,43.646198,35.8776016235352,37.505199432373,39.4990997314453,43.1189,26.5361995697021,32.7336006165,29.533701,32.12760162,47.449162,37.6189994812012,37.362452,null,40.785749,38.6954002380371,33.675701,27.395399,null,43.111198425293,27.9755001068115],[-106.609001,-84.428101,-97.662015,-68.828102,-86.6781997680664,-71.005203,null,-73.153297,-78.73220062,-118.356378,-76.668297,-111.1529999,-80.040497,-81.8498001099,-80.9430999755859,-82.891899,-84.667801,-77.037697,-104.672996521,-97.038002,-83.353401184082,-106.9179993,-81.759598,-80.152702,-77.455803,-95.3414001464844,-86.294403,-110.737998962402,-81.6878967285156,-115.151817,-118.407997,-81.3089981079102,-80.2906036376953,-93.221802,-90.2580032348633,-117.600997924805,-87.9048,-76.201202,-71.875702,-80.0955963134766,-122.5979996,-75.241096496582,-112.005905,-80.23290253,null,-116.507004,-70.309303,-78.7874984741211,-77.3197021484375,-119.767997741699,-77.672401,-81.7552032470703,-117.190002441,-98.469803,-81.20210266,-122.311134,-122.375,-121.929188,null,-111.979746,-121.591003417969,-117.867996,-82.554398,null,-76.1063003540039,-82.533203125],[1.28196443691787,4.11685012701101,3.31668077900085,1,2.88611346316681,7.18416596104996,1.45342929720576,1.97925486875529,3.5186282811177,1.55249788314987,3.43099068585944,1.09144792548688,2.79466553767993,3.09187129551228,5.04276037256562,2.29170194750212,1.94115156646909,3.81964436917866,1.79635901778154,2.90516511430991,2.63082133784928,1.15622353937341,1.3276883996613,5.37425910245555,1.60965283657917,1.3276883996613,2.46697713801863,1.08001693480102,2.98518204911092,3.22904318374259,10,5.24851820491109,7.27561388653683,2.3259949195597,2.03259949195597,1.29339542760373,3.54911092294666,2.64606265876376,1.77349703640982,2.80609652836579,2.22311600338696,2.00592718035563,3.10330228619814,3.4043183742591,1.03429297205758,1.24386113463167,1.26672311600339,5.0580016934801,2.91659610499577,1.17146486028789,2.52032176121931,2.47840812870449,2.80228619813717,1.33149872988992,2.28027095681626,3.89966130397968,6.99745977984759,1.30482641828959,4.04445385266723,2.93183742591025,1.17527519051651,1.32387806943268,1.34292972057578,1.60584250635055,2.03640982218459,3.10711261642676],null,null,{"interactive":true,"className":"","stroke":true,"color":"rgb(255, 65, 54)","weight":5,"opacity":0.5,"fill":true,"fillColor":"rgb(255, 65, 54)","fillOpacity":0.2},null,null,null,null,["Destination:  Albuquerque  Count:  80","Destination:  Atlanta  Count:  824","Destination:  Austin  Count:  614","Destination:  Bangor  Count:  6","Destination:  Nashville  Count:  501","Destination:  Boston  Count:  1629","Destination:  NA  Count:  125","Destination:  South Burlington  Count:  263","Destination:  Buffalo  Count:  667","Destination:  Burbank  Count:  151","Destination:  Baltimore  Count:  644","Destination:  Bozeman  Count:  30","Destination:  Charleston  Count:  477","Destination:  Cleveland  Count:  555","Destination:  Charlotte  Count:  1067","Destination:  Columbus  Count:  345","Destination:  Cincinnati / Covington  Count:  253","Destination:  Washington  Count:  746","Destination:  Denver  Count:  215","Destination:  Dallas-Fort Worth  Count:  506","Destination:  Detroit  Count:  434","Destination:  Eagle  Count:  47","Destination:  Key West  Count:  92","Destination:  Fort Lauderdale  Count:  1154","Destination:  Dulles  Count:  166","Destination:  Houston  Count:  92","Destination:  Indianapolis  Count:  391","Destination:  Jackson  Count:  27","Destination:  Jacksonville  Count:  527","Destination:  Las Vegas  Count:  591","Destination:  Los Angeles  Count:  2368","Destination:  Orlando  Count:  1121","Destination:  Miami  Count:  1653","Destination:  Minneapolis  Count:  354","Destination:  New Orleans  Count:  277","Destination:  Ontario  Count:  83","Destination:  Chicago  Count:  675","Destination:  Norfolk  Count:  438","Destination:  Worcester  Count:  209","Destination:  West Palm Beach  Count:  480","Destination:  Portland  Count:  327","Destination:  Philadelphia  Count:  270","Destination:  Phoenix  Count:  558","Destination:  Pittsburgh  Count:  637","Destination:  NA  Count:  15","Destination:  Palm Springs  Count:  70","Destination:  Portland  Count:  76","Destination:  Raleigh/Durham  Count:  1071","Destination:  Richmond  Count:  509","Destination:  Reno  Count:  51","Destination:  Rochester  Count:  405","Destination:  Fort Myers  Count:  394","Destination:  San Diego  Count:  479","Destination:  San Antonio  Count:  93","Destination:  Savannah  Count:  342","Destination:  Seattle  Count:  767","Destination:  San Francisco  Count:  1580","Destination:  San Jose  Count:  86","Destination:  NA  Count:  805","Destination:  Salt Lake City  Count:  513","Destination:  Sacramento  Count:  52","Destination:  Santa Ana  Count:  91","Destination:  Sarasota/Bradenton  Count:  96","Destination:  NA  Count:  165","Destination:  Syracuse  Count:  278","Destination:  Tampa  Count:  559"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addPopups","args":[40.63945,-73.77932,"<b><a href='https://www.jfkairport.com/'>John F. Kennedy International Airport<\/a><\/b><br/>Jamaica, Queens<br/>New York, NY 11430",null,null,{"maxWidth":300,"minWidth":50,"autoPan":true,"keepInView":false,"closeButton":true,"className":""}]}],"setView":[[39,-95],4,[]],"limits":{"lat":[24.556101,47.449162],"lng":[-122.5979996,-68.828102]}},"evals":[],"jsHooks":[]}</script>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

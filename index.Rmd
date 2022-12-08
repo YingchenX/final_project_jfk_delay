@@ -1,14 +1,12 @@
 ---
-title: "The Flight Delay Issue"
+title: "Flight Delay and Cancelation"
 output: 
   html_document:
     toc: true
     toc_float: true
-    output: 
-  always_allow_html: true
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -25,14 +23,14 @@ h1.title {
 
 &nbsp;
 
-```{r, echo=FALSE, out.width="100%", fig.cap="(generated via [Midjourney](https://midjourney.com/))", fig.align = 'center'}
+```{r, echo = FALSE, out.width = "100%", fig.cap = "(Generated via [Midjourney](https://midjourney.com/))", fig.align = 'center'}
 knitr::include_graphics("./pictures/Jialu_Cheng_a_colorful_the_united_states_flight_route_map.png")
 ```
 
 &nbsp;
 
 ## Website Overview
-
+<br>
 (Insert the video here)
 
 &nbsp;
@@ -44,7 +42,7 @@ Our analysis focuses on the flight delay data from the Bureau of Transportation 
 &nbsp;
 
 ## Key Questions We Focused on
-
+<br>
 **1. What are the key trends of the flights in JFK during last holiday season?**
 
   *  Exploratory analysis including descriptive table or histogram showing criteria’s distribution by categories or by time, and interactive maps showing the analyzed flight routes departed from JFK

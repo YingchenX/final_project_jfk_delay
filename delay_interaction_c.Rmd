@@ -1,0 +1,270 @@
+---
+title: "Delay Data Exploration for Categorical Predictors"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
+
+library(tidyverse)
+library(plotly)
+
+raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
+```
+
+<br>
+
+
+## Interaction between Categorical Predictors {.tabset}
+```{r, include = FALSE}
+hour_air = function(air){
+  raw_df %>% 
+  filter(
+    airline == air) %>%     
+  mutate(
+    mean = mean(delay),
+    hour_c = fct_reorder(hour_c, delay)
+    ) %>% 
+  plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Hour"),
+      yaxis = list(title = "Delay Time (minutes)"))
+}
+
+month_air = function(air){
+  raw_df %>% 
+  filter(
+    airline == air) %>%     
+  mutate(
+    month = fct_reorder(month, delay)
+    ) %>% 
+  plot_ly(x = ~month, y = ~delay, color = ~month,
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Month"),
+      yaxis = list(title = "Delay Time (minutes)"))
+}
+
+hour_month = function(mon){
+raw_df %>% 
+  filter(
+    month == mon) %>%     
+  mutate(
+    hour_c = fct_reorder(hour_c, delay)
+    ) %>% 
+  plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Hour"),
+      yaxis = list(title = "Delay Time (minutes)"))
+}
+
+hour_month_air = function(air){
+  raw_df %>% 
+    filter(
+      airline == air) %>%
+    mutate(
+      month = fct_reorder(month, date)) %>% 
+    plot_ly(x = ~hour_c, y = ~delay, color = ~month,
+            type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      boxmode = "group",
+      xaxis = list(title = "Hour"),
+      yaxis = list(title = "Delay Time (minutes)"))
+}
+
+```
+
+<br>
+
+### Hour*Airline 
+
+#### Before Stratification by Airline
+```{r, echo = FALSE}
+raw_df %>% 
+  mutate(
+    mean = mean(delay),
+    hour_c = fct_reorder(hour_c, delay)
+    ) %>% 
+  plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Hour"),
+      yaxis = list(title = "Delay Time (minutes)"))
+```
+
+#### Stratification by Airline {.tabset}
+##### Alaska
+```{r, echo = FALSE}
+hour_air("Alaska Airlines")
+```
+
+##### American
+```{r, echo = FALSE}
+hour_air("American Airlines")
+```
+
+##### Delta
+```{r, echo = FALSE}
+hour_air("Delta Air Lines")
+```
+
+##### Endeavor
+```{r, echo = FALSE}
+hour_air("Endeavor Air")
+```
+
+##### JetBlue
+```{r, echo = FALSE}
+hour_air("JetBlue Airways")
+```
+
+##### Republic
+```{r, echo = FALSE}
+hour_air("Republic Airways")
+```
+
+##### United
+```{r, echo = FALSE}
+hour_air("United Air Lines")
+```
+
+
+### Month*Airline
+#### Before Stratification by Airline
+```{r, echo = FALSE}
+raw_df %>% 
+  mutate(
+    month = fct_reorder(month, delay)
+    ) %>% 
+  plot_ly(x = ~month, y = ~delay, color = ~month,
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Month"),
+      yaxis = list(title = "Delay Time (minutes)"))
+
+```
+
+
+#### Stratification by Airline {.tabset}
+##### Alaska
+```{r, echo = FALSE}
+month_air("Alaska Airlines")
+```
+
+##### American
+```{r, echo = FALSE}
+month_air("American Airlines")
+```
+
+##### Delta
+```{r, echo = FALSE}
+month_air("Delta Air Lines")
+```
+
+##### Endeavor
+```{r, echo = FALSE}
+month_air("Endeavor Air")
+```
+
+##### JetBlue
+```{r, echo = FALSE}
+month_air("JetBlue Airways")
+```
+
+##### Republic
+```{r, echo = FALSE}
+month_air("Republic Airways")
+```
+
+##### United
+```{r, echo = FALSE}
+month_air("United Air Lines")
+```
+
+
+### Month*Hour
+#### Before Stratification by Month
+```{r, echo = FALSE}
+raw_df %>% 
+  mutate(
+    hour_c = fct_reorder(hour_c, delay)
+    ) %>% 
+  plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Hour"),
+      yaxis = list(title = "Delay Time (minutes)"))
+
+```
+
+#### Stratification by Month {.tabset}
+##### Nov
+```{r, echo = FALSE}
+hour_month("Nov")
+```
+
+##### Dec
+```{r, echo = FALSE}
+hour_month("Dec")
+```
+
+##### Jan
+```{r, echo = FALSE}
+hour_month("Jan")
+```
+
+### Three-ways Interaction
+#### Before Stratification by Airline
+```{r, echo = FALSE}
+raw_df %>% 
+  mutate(
+    month = fct_reorder(month, date)) %>% 
+  plot_ly(x = ~hour_c, y = ~delay, color = ~month,
+          type = 'box', mode = 'markers', alpha = .5) %>% 
+    layout(
+      boxmode = "group",
+      xaxis = list(title = "Hour"),
+      yaxis = list(title = "Delay Time (minutes)"))
+```
+
+#### Stratification by Airline {.tabset}
+##### Alaska
+```{r, echo = FALSE}
+hour_month_air("Alaska Airlines")
+```
+
+##### American
+```{r, echo = FALSE}
+hour_month_air("American Airlines")
+```
+
+##### Delta
+```{r, echo = FALSE}
+hour_month_air("Delta Air Lines")
+```
+
+##### Endeavor
+```{r, echo = FALSE}
+hour_month_air("Endeavor Air")
+```
+
+##### JetBlue
+```{r, echo = FALSE}
+hour_month_air("JetBlue Airways")
+```
+
+##### Republic
+```{r, echo = FALSE}
+hour_month_air("Republic Airways")
+```
+
+##### United
+```{r, echo = FALSE}
+hour_month_air("United Air Lines")
+```
+
+

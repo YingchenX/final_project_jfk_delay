@@ -1,0 +1,171 @@
+---
+title: "Delay Data Exploration for Continuous Predictors"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
+
+library(tidyverse)
+library(plotly)
+
+
+raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
+```
+
+<br>
+
+```{r, include = FALSE}
+
+cont_airline = function(cont){
+  
+  airline = raw_df %>% 
+  plot_ly(x = ~cont, y = ~delay, color = ~airline,
+          type = 'scatter', mode = 'markers', alpha = .5) %>% 
+  layout(
+    yaxis = list(title = "Delay Time (minutes)"))
+}
+
+cont_month = function(cont){
+  month = raw_df %>%
+    mutate(month = fct_reorder(month, date)) %>% 
+  plot_ly(x = ~cont, y = ~delay, color = ~month,
+          type = 'scatter', mode = 'markers', alpha = .5) %>% 
+  layout(
+    yaxis = list(title = "Delay Time (minutes)"))
+}
+  
+cont_hour = function(cont){
+  hour = raw_df %>% 
+  plot_ly(x = ~cont, y = ~delay, color = ~hour_c,
+          type = 'scatter', mode = 'markers', alpha = .5) %>% 
+  layout(
+    yaxis = list(title = "Delay Time (minutes)"))
+}
+
+```
+
+
+## Interaction for Continuous Predictors 
+
+<br>
+
+### Types of Delay{.tabset}
+#### Carrier Delay
+```{r, echo = FALSE}
+cont_airline(raw_df$carrierd) %>% 
+  layout(xaxis = list(title = "Carrier Delay (minutes)"))
+
+cont_month(raw_df$carrierd) %>% 
+  layout(xaxis = list(title = "Carrier Delay (minutes)"))
+
+cont_hour(raw_df$carrierd) %>% 
+  layout(xaxis = list(title = "Carrier Delay (minutes)"))
+
+```
+
+#### Extreme Weather Delay
+```{r, echo = FALSE}
+cont_airline(raw_df$extrmwd) %>% 
+  layout(xaxis = list(title = "Extreme Weather Delay (minutes)"))
+
+cont_month(raw_df$extrmwd) %>% 
+  layout(xaxis = list(title = "Extreme Weather Delay (minutes)"))
+
+cont_hour(raw_df$extrmwd) %>% 
+  layout(xaxis = list(title = "Extreme Weather Delay (minutes)"))
+```
+
+#### Late Arrival Delay 
+```{r, echo = FALSE}
+cont_airline(raw_df$latarrd) %>% 
+  layout(xaxis = list(title = "Late Arrival Delay (minutes)"))
+
+cont_month(raw_df$latarrd) %>% 
+  layout(xaxis = list(title = "Late Arrival Delay (minutes)"))
+
+cont_hour(raw_df$latarrd) %>% 
+  layout(xaxis = list(title = "Late Arrival Delay (minutes)"))
+```
+
+#### NAS Delay
+```{r, echo = FALSE}
+cont_airline(raw_df$nasd) %>% 
+  layout(xaxis = list(title = "NAS Delay (minutes)"))
+
+cont_month(raw_df$nasd) %>% 
+  layout(xaxis = list(title = "NAS Delay (minutes)"))
+
+cont_hour(raw_df$nasd) %>% 
+  layout(xaxis = list(title = "NAS Delay (minutes)"))
+```
+
+#### Security Delay
+```{r, echo = FALSE}
+cont_airline(raw_df$securityd) %>% 
+  layout(xaxis = list(title = "Security Delay (minutes)"))
+
+cont_month(raw_df$securityd) %>% 
+  layout(xaxis = list(title = "Security Delay (minutes)"))
+
+cont_hour(raw_df$securityd) %>% 
+  layout(xaxis = list(title = "Security Delay (minutes)"))
+```
+
+
+### Weather Specific{.tabset}
+#### Temperature
+```{r, echo = FALSE}
+cont_airline(raw_df$temperature) %>% 
+  layout(xaxis = list(title = "Temperature (F)"))
+
+cont_month(raw_df$temperature) %>% 
+  layout(xaxis = list(title = "Temperature (F)"))
+
+cont_hour(raw_df$temperature) %>% 
+  layout(xaxis = list(title = "Temperature (F)"))
+```
+
+#### Humidity
+```{r, echo = FALSE}
+cont_airline(raw_df$humidity) %>% 
+  layout(xaxis = list(title = "Humidity (%)"))
+
+cont_month(raw_df$humidity) %>% 
+  layout(xaxis = list(title = "Humidity (%)"))
+
+cont_hour(raw_df$humidity) %>% 
+  layout(xaxis = list(title = "Humidity (%)"))
+```
+
+#### Visibility
+```{r, echo = FALSE}
+cont_airline(raw_df$visibility) %>% 
+  layout(xaxis = list(title = "Visibility"))
+
+cont_month(raw_df$visibility) %>% 
+  layout(xaxis = list(title = "Visibility"))
+
+cont_hour(raw_df$visibility) %>% 
+  layout(xaxis = list(title = "Visibility"))
+```
+
+#### Wind Speed
+```{r, echo = FALSE}
+cont_airline(raw_df$wind_s) %>% 
+  layout(xaxis = list(title = "Wind Speed (mph)"))
+
+cont_month(raw_df$wind_s) %>% 
+  layout(xaxis = list(title = "Wind Speed (mph)"))
+
+cont_hour(raw_df$wind_s) %>% 
+  layout(xaxis = list(title = "Wind Speed (mph)"))
+```
+
+
+
+
+
+
