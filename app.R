@@ -40,33 +40,30 @@ airlines = cancel %>% arrange(airline_name) %>% distinct(airline_name) %>% pull(
 months = delay %>% distinct(month) %>% pull()
 
 ui = fluidPage(
-  headerPanel(h3("Flight Delay and Cancelation")),
+  headerPanel(h3("Flight Cancelation and Delay")),
   sidebarPanel(
     selectInput(
       inputId = "airline_choice",
       label = h4("Airline"),
       choices = airlines,
-      selected = "JetBlue Airways"
-    ),
+      selected = "JetBlue Airways"),
     radioButtons(
       inputId = "month_choice",
       label = h4("Month"),
       choices = months,
-      selected = "Dec, 2021")
-   ),
+      selected = "Dec, 2021")),
   mainPanel(
     tabsetPanel(type = "tabs",
-                tabPanel("Delay", fluidRow(br(), plotlyOutput("delay_count"), br(),
-                                           br(), plotlyOutput("delay_minute"))),
-                tabPanel("Cancelation", fluidRow(br(), plotlyOutput("cancel_plot"), br(),
-                                                 br(), plotlyOutput("covid_plot"))))
-  )
-)
+                tabPanel("Cancelation", fluidRow(br(), plotlyOutput("cancel"))),
+                tabPanel("Delay", fluidRow(br(), plotlyOutput("delay"))))))
+
+
 
 server = function(input, output) {
 
-  output$delay_count = renderPlotly({
-    delay %>%
+  output$delay = renderPlotly({
+    plot1 =
+      delay %>%
       distinct(airline_name, date, month, day, year, count) %>% 
       filter(
         airline_name == input[["airline_choice"]],
@@ -77,15 +74,10 @@ server = function(input, output) {
       ) %>% 
       plot_ly(x = ~day, y = ~count, text = ~text_label,
               hoverinfo = "text", color = "rgb(255, 65, 54)",
-              type = "bar", mode = "markers", alpha = .5) %>% 
-      layout(
-        xaxis = list(title = "Day"),
-        yaxis = list(title = "Count"),
-        title = "Number of Delays on Each Day")
-  })
-  
-  output$delay_minute = renderPlotly({
-    delay %>% 
+              type = "bar", mode = "markers", alpha = .5)
+    
+    plot2 = 
+      delay %>% 
       filter(
         airline_name == input[["airline_choice"]],
         month == input[["month_choice"]]
@@ -93,17 +85,26 @@ server = function(input, output) {
       mutate(
         text_label = str_c("Date: ", date)
       ) %>% 
-      plot_ly(x = ~day, y = ~delay_minutes, text = ~text_label, hoverinfo = "text",
+      plot_ly(x = ~day, y = ~delay_minutes,
               color = "rgb(255, 65, 54)",
-              type = "box", mode = "markers", alpha = .5) %>% 
+              type = "box", mode = "markers", alpha = .5) 
+    
+    subplot(list(plot1, plot2), nrows = 1, margin = 0.06) %>% 
       layout(
-        xaxis = list(title = "Day"),
-        yaxis = list(title = "Delay Time (Minutes)"),
-        title = "Distribution of Delay Time on Each Day")
+        annotations = list(
+          list(x = 0.08, y = 1.1, text = "Number of Delays by Day", font = list(size = 16), showarrow = F, xref = "paper", yref = "paper"),
+          list(x = 0.92, y = 1.1, text = "Delay Time in Minutes by Day", font = list(size = 16), showarrow = F, xref = "paper", yref = "paper")
+        ),
+        showlegend = FALSE,
+        margin = list(l = 50, r = 50, b = 50, t = 30)
+      )
+    
+    
   })
   
-  output$cancel_plot = renderPlotly({
-    covid_cancel %>% 
+  output$cancel = renderPlotly({
+    plot3 = 
+      covid_cancel %>% 
       distinct(airline_name, date, month, day, year, cancel_count) %>% 
       filter(
         airline_name == input[["airline_choice"]],
@@ -115,17 +116,10 @@ server = function(input, output) {
       plot_ly(x = ~day, y = ~cancel_count, color = "rgb(255, 65, 54)",
               size = ~cancel_count, sizes = c(10, 100), text = ~text_label,
               hoverinfo = "text",
-              type = "scatter", mode = "markers", opacity = .7
-      ) %>% 
-      layout(
-        xaxis = list(title = "Day"),
-        yaxis = list(title = "Count"),
-        title = "Number of Cancelations on Each Day"
-      )
-  })
+              type = "scatter", mode = "markers", opacity = .7)
     
-  output$covid_plot = renderPlotly({
-    covid_cancel %>% 
+    plot4 =
+      covid_cancel %>% 
       filter(
         month == input[["month_choice"]]
       ) %>%
@@ -135,15 +129,20 @@ server = function(input, output) {
       plot_ly(x = ~day, y = ~case_count, color = "rgb(255, 65, 54)",
               size = ~case_count, sizes = c(10, 100),
               text = ~text_label, hoverinfo = "text",
-              type = "scatter", mode = "markers", opacity = .7
-      ) %>% 
+              type = "scatter", mode = "markers", opacity = .7)
+    
+    subplot(list(plot3, plot4), nrows = 1, margin = 0.06) %>% 
       layout(
-        xaxis = list(title = "Day"),
-        yaxis = list(title = "Case Count"),
-        title = "Number of COVID Cases on Each Day"
-    )
+        annotations = list(
+          list(x = 0.06, y = 1.1, text = "Number of Cancelations by Day", font = list(size = 16), showarrow = F, xref = "paper", yref = "paper"),
+          list(x = 0.94, y = 1.1, text = "Number of COVID Cases by Day", font = list(size = 16), showarrow = F, xref = "paper", yref = "paper")
+        ),
+        margin = list(l = 50, r = 50, b = 50, t = 30),
+        showlegend = FALSE
+      )
     
   })
+    
   
 }
 
