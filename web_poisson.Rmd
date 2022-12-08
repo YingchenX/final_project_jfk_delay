@@ -53,7 +53,7 @@ Since our outcome, `cancel_count`, is calculated using a count variable (number 
 # poisson distribution of counts
 his_plot<- cancel_tidy %>% 
   plot_ly(x = ~cancel_count, 
-   type = "histogram", marker = list(color = 'rgb(255, 102, 102)'))
+   type = "histogram", marker = list(color = 'rgb(255, 156, 128)'))
 
 his_plot %>% 
          layout(
@@ -105,6 +105,39 @@ bar_plot2 = bar_plot2 %>%
          margin = list(b = 100),
          barmode = 'group')
 bar_plot2
+```
+lag covid-19
+```{r}
+cancel_covid <- cancel_tidy  %>%
+  select(date, cancel_count, covid_case) %>% 
+  distinct()
+
+cancel_plot <-  cancel_covid  %>%
+  mutate(text_label = str_c("Date: ", date, "\nCancellation flight: ", cancel_count)) %>% 
+  plot_ly(
+    x = ~date, y = ~cancel_count, type = "scatter", mode = "lines+markers",
+   text = ~text_label, alpha = 0.5, name = 'Daily flight cancellation') %>% 
+  layout(
+         yaxis = list(title = "Daily flight cancellation"),
+         annotations = list( 
+    list(x = 0.1 , y = 0.8, text = "Daily flight cancellation", showarrow = F, xref='paper', yref='paper')))
+         
+covid_plot <-  cancel_covid  %>%
+  mutate(text_label = str_c("Date: ", date, "\nCovid cases: ", covid_case)) %>% 
+  plot_ly(
+    x = ~date, y = ~covid_case, type = "scatter", mode = "lines+markers",
+   text = ~text_label, alpha = 0.5, name = 'Daily covid cases') %>% 
+  layout(
+         yaxis = list(title = "Daily covid cases"),
+         annotations = list( 
+    list(x = 0.1 , y = 0.8, text = "Daily covid cases", showarrow = F, xref='paper', yref='paper')))
+
+scatter_plot <- subplot(cancel_plot, covid_plot, nrows = 2) %>% 
+  layout(title = list(text = "Time trend of daily cancellation vs. daily covid cases"),
+         plot_bgcolor='#e5ecf6') 
+scatter_plot
+
+
 ```
 
 # Poisson model
