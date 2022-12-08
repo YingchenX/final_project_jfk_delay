@@ -13,7 +13,7 @@
 
 <title>Regression_delay</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
@@ -180,8 +180,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -189,16 +189,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -1375,6 +1368,37 @@ nest_lm_h %&gt;%
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div id="step-5-add-interaction-terms" class="section level1">
+<h1>Step 5: Add interaction terms</h1>
+<div id="fit-the-regression-model-1" class="section level2">
+<h2>Fit the regression model</h2>
+<pre class="r"><code>int1_lm = lm(delay ~ . + carrierd*airline,
+              data = raw_df_10)
+
+summary(int1_lm) %&gt;% broom::glance()</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   r.squared adj.r.squared sigma statistic p.value    df df.residual  nobs
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;
+## 1     0.957         0.957  13.8    10016.       0    24       10722 10747</code></pre>
+<pre class="r"><code>summary(int1_lm) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value)</code></pre>
+<pre><code>## # A tibble: 25 × 3
+##    term                     estimate  p.value
+##    &lt;chr&gt;                       &lt;dbl&gt;    &lt;dbl&gt;
+##  1 (Intercept)                3.11   1.79e- 3
+##  2 monthDec                  -2.01   2.81e- 7
+##  3 monthNov                  -1.69   1.73e- 4
+##  4 airlineDelta Air Lines    -0.0172 9.65e- 1
+##  5 airlineAmerican Airlines  -0.157  7.23e- 1
+##  6 airlineRepublic Airways   -6.12   2.33e-31
+##  7 airlineEndeavor Air       -2.45   2.24e- 4
+##  8 airlineAlaska Airlines    -3.85   1.14e- 4
+##  9 airlineUnited Air Lines    3.63   2.06e- 2
+## 10 carrierd                   0.994  0       
+## # … with 15 more rows</code></pre>
 </div>
 </div>
 
