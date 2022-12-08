@@ -11,13 +11,13 @@ knitr::opts_chunk$set(echo = TRUE,
 library(tidyverse)
 library(plotly)
 
-raw_df = read_csv("Reg_data_exp/raw_df.csv")
+raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 ```
 
 <br>
 
 
-## Interaction between categorical variables {.tabset}
+## Interaction between Categorical Variables {.tabset}
 ```{r, include = FALSE}
 hour_air = function(air){
   raw_df %>% 
@@ -76,93 +76,6 @@ hour_month_air = function(air){
       xaxis = list(title = "Hour"),
       yaxis = list(title = "Delay Time (Minutes)"))
 }
-
-```
-
-```{r, eval = FALSE, include = FALSE}
-raw_df %>% 
-  filter(
-    delay == 0:120) %>%     
-  mutate(
-    mean = mean(delay),
-    hour_c = fct_reorder(hour_c, delay)
-    ) %>% 
-  plot_ly(x = ~hour_c, y = ~delay, color = "rgb(255, 65, 54)",
-          type = 'box', mode = 'markers', alpha = .5) %>% 
-    layout(
-      xaxis = list(title = "Hour"),
-      yaxis = list(title = "Delay Time (Minutes)"))
-
-raw_df %>% 
-  filter(
-    delay > 120) %>%     
-  mutate(
-    mean = mean(delay),
-    hour_c = fct_reorder(hour_c, delay)
-    ) %>% 
-  plot_ly(x = ~hour_c, y = ~delay, color = "rgb(255, 65, 54)",
-          type = 'box', mode = 'markers', alpha = .5) %>% 
-    layout(
-      xaxis = list(title = "Hour"),
-      yaxis = list(title = "Delay Time (Minutes)"))
-
-hour_air_0 = function(air){
-raw_df %>% 
-  filter(
-    delay == 0:120,
-    airline == air) %>%     
-  mutate(
-    mean = mean(delay),
-    hour_c = fct_reorder(hour_c, delay)
-    ) %>% 
-  plot_ly(x = ~hour_c, y = ~delay, color = ,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
-    layout(
-      xaxis = list(title = "Hour"),
-      yaxis = list(title = "Delay Time (Minutes)"))
-}
-
-hour_air_120 = function(air){
-raw_df %>% 
-  filter(
-    delay > 120,
-    airline == "JetBlue Airways") %>%     
-  mutate(
-    mean = mean(delay),
-    hour_c = fct_reorder(hour_c, delay)
-    ) %>% 
-  plot_ly(x = ~hour_c, y = ~delay, color = "rgb(255, 65, 54)",
-          type = 'box', mode = 'markers', alpha = .5) %>% 
-    layout(
-      xaxis = list(title = "Hour"),
-      yaxis = list(title = "Delay Time (Minutes)"))
-}
-
-raw_df %>% 
-  filter(
-    delay == 0:120,
-    airline == "JetBlue Airways") %>%     
-  mutate(
-    month = fct_reorder(month, delay)
-    ) %>% 
-  plot_ly(x = ~month, y = ~delay, color = ~month,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
-    layout(
-      xaxis = list(title = "Month"),
-      yaxis = list(title = "Delay Time (Minutes)"))
-
-raw_df %>% 
-  filter(
-    delay > 120,
-    airline == "JetBlue Airways") %>%     
-  mutate(
-    month = fct_reorder(month, delay)
-    ) %>% 
-  plot_ly(x = ~month, y = ~delay, color = ~month,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
-    layout(
-      xaxis = list(title = "Month"),
-      yaxis = list(title = "Delay Time (Minutes)"))
 
 ```
 

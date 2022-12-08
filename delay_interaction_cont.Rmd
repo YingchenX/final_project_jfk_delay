@@ -11,7 +11,8 @@ knitr::opts_chunk$set(echo = TRUE,
 library(tidyverse)
 library(plotly)
 
-raw_df = read_csv("Reg_data_exp/raw_df.csv")
+
+raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 ```
 
 <br>
@@ -38,56 +39,65 @@ cont_interact = function(cont){
   layout(
     yaxis = list(title = "Delay Time (Minutes)"))
   
-  subplot(airline, month, hour, nrows = 2, margin = 0.04, heights = c(0.6, 0.4))
+  htmltools::tagList(list(airline, month, hour))
 }
 ```
 
 
-## Interaction for continuous variables {.tabset}
-### Temperature
-```{r, echo = FALSE}
-cont_interact(raw_df$temperature)
-```
+## Interaction for continuous variables 
 
-### Humidity
-```{r, echo = FALSE}
-cont_interact(raw_df$humidity)
-```
-
-### Visibility
-```{r, echo = FALSE}
-cont_interact(raw_df$visibility)
-```
-
-### Wind Speed
-```{r, echo = FALSE}
-cont_interact(raw_df$wind_s)
-```
-
-### Carrier Delay
+### Types of Delay{.tabset}
+#### Carrier Delay
 ```{r, echo = FALSE}
 cont_interact(raw_df$carrierd)
 ```
 
-### Extreme Weather Delay
+#### Extreme Weather Delay
 ```{r, echo = FALSE}
 cont_interact(raw_df$extrmwd)
 ```
 
-### NAS Delay
+#### Late Arrival Delay 
+```{r, echo = FALSE}
+cont_interact(raw_df$latarrd)
+```
+
+#### NAS Delay
 ```{r, echo = FALSE}
 cont_interact(raw_df$nasd)
 ```
 
-### Security Delay
+#### Security Delay
 ```{r, echo = FALSE}
 cont_interact(raw_df$securityd)
 ```
 
-### Late Arrival Delay 
+
+
+
+### Weather Specific{.tabset}
+#### Temperature
 ```{r, echo = FALSE}
-cont_interact(raw_df$latarrd)
+cont_interact(raw_df$temperature)
 ```
+
+#### Humidity
+```{r, echo = FALSE}
+cont_interact(raw_df$humidity)
+```
+
+#### Visibility
+```{r, echo = FALSE}
+cont_interact(raw_df$visibility)
+```
+
+#### Wind Speed
+```{r, echo = FALSE}
+cont_interact(raw_df$wind_s)
+```
+
+
+
 
 
 
