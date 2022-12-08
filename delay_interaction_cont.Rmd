@@ -1,0 +1,93 @@
+---
+title: "Delay Data Exploration for Continuous Variable"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
+
+library(tidyverse)
+library(plotly)
+
+raw_df = read_csv("Reg_data_exp/raw_df.csv")
+```
+
+<br>
+
+```{r, include = FALSE}
+
+cont_interact = function(cont){
+  
+  airline = raw_df %>% 
+  plot_ly(x = ~cont, y = ~delay, color = ~airline,
+          type = 'scatter', mode = 'markers', alpha = .5) %>% 
+  layout(
+    yaxis = list(title = "Delay Time (Minutes)"))
+
+  month = raw_df %>% 
+  plot_ly(x = ~cont, y = ~delay, color = ~month,
+          type = 'scatter', mode = 'markers', alpha = .5) %>% 
+  layout(
+    yaxis = list(title = "Delay Time (Minutes)"))
+
+  hour = raw_df %>% 
+  plot_ly(x = ~cont, y = ~delay, color = ~hour_c,
+          type = 'scatter', mode = 'markers', alpha = .5) %>% 
+  layout(
+    yaxis = list(title = "Delay Time (Minutes)"))
+  
+  subplot(airline, month, hour, nrows = 2, margin = 0.04, heights = c(0.6, 0.4))
+}
+```
+
+
+## Interaction for continuous variables {.tabset}
+### Temperature
+```{r, echo = FALSE}
+cont_interact(raw_df$temperature)
+```
+
+### Humidity
+```{r, echo = FALSE}
+cont_interact(raw_df$humidity)
+```
+
+### Visibility
+```{r, echo = FALSE}
+cont_interact(raw_df$visibility)
+```
+
+### Wind Speed
+```{r, echo = FALSE}
+cont_interact(raw_df$wind_s)
+```
+
+### Carrier Delay
+```{r, echo = FALSE}
+cont_interact(raw_df$carrierd)
+```
+
+### Extreme Weather Delay
+```{r, echo = FALSE}
+cont_interact(raw_df$extrmwd)
+```
+
+### NAS Delay
+```{r, echo = FALSE}
+cont_interact(raw_df$nasd)
+```
+
+### Security Delay
+```{r, echo = FALSE}
+cont_interact(raw_df$securityd)
+```
+
+### Late Arrival Delay 
+```{r, echo = FALSE}
+cont_interact(raw_df$latarrd)
+```
+
+
+
