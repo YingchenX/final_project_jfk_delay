@@ -86,7 +86,7 @@ cancel_tidy <- cancel_tidy%>%
                         ifelse(month == "December", "Dec", "Jan")),
     year_month = paste(year, month1, sep="-")) %>% 
     filter(!is.na(cancel_count))  %>% 
-    select(-month1, -date.y, -date.x, -date)
+    select(-month1, -date.y, -date.x)
 
 write_csv(cancel_tidy, "tidied_data/cancel_tidy.csv")
  
