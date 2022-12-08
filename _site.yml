@@ -17,13 +17,9 @@ navbar:
         href: Destination.html
     - text: "Analysis"
       menu:
-      - text: "Visualization"
-        href: xx.html
-      - text: "Mapping"
+      - text: "Linear Regression"
         href: xx.html
       - text: "Poission Regression"
-        href: xx.html
-      - text: "Predictive Model"
         href: xx.html
     - text: "Project Report"
       href: project_report.html
