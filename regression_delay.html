@@ -13,7 +13,7 @@
 
 <title>Regression_delay</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
@@ -180,8 +180,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -189,16 +189,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -1375,6 +1368,35 @@ nest_lm_h %&gt;%
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div id="step-5-add-interaction-terms" class="section level1">
+<h1>Step 5: Add interaction terms</h1>
+<div id="carrier-airline" class="section level2">
+<h2>Carrier * airline</h2>
+<pre class="r"><code>int1_lm = lm(delay ~ . + carrierd*airline,
+              data = raw_df_10)
+
+anova(int1_lm)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: delay
+##                     Df   Sum Sq  Mean Sq    F value    Pr(&gt;F)    
+## month                2   942868   471434 2.4657e+03 &lt; 2.2e-16 ***
+## airline              6   479178    79863 4.1771e+02 &lt; 2.2e-16 ***
+## carrierd             1 29322536 29322536 1.5337e+05 &lt; 2.2e-16 ***
+## extrmwd              1  4507875  4507875 2.3577e+04 &lt; 2.2e-16 ***
+## nasd                 1   556553   556553 2.9109e+03 &lt; 2.2e-16 ***
+## securityd            1    67692    67692 3.5405e+02 &lt; 2.2e-16 ***
+## latarrd              1 10036778 10036778 5.2495e+04 &lt; 2.2e-16 ***
+## temperature          1     2434     2434 1.2730e+01 0.0003614 ***
+## visibility           1    34801    34801 1.8202e+02 &lt; 2.2e-16 ***
+## hour_c               3     5667     1889 9.8800e+00 1.675e-06 ***
+## airline:carrierd     6     3958      660 3.4499e+00 0.0020910 ** 
+## Residuals        10722  2049982      191                         
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>significant</p>
 </div>
 </div>
 

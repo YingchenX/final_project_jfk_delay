@@ -633,3 +633,15 @@ nest_lm_h %>%
   knitr::kable(digits = 3)
 ```
 
+
+# Step 5: Add interaction terms
+## Carrier * airline 
+```{r}
+int1_lm = lm(delay ~ . + carrierd*airline,
+              data = raw_df_10)
+
+anova(int1_lm)
+```
+
+significant
+
