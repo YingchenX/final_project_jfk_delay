@@ -51,14 +51,16 @@ In this research, we look for a relationship between cancellation and a number o
 Since our outcome, `cancel_count`, is calculated using a count variable (number of cancellation) repeated over time, we’ll model it using a Poisson regression model.
 ```{r}
 # poisson distribution of counts
-cancel_tidy %>% 
-  ggplot(aes(x = cancel_count)) + 
-  geom_histogram(binwidth = 1.8) +
-  theme_light() +
-  labs(x = "Numbers of cancellation per day",
-       y = "Count",
-       title = "Distribution of cancellation counts per day, 2021/11/1 to 2022/1/31") +
-  theme(plot.title = element_text(hjust = 0.5))
+his_plot<- cancel_tidy %>% 
+  plot_ly(x = ~cancel_count, 
+   type = "histogram", marker = list(color = 'rgb(255, 102, 102)'))
+
+his_plot %>% 
+         layout(
+         title= 'Distribution of daily flight cancellation, 2021/11/1 to 2022/1/31',
+         xaxis = list(title = "Daily flight cancellation", tickangle = -45),
+         yaxis = list(title = "Count"))
+
 ```
 
 ## Stratification factors
@@ -66,11 +68,12 @@ Cancellation count per month show difference both by month and airline, therefor
 ```{r}
 cancel_airline <- cancel_tidy  %>%
   group_by(year_month, airline_name) %>%
-  mutate(Total_number_of_cancellation = sum(cancel_count))  
+  mutate(Total_number_of_cancellation = sum(cancel_count)) %>%   
+  select(year_month, airline_name, Total_number_of_cancellation) %>%
+  distinct %>%
+  mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan"))  
 
 cancel_airline %>%
-  select(year_month, airline_name, Total_number_of_cancellation) %>%
-  distinct %>% 
   pivot_wider(
   names_from = airline_name, 
   values_from = Total_number_of_cancellation) %>%
@@ -81,21 +84,27 @@ cancel_airline %>%
 
 
 ```{r}
-plot_cancel_airline <- cancel_airline %>%
-  ggplot(aes(x = airline_name, y = Total_number_of_cancellation, fill = year_month)) +
-  geom_bar(stat = "identity", show.legend = FALSE) +
-  labs(
-    title = "Monthly flight Cancellation numbers by month and airline",
-    x = "Airline Name",
-    y = "Monthly flight Cancellation numbers"
-  ) +
-  theme(legend.position="right", legend.title = element_blank(),
-        text = element_text(size = 10),
-        axis.text.x = element_text(angle = 60, hjust = 1, size = 5)) +
-  facet_grid(. ~ year_month)
+bar_plot1 = cancel_airline %>% 
+  mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan")) %>% 
+  plot_ly(x = ~year_month, y = ~Total_number_of_cancellation, color = ~airline_name, type = "bar", colors = "OrRd")
 
-  
-ggplotly(plot_cancel_airline)
+bar_plot1 = bar_plot1 %>% 
+  layout(xaxis = list(title = "Time"),
+         yaxis = list(title = "Monthly flight cancellation numbers"),
+         margin = list(b = 100),
+         barmode = 'group')
+bar_plot1
+
+bar_plot2 = cancel_airline %>% 
+  mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan")) %>% 
+  plot_ly(x = ~airline_name, y = ~Total_number_of_cancellation, color = ~year_month, type = "bar", colors = "OrRd")
+
+bar_plot2 = bar_plot2 %>% 
+  layout(xaxis = list(title = "Airline Name", tickangle = -45),
+         yaxis = list(title = "Monthly flight cancellation numbers"),
+         margin = list(b = 100),
+         barmode = 'group')
+bar_plot2
 ```
 
 # Poisson model
