@@ -5,10 +5,16 @@ navbar:
   left:
     - text: "Explore"
       menu:
-      - text: "Delay & Cancel"
-        href:  https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/
-      - text: "Destination"
-        href:  Destination.html
+      - text: "Overview"
+        href: xx.html
+      - text: "Cancel & Delay"
+        href: https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/
+      - text: "Categorical Variables"
+        href: xx.html
+      - text: "Continuous Variables"
+        href: xx.html
+      - text: "Fun Facts"
+        href: Destination.html
     - text: "Analysis"
       menu:
       - text: "Visualization"
@@ -21,12 +27,13 @@ navbar:
         href: xx.html
     - text: "Project Report"
       href: project_report.html
-      
   right:
-    - text: "What to do"
+    - text: "What to Do"
       href: what_to_do_JFK.html
     - text: "About Us"
       href: about_us.html
+    - icon: fa-brands fa-youtube fa-lg
+      href: http://
     - icon: fa-github fa-lg
       href: https://github.com/YingchenX/final_project_nycairport
 
@@ -34,3 +41,4 @@ output:
   html_document:
     theme: journal
     always_allow_html: true
+    
