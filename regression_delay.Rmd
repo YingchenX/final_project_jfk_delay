@@ -131,7 +131,7 @@ From the previous data exploration and visualization, we found some interesting 
 
 <br>
 
-### check distribution of the outcome (continuous)
+### distribution of outcome
 
 ```{r}
 delay_hist = raw_df %>% 
@@ -162,7 +162,7 @@ To address the two issues above, we can apply a Log transformation to normalize 
 
 <br>
 
-### data cleaning and log transformation
+### log transformation
 
 ```{r}
 log_df = raw_df %>% 
@@ -282,7 +282,9 @@ box_cat(log_df$hour_c) %>%
   layout(xaxis = list(title = "Times of the day"))
 
 #One-way ANOVA
-aov(delay ~ hour_c, data = log_df) %>% summary()
+aov(delay ~ hour_c, data = log_df) %>% 
+  summary() 
+  
 
 #Pairwise t-tests (Bonferroni)
 pairwise.t.test(log_df$delay, log_df$hour_c, p.adjust.method = "bonferroni")
@@ -398,11 +400,14 @@ Weather_delay_scatter
 #### Pearson correlation 
 
 ```{r}
+
 cor_po = log_df %>% 
   select(-airline, -month, -hour_c) %>% 
-  cor(y = log_df$delay, x = ., method = c("pearson", "kendall", "spearman")) 
+  cor(y = log_df$delay, x = ., method = c("pearson")) 
 
-round(cor_po, 2)
+round(cor_po, 2) %>% 
+  knitr::kable()
+
 ```
 
 **Highlights:**
@@ -486,7 +491,8 @@ As we see above, independence assumption is met and thus we can add all these 5 
 
 ```{r}
 lm_1 = lm(delay ~ airline + month + hour_c + carrierd + latarrd, data = log_df)
-broom::glance(lm_1) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16'))
+broom::glance(lm_1) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16')) %>% 
+  knitr::kable()
 ```
 
 **Highlights:** 
@@ -506,7 +512,8 @@ broom::glance(lm_1) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.v
 
 ```{r}
 lm_2 = lm(delay ~ ., data = log_df)
-broom::glance(lm_2) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16'))
+broom::glance(lm_2) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16')) %>% 
+  knitr::kable()
 ```
 
 **Highlights:** 
