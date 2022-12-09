@@ -33,6 +33,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
@@ -235,6 +236,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -403,6 +407,14 @@ div.tocify {
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Poisson model</h1>
@@ -458,21 +470,21 @@ library(plotly)</code></pre>
 theme_set(theme_minimal() + theme(legend.position = &quot;bottom&quot;))
 
 cancel_airline = read_csv(&quot;tidied_data/cancel_airline.csv&quot;)</code></pre>
-<pre><code>## Rows: 216 Columns: 12
+<pre><code>## Rows: 216 Columns: 13
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr  (3): month, airline_name, year_month
-## dbl  (8): year, day, temperature, humidity, windspeed, covid_case, cancel_co...
+## dbl  (9): year, day, temperature, humidity, windspeed, covid_case, daily_can...
 ## date (1): date
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <pre class="r"><code>cancel_tidy = read_csv(&quot;tidied_data/cancel_tidy.csv&quot;)</code></pre>
-<pre><code>## Rows: 216 Columns: 11
+<pre><code>## Rows: 216 Columns: 12
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr  (3): month, airline_name, year_month
-## dbl  (7): year, day, temperature, humidity, windspeed, covid_case, cancel_count
+## dbl  (8): year, day, temperature, humidity, windspeed, covid_case, daily_can...
 ## date (1): date
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
@@ -491,33 +503,34 @@ cancellations because of COVID breakouts or lockdowns.</p>
 a number of variables. The number of cancellations each day is therefore
 regarded as the result (dependent variable), and exposures of interest
 are regarded as the independent variables.</p>
-<p><code>cancel_coun</code>t: daily flight cancellation count in JFK
-airport <code>temperature</code>: daily average dry bulb temperature
-<code>humidity</code>: daily average relative humidity
-<code>windspeed</code>: daily average relative windspeed
-<code>covid_case</code>: new daily cases of COVID-19
-<code>airline_name</code>: domestic airline <code>year_month</code>: the
-date format in “Year Month”</p>
+<ul>
+<li><code>daily_cancel</code>: daily flight cancellation count in JFK
+airport</li>
+<li><code>temperature</code>: daily average dry bulb temperature</li>
+<li><code>humidity</code>: daily average relative humidity</li>
+<li><code>windspeed</code>: daily average relative windspeed</li>
+<li><code>covid_case</code>: new daily cases of COVID-19</li>
+<li><code>airline_name</code>: domestic airline</li>
+<li><code>year_month</code>: the date format in “Year Month”</li>
+</ul>
 </div>
 <div id="pre-analysis" class="section level1">
 <h1>Pre-analysis</h1>
 <div id="check-distribution" class="section level2">
 <h2>Check distribution</h2>
-<p>Since our outcome, <code>cancel_count</code>, is calculated using a
+<p>Since our outcome, <code>daily_cancel</code>, is calculated using a
 count variable (number of cancellation) repeated over time, we’ll model
 it using a Poisson regression model.</p>
 <pre class="r"><code># poisson distribution of counts
-his_plot&lt;- cancel_tidy %&gt;% 
-  plot_ly(x = ~cancel_count, 
-   type = &quot;histogram&quot;, marker = list(color = &#39;rgb(255, 156, 128)&#39;))
-
-his_plot %&gt;% 
+cancel_tidy %&gt;% 
+  plot_ly(x = ~daily_cancel, 
+   type = &quot;histogram&quot;, marker = list(color = &#39;rgb(255, 156, 128)&#39;)) %&gt;% 
          layout(
          title= &#39;Distribution of daily flight cancellation, 2021/11/1 to 2022/1/31&#39;,
          xaxis = list(title = &quot;Daily flight cancellation&quot;, tickangle = -45),
          yaxis = list(title = &quot;Count&quot;))</code></pre>
-<div id="htmlwidget-d737df0e2f67e8468a96" style="width:90%;height:576px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d737df0e2f67e8468a96">{"x":{"visdat":{"ef92d931a41":["function () ","plotlyVisDat"]},"cur_data":"ef92d931a41","attrs":{"ef92d931a41":{"x":{},"marker":{"color":"rgb(255, 156, 128)"},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"histogram"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Distribution of daily flight cancellation, 2021/11/1 to 2022/1/31","xaxis":{"domain":[0,1],"automargin":true,"title":"Daily flight cancellation","tickangle":-45},"yaxis":{"domain":[0,1],"automargin":true,"title":"Count"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[9,9,2,2,2,1,2,6,6,6,1,3,3,3,5,5,2,2,2,2,2,3,3,1,1,3,2,1,3,3,1,2,3,3,2,2,2,2,4,4,4,4,3,1,2,2,2,3,3,3,1,2,2,8,8,8,19,19,19,30,30,30,30,30,35,35,35,35,35,27,27,27,27,27,19,19,19,19,19,22,22,22,22,38,38,38,29,29,29,39,39,39,39,39,39,39,54,54,54,54,54,54,49,49,49,49,49,49,49,28,28,28,28,28,28,28,6,6,6,6,16,16,16,16,16,16,127,127,127,127,127,127,11,11,11,11,11,8,8,8,8,9,9,9,5,5,5,5,5,3,3,2,2,6,6,6,57,57,57,57,57,57,15,15,15,15,15,6,6,4,4,17,17,17,17,17,17,21,21,21,5,5,5,3,3,3,2,2,3,3,2,2,2,2,52,52,52,52,52,333,333,333,333,333,333,333,206,206,206,206,206,206,206,33,33,33],"marker":{"color":"rgb(255, 156, 128)","line":{"color":"rgba(31,119,180,1)"}},"type":"histogram","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-a9fc0a2c2f93fe25596c" style="width:90%;height:576px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a9fc0a2c2f93fe25596c">{"x":{"visdat":{"fa4038df90d7":["function () ","plotlyVisDat"]},"cur_data":"fa4038df90d7","attrs":{"fa4038df90d7":{"x":{},"marker":{"color":"rgb(255, 156, 128)"},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"histogram"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Distribution of daily flight cancellation, 2021/11/1 to 2022/1/31","xaxis":{"domain":[0,1],"automargin":true,"title":"Daily flight cancellation","tickangle":-45},"yaxis":{"domain":[0,1],"automargin":true,"title":"Count"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[9,9,2,2,2,1,2,6,6,6,1,3,3,3,5,5,2,2,2,2,2,3,3,1,1,3,2,1,3,3,1,2,3,3,2,2,2,2,4,4,4,4,3,1,2,2,2,3,3,3,1,2,2,8,8,8,19,19,19,30,30,30,30,30,35,35,35,35,35,27,27,27,27,27,19,19,19,19,19,22,22,22,22,38,38,38,29,29,29,39,39,39,39,39,39,39,54,54,54,54,54,54,49,49,49,49,49,49,49,28,28,28,28,28,28,28,6,6,6,6,16,16,16,16,16,16,127,127,127,127,127,127,11,11,11,11,11,8,8,8,8,9,9,9,5,5,5,5,5,3,3,2,2,6,6,6,57,57,57,57,57,57,15,15,15,15,15,6,6,4,4,17,17,17,17,17,17,21,21,21,5,5,5,3,3,3,2,2,3,3,2,2,2,2,52,52,52,52,52,333,333,333,333,333,333,333,206,206,206,206,206,206,206,33,33,33],"marker":{"color":"rgb(255, 156, 128)","line":{"color":"rgba(31,119,180,1)"}},"type":"histogram","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="stratification-factors" class="section level2">
 <h2>Stratification factors</h2>
@@ -526,7 +539,7 @@ airline, therefore, using month and airline as stratification
 factors.</p>
 <pre class="r"><code>cancel_airline &lt;- cancel_tidy  %&gt;%
   group_by(year_month, airline_name) %&gt;%
-  mutate(Total_number_of_cancellation = sum(cancel_count)) %&gt;%   
+  mutate(Total_number_of_cancellation = sum(daily_cancel_by_airline)) %&gt;%   
   select(year_month, airline_name, Total_number_of_cancellation) %&gt;%
   distinct %&gt;%
   mutate(year_month = fct_relevel(year_month, &quot;2021-Nov&quot;, &quot;2021-Dec&quot;, &quot;2022-Jan&quot;))  
@@ -565,69 +578,65 @@ airline</caption>
 <tbody>
 <tr class="odd">
 <td align="left">2021-Nov</td>
-<td align="right">42</td>
-<td align="right">23</td>
-<td align="right">11</td>
-<td align="right">8</td>
-<td align="right">3</td>
-<td align="right">8</td>
+<td align="right">33</td>
+<td align="right">6</td>
+<td align="right">5</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">4</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">2021-Dec</td>
-<td align="right">174</td>
-<td align="right">143</td>
-<td align="right">252</td>
-<td align="right">226</td>
-<td align="right">10</td>
-<td align="right">5</td>
-<td align="right">171</td>
+<td align="right">22</td>
+<td align="right">15</td>
+<td align="right">165</td>
+<td align="right">45</td>
+<td align="right">4</td>
+<td align="right">2</td>
+<td align="right">7</td>
 </tr>
 <tr class="odd">
 <td align="left">2022-Jan</td>
-<td align="right">1047</td>
-<td align="right">977</td>
-<td align="right">1121</td>
-<td align="right">1039</td>
-<td align="right">1058</td>
-<td align="right">1047</td>
-<td align="right">672</td>
+<td align="right">139</td>
+<td align="right">41</td>
+<td align="right">416</td>
+<td align="right">182</td>
+<td align="right">156</td>
+<td align="right">185</td>
+<td align="right">10</td>
 </tr>
 </tbody>
 </table>
 <pre class="r"><code>bar_plot1 = cancel_airline %&gt;% 
   mutate(year_month = fct_relevel(year_month, &quot;2021-Nov&quot;, &quot;2021-Dec&quot;, &quot;2022-Jan&quot;)) %&gt;% 
-  plot_ly(x = ~year_month, y = ~Total_number_of_cancellation, color = ~airline_name, type = &quot;bar&quot;, colors = &quot;OrRd&quot;)
-
-bar_plot1 = bar_plot1 %&gt;% 
+  plot_ly(x = ~year_month, y = ~Total_number_of_cancellation, color = ~airline_name, type = &quot;bar&quot;, colors = &quot;OrRd&quot;)  %&gt;% 
   layout(xaxis = list(title = &quot;Time&quot;),
          yaxis = list(title = &quot;Monthly flight cancellation numbers&quot;),
          margin = list(b = 100),
          barmode = &#39;group&#39;)
 bar_plot1</code></pre>
-<div id="htmlwidget-77be33eafde7a3da7e0c" style="width:90%;height:576px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-77be33eafde7a3da7e0c">{"x":{"visdat":{"ef9260dbb6e":["function () ","plotlyVisDat"]},"cur_data":"ef9260dbb6e","attrs":{"ef9260dbb6e":{"x":{},"y":{},"color":{},"colors":"OrRd","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":100,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"Time","type":"category","categoryorder":"array","categoryarray":["2021-Nov","2021-Dec","2022-Jan"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Monthly flight cancellation numbers"},"barmode":"group","hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[23,143,977],"type":"bar","name":"Alaska Airlines","marker":{"color":"rgba(254,240,217,1)","line":{"color":"rgba(254,240,217,1)"}},"textfont":{"color":"rgba(254,240,217,1)"},"error_y":{"color":"rgba(254,240,217,1)"},"error_x":{"color":"rgba(254,240,217,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[42,174,1047],"type":"bar","name":"American Airlines","marker":{"color":"rgba(253,212,158,1)","line":{"color":"rgba(253,212,158,1)"}},"textfont":{"color":"rgba(253,212,158,1)"},"error_y":{"color":"rgba(253,212,158,1)"},"error_x":{"color":"rgba(253,212,158,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[8,226,1039],"type":"bar","name":"Delta Air Lines","marker":{"color":"rgba(253,187,132,1)","line":{"color":"rgba(253,187,132,1)"}},"textfont":{"color":"rgba(253,187,132,1)"},"error_y":{"color":"rgba(253,187,132,1)"},"error_x":{"color":"rgba(253,187,132,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[3,10,1058],"type":"bar","name":"Endeavor Air","marker":{"color":"rgba(252,141,89,1)","line":{"color":"rgba(252,141,89,1)"}},"textfont":{"color":"rgba(252,141,89,1)"},"error_y":{"color":"rgba(252,141,89,1)"},"error_x":{"color":"rgba(252,141,89,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[11,252,1121],"type":"bar","name":"JetBlue Airways","marker":{"color":"rgba(239,101,72,1)","line":{"color":"rgba(239,101,72,1)"}},"textfont":{"color":"rgba(239,101,72,1)"},"error_y":{"color":"rgba(239,101,72,1)"},"error_x":{"color":"rgba(239,101,72,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[8,5,1047],"type":"bar","name":"Republic Airways","marker":{"color":"rgba(215,48,31,1)","line":{"color":"rgba(215,48,31,1)"}},"textfont":{"color":"rgba(215,48,31,1)"},"error_y":{"color":"rgba(215,48,31,1)"},"error_x":{"color":"rgba(215,48,31,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[1,171,672],"type":"bar","name":"United Air Lines","marker":{"color":"rgba(153,0,0,1)","line":{"color":"rgba(153,0,0,1)"}},"textfont":{"color":"rgba(153,0,0,1)"},"error_y":{"color":"rgba(153,0,0,1)"},"error_x":{"color":"rgba(153,0,0,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-5c5637818ed1320ecee1" style="width:90%;height:576px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5c5637818ed1320ecee1">{"x":{"visdat":{"fa403f7c834e":["function () ","plotlyVisDat"]},"cur_data":"fa403f7c834e","attrs":{"fa403f7c834e":{"x":{},"y":{},"color":{},"colors":"OrRd","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":100,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"Time","type":"category","categoryorder":"array","categoryarray":["2021-Nov","2021-Dec","2022-Jan"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Monthly flight cancellation numbers"},"barmode":"group","hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[6,15,41],"type":"bar","name":"Alaska Airlines","marker":{"color":"rgba(254,240,217,1)","line":{"color":"rgba(254,240,217,1)"}},"textfont":{"color":"rgba(254,240,217,1)"},"error_y":{"color":"rgba(254,240,217,1)"},"error_x":{"color":"rgba(254,240,217,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[33,22,139],"type":"bar","name":"American Airlines","marker":{"color":"rgba(253,212,158,1)","line":{"color":"rgba(253,212,158,1)"}},"textfont":{"color":"rgba(253,212,158,1)"},"error_y":{"color":"rgba(253,212,158,1)"},"error_x":{"color":"rgba(253,212,158,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[2,45,182],"type":"bar","name":"Delta Air Lines","marker":{"color":"rgba(253,187,132,1)","line":{"color":"rgba(253,187,132,1)"}},"textfont":{"color":"rgba(253,187,132,1)"},"error_y":{"color":"rgba(253,187,132,1)"},"error_x":{"color":"rgba(253,187,132,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[1,4,156],"type":"bar","name":"Endeavor Air","marker":{"color":"rgba(252,141,89,1)","line":{"color":"rgba(252,141,89,1)"}},"textfont":{"color":"rgba(252,141,89,1)"},"error_y":{"color":"rgba(252,141,89,1)"},"error_x":{"color":"rgba(252,141,89,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[5,165,416],"type":"bar","name":"JetBlue Airways","marker":{"color":"rgba(239,101,72,1)","line":{"color":"rgba(239,101,72,1)"}},"textfont":{"color":"rgba(239,101,72,1)"},"error_y":{"color":"rgba(239,101,72,1)"},"error_x":{"color":"rgba(239,101,72,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[4,2,185],"type":"bar","name":"Republic Airways","marker":{"color":"rgba(215,48,31,1)","line":{"color":"rgba(215,48,31,1)"}},"textfont":{"color":"rgba(215,48,31,1)"},"error_y":{"color":"rgba(215,48,31,1)"},"error_x":{"color":"rgba(215,48,31,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-Nov","2021-Dec","2022-Jan"],"y":[1,7,10],"type":"bar","name":"United Air Lines","marker":{"color":"rgba(153,0,0,1)","line":{"color":"rgba(153,0,0,1)"}},"textfont":{"color":"rgba(153,0,0,1)"},"error_y":{"color":"rgba(153,0,0,1)"},"error_x":{"color":"rgba(153,0,0,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <pre class="r"><code>bar_plot2 = cancel_airline %&gt;% 
   mutate(year_month = fct_relevel(year_month, &quot;2021-Nov&quot;, &quot;2021-Dec&quot;, &quot;2022-Jan&quot;)) %&gt;% 
-  plot_ly(x = ~airline_name, y = ~Total_number_of_cancellation, color = ~year_month, type = &quot;bar&quot;, colors = &quot;OrRd&quot;)
-
-bar_plot2 = bar_plot2 %&gt;% 
+  plot_ly(x = ~airline_name, y = ~Total_number_of_cancellation, color = ~year_month, type = &quot;bar&quot;, colors = &quot;OrRd&quot;)  %&gt;% 
   layout(xaxis = list(title = &quot;Airline Name&quot;, tickangle = -45),
          yaxis = list(title = &quot;Monthly flight cancellation numbers&quot;),
          margin = list(b = 100),
          barmode = &#39;group&#39;)
 bar_plot2</code></pre>
-<div id="htmlwidget-2c38693585ab303b173c" style="width:90%;height:576px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2c38693585ab303b173c">{"x":{"visdat":{"ef926f8c35dc":["function () ","plotlyVisDat"]},"cur_data":"ef926f8c35dc","attrs":{"ef926f8c35dc":{"x":{},"y":{},"color":{},"colors":"OrRd","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":100,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"Airline Name","tickangle":-45,"type":"category","categoryorder":"array","categoryarray":["Alaska Airlines","American Airlines","Delta Air Lines","Endeavor Air","JetBlue Airways","Republic Airways","United Air Lines"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Monthly flight cancellation numbers"},"barmode":"group","hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":["American Airlines","Alaska Airlines","JetBlue Airways","Delta Air Lines","Endeavor Air","Republic Airways","United Air Lines"],"y":[42,23,11,8,3,8,1],"type":"bar","name":"2021-Nov","marker":{"color":"rgba(254,232,200,1)","line":{"color":"rgba(254,232,200,1)"}},"textfont":{"color":"rgba(254,232,200,1)"},"error_y":{"color":"rgba(254,232,200,1)"},"error_x":{"color":"rgba(254,232,200,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["American Airlines","JetBlue Airways","Delta Air Lines","Republic Airways","Endeavor Air","Alaska Airlines","United Air Lines"],"y":[174,252,226,5,10,143,171],"type":"bar","name":"2021-Dec","marker":{"color":"rgba(253,187,132,1)","line":{"color":"rgba(253,187,132,1)"}},"textfont":{"color":"rgba(253,187,132,1)"},"error_y":{"color":"rgba(253,187,132,1)"},"error_x":{"color":"rgba(253,187,132,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["Endeavor Air","American Airlines","Alaska Airlines","JetBlue Airways","Delta Air Lines","United Air Lines","Republic Airways"],"y":[1058,1047,977,1121,1039,672,1047],"type":"bar","name":"2022-Jan","marker":{"color":"rgba(227,74,51,1)","line":{"color":"rgba(227,74,51,1)"}},"textfont":{"color":"rgba(227,74,51,1)"},"error_y":{"color":"rgba(227,74,51,1)"},"error_x":{"color":"rgba(227,74,51,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-fc2a517b65626f4fb5a5" style="width:90%;height:576px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-fc2a517b65626f4fb5a5">{"x":{"visdat":{"fa407909672":["function () ","plotlyVisDat"]},"cur_data":"fa407909672","attrs":{"fa407909672":{"x":{},"y":{},"color":{},"colors":"OrRd","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":100,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"Airline Name","tickangle":-45,"type":"category","categoryorder":"array","categoryarray":["Alaska Airlines","American Airlines","Delta Air Lines","Endeavor Air","JetBlue Airways","Republic Airways","United Air Lines"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Monthly flight cancellation numbers"},"barmode":"group","hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":["American Airlines","Alaska Airlines","JetBlue Airways","Delta Air Lines","Endeavor Air","Republic Airways","United Air Lines"],"y":[33,6,5,2,1,4,1],"type":"bar","name":"2021-Nov","marker":{"color":"rgba(254,232,200,1)","line":{"color":"rgba(254,232,200,1)"}},"textfont":{"color":"rgba(254,232,200,1)"},"error_y":{"color":"rgba(254,232,200,1)"},"error_x":{"color":"rgba(254,232,200,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["American Airlines","JetBlue Airways","Delta Air Lines","Republic Airways","Endeavor Air","Alaska Airlines","United Air Lines"],"y":[22,165,45,2,4,15,7],"type":"bar","name":"2021-Dec","marker":{"color":"rgba(253,187,132,1)","line":{"color":"rgba(253,187,132,1)"}},"textfont":{"color":"rgba(253,187,132,1)"},"error_y":{"color":"rgba(253,187,132,1)"},"error_x":{"color":"rgba(253,187,132,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["Endeavor Air","American Airlines","Alaska Airlines","JetBlue Airways","Delta Air Lines","United Air Lines","Republic Airways"],"y":[156,139,41,416,182,10,185],"type":"bar","name":"2022-Jan","marker":{"color":"rgba(227,74,51,1)","line":{"color":"rgba(227,74,51,1)"}},"textfont":{"color":"rgba(227,74,51,1)"},"error_y":{"color":"rgba(227,74,51,1)"},"error_x":{"color":"rgba(227,74,51,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <p>lag covid-19</p>
 <pre class="r"><code>cancel_covid &lt;- cancel_tidy  %&gt;%
-  select(date, cancel_count, covid_case) %&gt;% 
+  select(date, daily_cancel, covid_case) %&gt;% 
   distinct()
 
 cancel_plot &lt;-  cancel_covid  %&gt;%
-  mutate(text_label = str_c(&quot;Date: &quot;, date, &quot;\nCancellation flight: &quot;, cancel_count)) %&gt;% 
+  mutate(text_label = str_c(&quot;Date: &quot;, date, &quot;\nCancellation flight: &quot;, daily_cancel)) %&gt;% 
   plot_ly(
-    x = ~date, y = ~cancel_count, type = &quot;scatter&quot;, mode = &quot;lines+markers&quot;,
+    x = ~date, y = ~daily_cancel, type = &quot;scatter&quot;, mode = &quot;lines+markers&quot;,
    text = ~text_label, alpha = 0.5, name = &#39;Daily flight cancellation&#39;) %&gt;% 
   layout(
          yaxis = list(title = &quot;Daily flight cancellation&quot;),
@@ -648,19 +657,19 @@ scatter_plot &lt;- subplot(cancel_plot, covid_plot, nrows = 2) %&gt;%
   layout(title = list(text = &quot;Time trend of daily cancellation vs. daily covid cases&quot;),
          plot_bgcolor=&#39;#e5ecf6&#39;) 
 scatter_plot</code></pre>
-<div id="htmlwidget-a823e0005f9bb1c77f49" style="width:90%;height:576px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a823e0005f9bb1c77f49">{"x":{"data":[{"x":["2021-11-01","2021-11-02","2021-11-06","2021-11-07","2021-11-08","2021-11-10","2021-11-11","2021-11-12","2021-11-13","2021-11-15","2021-11-16","2021-11-17","2021-11-18","2021-11-21","2021-11-22","2021-11-25","2021-11-26","2021-11-28","2021-11-29","2021-11-30","2021-12-01","2021-12-07","2021-12-08","2021-12-09","2021-12-10","2021-12-11","2021-12-13","2021-12-14","2021-12-15","2021-12-16","2021-12-18","2021-12-20","2021-12-21","2021-12-22","2021-12-23","2021-12-24","2021-12-25","2021-12-26","2021-12-27","2021-12-28","2021-12-29","2021-12-30","2021-12-31","2022-01-01","2022-01-02","2022-01-03","2022-01-04","2022-01-05","2022-01-06","2022-01-07","2022-01-08","2022-01-09","2022-01-10","2022-01-11","2022-01-12","2022-01-13","2022-01-14","2022-01-15","2022-01-16","2022-01-17","2022-01-18","2022-01-19","2022-01-20","2022-01-21","2022-01-22","2022-01-23","2022-01-24","2022-01-25","2022-01-26","2022-01-27","2022-01-28","2022-01-29","2022-01-30","2022-01-31"],"y":[9,2,2,1,2,6,1,3,5,2,2,2,3,1,1,3,2,1,3,1,2,3,2,2,4,4,3,1,2,2,3,1,2,2,8,19,30,35,27,19,22,38,29,39,54,49,28,6,16,127,11,8,9,5,5,3,2,6,57,15,6,4,17,21,5,3,2,3,2,2,52,333,206,33],"mode":"lines+markers","text":["Date: 2021-11-01<br />Cancellation flight: 9","Date: 2021-11-02<br />Cancellation flight: 2","Date: 2021-11-06<br />Cancellation flight: 2","Date: 2021-11-07<br />Cancellation flight: 1","Date: 2021-11-08<br />Cancellation flight: 2","Date: 2021-11-10<br />Cancellation flight: 6","Date: 2021-11-11<br />Cancellation flight: 1","Date: 2021-11-12<br />Cancellation flight: 3","Date: 2021-11-13<br />Cancellation flight: 5","Date: 2021-11-15<br />Cancellation flight: 2","Date: 2021-11-16<br />Cancellation flight: 2","Date: 2021-11-17<br />Cancellation flight: 2","Date: 2021-11-18<br />Cancellation flight: 3","Date: 2021-11-21<br />Cancellation flight: 1","Date: 2021-11-22<br />Cancellation flight: 1","Date: 2021-11-25<br />Cancellation flight: 3","Date: 2021-11-26<br />Cancellation flight: 2","Date: 2021-11-28<br />Cancellation flight: 1","Date: 2021-11-29<br />Cancellation flight: 3","Date: 2021-11-30<br />Cancellation flight: 1","Date: 2021-12-01<br />Cancellation flight: 2","Date: 2021-12-07<br />Cancellation flight: 3","Date: 2021-12-08<br />Cancellation flight: 2","Date: 2021-12-09<br />Cancellation flight: 2","Date: 2021-12-10<br />Cancellation flight: 4","Date: 2021-12-11<br />Cancellation flight: 4","Date: 2021-12-13<br />Cancellation flight: 3","Date: 2021-12-14<br />Cancellation flight: 1","Date: 2021-12-15<br />Cancellation flight: 2","Date: 2021-12-16<br />Cancellation flight: 2","Date: 2021-12-18<br />Cancellation flight: 3","Date: 2021-12-20<br />Cancellation flight: 1","Date: 2021-12-21<br />Cancellation flight: 2","Date: 2021-12-22<br />Cancellation flight: 2","Date: 2021-12-23<br />Cancellation flight: 8","Date: 2021-12-24<br />Cancellation flight: 19","Date: 2021-12-25<br />Cancellation flight: 30","Date: 2021-12-26<br />Cancellation flight: 35","Date: 2021-12-27<br />Cancellation flight: 27","Date: 2021-12-28<br />Cancellation flight: 19","Date: 2021-12-29<br />Cancellation flight: 22","Date: 2021-12-30<br />Cancellation flight: 38","Date: 2021-12-31<br />Cancellation flight: 29","Date: 2022-01-01<br />Cancellation flight: 39","Date: 2022-01-02<br />Cancellation flight: 54","Date: 2022-01-03<br />Cancellation flight: 49","Date: 2022-01-04<br />Cancellation flight: 28","Date: 2022-01-05<br />Cancellation flight: 6","Date: 2022-01-06<br />Cancellation flight: 16","Date: 2022-01-07<br />Cancellation flight: 127","Date: 2022-01-08<br />Cancellation flight: 11","Date: 2022-01-09<br />Cancellation flight: 8","Date: 2022-01-10<br />Cancellation flight: 9","Date: 2022-01-11<br />Cancellation flight: 5","Date: 2022-01-12<br />Cancellation flight: 5","Date: 2022-01-13<br />Cancellation flight: 3","Date: 2022-01-14<br />Cancellation flight: 2","Date: 2022-01-15<br />Cancellation flight: 6","Date: 2022-01-16<br />Cancellation flight: 57","Date: 2022-01-17<br />Cancellation flight: 15","Date: 2022-01-18<br />Cancellation flight: 6","Date: 2022-01-19<br />Cancellation flight: 4","Date: 2022-01-20<br />Cancellation flight: 17","Date: 2022-01-21<br />Cancellation flight: 21","Date: 2022-01-22<br />Cancellation flight: 5","Date: 2022-01-23<br />Cancellation flight: 3","Date: 2022-01-24<br />Cancellation flight: 2","Date: 2022-01-25<br />Cancellation flight: 3","Date: 2022-01-26<br />Cancellation flight: 2","Date: 2022-01-27<br />Cancellation flight: 2","Date: 2022-01-28<br />Cancellation flight: 52","Date: 2022-01-29<br />Cancellation flight: 333","Date: 2022-01-30<br />Cancellation flight: 206","Date: 2022-01-31<br />Cancellation flight: 33"],"name":"Daily flight cancellation","type":"scatter","marker":{"color":"rgba(31,119,180,0.498)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,0.498)"},"error_x":{"color":"rgba(31,119,180,0.498)"},"line":{"color":"rgba(31,119,180,0.498)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-11-01","2021-11-02","2021-11-06","2021-11-07","2021-11-08","2021-11-10","2021-11-11","2021-11-12","2021-11-13","2021-11-15","2021-11-16","2021-11-17","2021-11-18","2021-11-21","2021-11-22","2021-11-25","2021-11-26","2021-11-28","2021-11-29","2021-11-30","2021-12-01","2021-12-07","2021-12-08","2021-12-09","2021-12-10","2021-12-11","2021-12-13","2021-12-14","2021-12-15","2021-12-16","2021-12-18","2021-12-20","2021-12-21","2021-12-22","2021-12-23","2021-12-24","2021-12-25","2021-12-26","2021-12-27","2021-12-28","2021-12-29","2021-12-30","2021-12-31","2022-01-01","2022-01-02","2022-01-03","2022-01-04","2022-01-05","2022-01-06","2022-01-07","2022-01-08","2022-01-09","2022-01-10","2022-01-11","2022-01-12","2022-01-13","2022-01-14","2022-01-15","2022-01-16","2022-01-17","2022-01-18","2022-01-19","2022-01-20","2022-01-21","2022-01-22","2022-01-23","2022-01-24","2022-01-25","2022-01-26","2022-01-27","2022-01-28","2022-01-29","2022-01-30","2022-01-31"],"y":[780,806,508,542,1135,1049,875,1028,614,1263,1272,1329,1310,840,1528,531,1171,1060,2328,2006,2180,2922,3136,3022,3089,2159,7529,10875,13167,13866,9949,27953,30410,31401,31822,17475,7796,22991,51247,49688,50506,47451,29136,12063,32514,54958,49209,40241,36371,23206,16192,14352,25033,18537,18441,16096,13290,6759,6893,9828,10921,9030,7043,5797,3632,3397,6017,4763,4199,3634,2725,512,1425,3112],"mode":"lines+markers","text":["Date: 2021-11-01<br />Covid cases: 780","Date: 2021-11-02<br />Covid cases: 806","Date: 2021-11-06<br />Covid cases: 508","Date: 2021-11-07<br />Covid cases: 542","Date: 2021-11-08<br />Covid cases: 1135","Date: 2021-11-10<br />Covid cases: 1049","Date: 2021-11-11<br />Covid cases: 875","Date: 2021-11-12<br />Covid cases: 1028","Date: 2021-11-13<br />Covid cases: 614","Date: 2021-11-15<br />Covid cases: 1263","Date: 2021-11-16<br />Covid cases: 1272","Date: 2021-11-17<br />Covid cases: 1329","Date: 2021-11-18<br />Covid cases: 1310","Date: 2021-11-21<br />Covid cases: 840","Date: 2021-11-22<br />Covid cases: 1528","Date: 2021-11-25<br />Covid cases: 531","Date: 2021-11-26<br />Covid cases: 1171","Date: 2021-11-28<br />Covid cases: 1060","Date: 2021-11-29<br />Covid cases: 2328","Date: 2021-11-30<br />Covid cases: 2006","Date: 2021-12-01<br />Covid cases: 2180","Date: 2021-12-07<br />Covid cases: 2922","Date: 2021-12-08<br />Covid cases: 3136","Date: 2021-12-09<br />Covid cases: 3022","Date: 2021-12-10<br />Covid cases: 3089","Date: 2021-12-11<br />Covid cases: 2159","Date: 2021-12-13<br />Covid cases: 7529","Date: 2021-12-14<br />Covid cases: 10875","Date: 2021-12-15<br />Covid cases: 13167","Date: 2021-12-16<br />Covid cases: 13866","Date: 2021-12-18<br />Covid cases: 9949","Date: 2021-12-20<br />Covid cases: 27953","Date: 2021-12-21<br />Covid cases: 30410","Date: 2021-12-22<br />Covid cases: 31401","Date: 2021-12-23<br />Covid cases: 31822","Date: 2021-12-24<br />Covid cases: 17475","Date: 2021-12-25<br />Covid cases: 7796","Date: 2021-12-26<br />Covid cases: 22991","Date: 2021-12-27<br />Covid cases: 51247","Date: 2021-12-28<br />Covid cases: 49688","Date: 2021-12-29<br />Covid cases: 50506","Date: 2021-12-30<br />Covid cases: 47451","Date: 2021-12-31<br />Covid cases: 29136","Date: 2022-01-01<br />Covid cases: 12063","Date: 2022-01-02<br />Covid cases: 32514","Date: 2022-01-03<br />Covid cases: 54958","Date: 2022-01-04<br />Covid cases: 49209","Date: 2022-01-05<br />Covid cases: 40241","Date: 2022-01-06<br />Covid cases: 36371","Date: 2022-01-07<br />Covid cases: 23206","Date: 2022-01-08<br />Covid cases: 16192","Date: 2022-01-09<br />Covid cases: 14352","Date: 2022-01-10<br />Covid cases: 25033","Date: 2022-01-11<br />Covid cases: 18537","Date: 2022-01-12<br />Covid cases: 18441","Date: 2022-01-13<br />Covid cases: 16096","Date: 2022-01-14<br />Covid cases: 13290","Date: 2022-01-15<br />Covid cases: 6759","Date: 2022-01-16<br />Covid cases: 6893","Date: 2022-01-17<br />Covid cases: 9828","Date: 2022-01-18<br />Covid cases: 10921","Date: 2022-01-19<br />Covid cases: 9030","Date: 2022-01-20<br />Covid cases: 7043","Date: 2022-01-21<br />Covid cases: 5797","Date: 2022-01-22<br />Covid cases: 3632","Date: 2022-01-23<br />Covid cases: 3397","Date: 2022-01-24<br />Covid cases: 6017","Date: 2022-01-25<br />Covid cases: 4763","Date: 2022-01-26<br />Covid cases: 4199","Date: 2022-01-27<br />Covid cases: 3634","Date: 2022-01-28<br />Covid cases: 2725","Date: 2022-01-29<br />Covid cases: 512","Date: 2022-01-30<br />Covid cases: 1425","Date: 2022-01-31<br />Covid cases: 3112"],"name":"Daily covid cases","type":"scatter","marker":{"color":"rgba(255,127,14,0.498)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,0.498)"},"error_x":{"color":"rgba(255,127,14,0.498)"},"line":{"color":"rgba(255,127,14,0.498)"},"xaxis":"x2","yaxis":"y2","frame":null}],"layout":{"xaxis":{"domain":[0,1],"automargin":true,"anchor":"y"},"xaxis2":{"domain":[0,1],"automargin":true,"anchor":"y2"},"yaxis2":{"domain":[0,0.48],"automargin":true,"anchor":"x2"},"yaxis":{"domain":[0.52,1],"automargin":true,"anchor":"x"},"annotations":[{"x":0.1,"y":0.904,"text":"Daily flight cancellation","showarrow":false,"xref":"paper","yref":"paper"},{"x":0.1,"y":0.384,"text":"Daily covid cases","showarrow":false,"xref":"paper","yref":"paper"}],"shapes":[],"images":[],"margin":{"b":40,"l":60,"t":25,"r":10},"hovermode":"closest","showlegend":true,"title":{"text":"Time trend of daily cancellation vs. daily covid cases"},"plot_bgcolor":"#e5ecf6"},"attrs":{"ef921bc6c49f":{"x":{},"y":{},"mode":"lines+markers","text":{},"name":"Daily flight cancellation","alpha":0.5,"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"},"ef921696b0f8":{"x":{},"y":{},"mode":"lines+markers","text":{},"name":"Daily covid cases","alpha":0.5,"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"subplot":true,"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-764605cb2f5d6ef66796" style="width:90%;height:576px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-764605cb2f5d6ef66796">{"x":{"data":[{"x":["2021-11-01","2021-11-02","2021-11-06","2021-11-07","2021-11-08","2021-11-10","2021-11-11","2021-11-12","2021-11-13","2021-11-15","2021-11-16","2021-11-17","2021-11-18","2021-11-21","2021-11-22","2021-11-25","2021-11-26","2021-11-28","2021-11-29","2021-11-30","2021-12-01","2021-12-07","2021-12-08","2021-12-09","2021-12-10","2021-12-11","2021-12-13","2021-12-14","2021-12-15","2021-12-16","2021-12-18","2021-12-20","2021-12-21","2021-12-22","2021-12-23","2021-12-24","2021-12-25","2021-12-26","2021-12-27","2021-12-28","2021-12-29","2021-12-30","2021-12-31","2022-01-01","2022-01-02","2022-01-03","2022-01-04","2022-01-05","2022-01-06","2022-01-07","2022-01-08","2022-01-09","2022-01-10","2022-01-11","2022-01-12","2022-01-13","2022-01-14","2022-01-15","2022-01-16","2022-01-17","2022-01-18","2022-01-19","2022-01-20","2022-01-21","2022-01-22","2022-01-23","2022-01-24","2022-01-25","2022-01-26","2022-01-27","2022-01-28","2022-01-29","2022-01-30","2022-01-31"],"y":[9,2,2,1,2,6,1,3,5,2,2,2,3,1,1,3,2,1,3,1,2,3,2,2,4,4,3,1,2,2,3,1,2,2,8,19,30,35,27,19,22,38,29,39,54,49,28,6,16,127,11,8,9,5,5,3,2,6,57,15,6,4,17,21,5,3,2,3,2,2,52,333,206,33],"mode":"lines+markers","text":["Date: 2021-11-01<br />Cancellation flight: 9","Date: 2021-11-02<br />Cancellation flight: 2","Date: 2021-11-06<br />Cancellation flight: 2","Date: 2021-11-07<br />Cancellation flight: 1","Date: 2021-11-08<br />Cancellation flight: 2","Date: 2021-11-10<br />Cancellation flight: 6","Date: 2021-11-11<br />Cancellation flight: 1","Date: 2021-11-12<br />Cancellation flight: 3","Date: 2021-11-13<br />Cancellation flight: 5","Date: 2021-11-15<br />Cancellation flight: 2","Date: 2021-11-16<br />Cancellation flight: 2","Date: 2021-11-17<br />Cancellation flight: 2","Date: 2021-11-18<br />Cancellation flight: 3","Date: 2021-11-21<br />Cancellation flight: 1","Date: 2021-11-22<br />Cancellation flight: 1","Date: 2021-11-25<br />Cancellation flight: 3","Date: 2021-11-26<br />Cancellation flight: 2","Date: 2021-11-28<br />Cancellation flight: 1","Date: 2021-11-29<br />Cancellation flight: 3","Date: 2021-11-30<br />Cancellation flight: 1","Date: 2021-12-01<br />Cancellation flight: 2","Date: 2021-12-07<br />Cancellation flight: 3","Date: 2021-12-08<br />Cancellation flight: 2","Date: 2021-12-09<br />Cancellation flight: 2","Date: 2021-12-10<br />Cancellation flight: 4","Date: 2021-12-11<br />Cancellation flight: 4","Date: 2021-12-13<br />Cancellation flight: 3","Date: 2021-12-14<br />Cancellation flight: 1","Date: 2021-12-15<br />Cancellation flight: 2","Date: 2021-12-16<br />Cancellation flight: 2","Date: 2021-12-18<br />Cancellation flight: 3","Date: 2021-12-20<br />Cancellation flight: 1","Date: 2021-12-21<br />Cancellation flight: 2","Date: 2021-12-22<br />Cancellation flight: 2","Date: 2021-12-23<br />Cancellation flight: 8","Date: 2021-12-24<br />Cancellation flight: 19","Date: 2021-12-25<br />Cancellation flight: 30","Date: 2021-12-26<br />Cancellation flight: 35","Date: 2021-12-27<br />Cancellation flight: 27","Date: 2021-12-28<br />Cancellation flight: 19","Date: 2021-12-29<br />Cancellation flight: 22","Date: 2021-12-30<br />Cancellation flight: 38","Date: 2021-12-31<br />Cancellation flight: 29","Date: 2022-01-01<br />Cancellation flight: 39","Date: 2022-01-02<br />Cancellation flight: 54","Date: 2022-01-03<br />Cancellation flight: 49","Date: 2022-01-04<br />Cancellation flight: 28","Date: 2022-01-05<br />Cancellation flight: 6","Date: 2022-01-06<br />Cancellation flight: 16","Date: 2022-01-07<br />Cancellation flight: 127","Date: 2022-01-08<br />Cancellation flight: 11","Date: 2022-01-09<br />Cancellation flight: 8","Date: 2022-01-10<br />Cancellation flight: 9","Date: 2022-01-11<br />Cancellation flight: 5","Date: 2022-01-12<br />Cancellation flight: 5","Date: 2022-01-13<br />Cancellation flight: 3","Date: 2022-01-14<br />Cancellation flight: 2","Date: 2022-01-15<br />Cancellation flight: 6","Date: 2022-01-16<br />Cancellation flight: 57","Date: 2022-01-17<br />Cancellation flight: 15","Date: 2022-01-18<br />Cancellation flight: 6","Date: 2022-01-19<br />Cancellation flight: 4","Date: 2022-01-20<br />Cancellation flight: 17","Date: 2022-01-21<br />Cancellation flight: 21","Date: 2022-01-22<br />Cancellation flight: 5","Date: 2022-01-23<br />Cancellation flight: 3","Date: 2022-01-24<br />Cancellation flight: 2","Date: 2022-01-25<br />Cancellation flight: 3","Date: 2022-01-26<br />Cancellation flight: 2","Date: 2022-01-27<br />Cancellation flight: 2","Date: 2022-01-28<br />Cancellation flight: 52","Date: 2022-01-29<br />Cancellation flight: 333","Date: 2022-01-30<br />Cancellation flight: 206","Date: 2022-01-31<br />Cancellation flight: 33"],"name":"Daily flight cancellation","type":"scatter","marker":{"color":"rgba(31,119,180,0.498)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,0.498)"},"error_x":{"color":"rgba(31,119,180,0.498)"},"line":{"color":"rgba(31,119,180,0.498)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-11-01","2021-11-02","2021-11-06","2021-11-07","2021-11-08","2021-11-10","2021-11-11","2021-11-12","2021-11-13","2021-11-15","2021-11-16","2021-11-17","2021-11-18","2021-11-21","2021-11-22","2021-11-25","2021-11-26","2021-11-28","2021-11-29","2021-11-30","2021-12-01","2021-12-07","2021-12-08","2021-12-09","2021-12-10","2021-12-11","2021-12-13","2021-12-14","2021-12-15","2021-12-16","2021-12-18","2021-12-20","2021-12-21","2021-12-22","2021-12-23","2021-12-24","2021-12-25","2021-12-26","2021-12-27","2021-12-28","2021-12-29","2021-12-30","2021-12-31","2022-01-01","2022-01-02","2022-01-03","2022-01-04","2022-01-05","2022-01-06","2022-01-07","2022-01-08","2022-01-09","2022-01-10","2022-01-11","2022-01-12","2022-01-13","2022-01-14","2022-01-15","2022-01-16","2022-01-17","2022-01-18","2022-01-19","2022-01-20","2022-01-21","2022-01-22","2022-01-23","2022-01-24","2022-01-25","2022-01-26","2022-01-27","2022-01-28","2022-01-29","2022-01-30","2022-01-31"],"y":[780,806,508,542,1135,1049,875,1028,614,1263,1272,1329,1310,840,1528,531,1171,1060,2328,2006,2180,2922,3136,3022,3089,2159,7529,10875,13167,13866,9949,27953,30410,31401,31822,17475,7796,22991,51247,49688,50506,47451,29136,12063,32514,54958,49209,40241,36371,23206,16192,14352,25033,18537,18441,16096,13290,6759,6893,9828,10921,9030,7043,5797,3632,3397,6017,4763,4199,3634,2725,512,1425,3112],"mode":"lines+markers","text":["Date: 2021-11-01<br />Covid cases: 780","Date: 2021-11-02<br />Covid cases: 806","Date: 2021-11-06<br />Covid cases: 508","Date: 2021-11-07<br />Covid cases: 542","Date: 2021-11-08<br />Covid cases: 1135","Date: 2021-11-10<br />Covid cases: 1049","Date: 2021-11-11<br />Covid cases: 875","Date: 2021-11-12<br />Covid cases: 1028","Date: 2021-11-13<br />Covid cases: 614","Date: 2021-11-15<br />Covid cases: 1263","Date: 2021-11-16<br />Covid cases: 1272","Date: 2021-11-17<br />Covid cases: 1329","Date: 2021-11-18<br />Covid cases: 1310","Date: 2021-11-21<br />Covid cases: 840","Date: 2021-11-22<br />Covid cases: 1528","Date: 2021-11-25<br />Covid cases: 531","Date: 2021-11-26<br />Covid cases: 1171","Date: 2021-11-28<br />Covid cases: 1060","Date: 2021-11-29<br />Covid cases: 2328","Date: 2021-11-30<br />Covid cases: 2006","Date: 2021-12-01<br />Covid cases: 2180","Date: 2021-12-07<br />Covid cases: 2922","Date: 2021-12-08<br />Covid cases: 3136","Date: 2021-12-09<br />Covid cases: 3022","Date: 2021-12-10<br />Covid cases: 3089","Date: 2021-12-11<br />Covid cases: 2159","Date: 2021-12-13<br />Covid cases: 7529","Date: 2021-12-14<br />Covid cases: 10875","Date: 2021-12-15<br />Covid cases: 13167","Date: 2021-12-16<br />Covid cases: 13866","Date: 2021-12-18<br />Covid cases: 9949","Date: 2021-12-20<br />Covid cases: 27953","Date: 2021-12-21<br />Covid cases: 30410","Date: 2021-12-22<br />Covid cases: 31401","Date: 2021-12-23<br />Covid cases: 31822","Date: 2021-12-24<br />Covid cases: 17475","Date: 2021-12-25<br />Covid cases: 7796","Date: 2021-12-26<br />Covid cases: 22991","Date: 2021-12-27<br />Covid cases: 51247","Date: 2021-12-28<br />Covid cases: 49688","Date: 2021-12-29<br />Covid cases: 50506","Date: 2021-12-30<br />Covid cases: 47451","Date: 2021-12-31<br />Covid cases: 29136","Date: 2022-01-01<br />Covid cases: 12063","Date: 2022-01-02<br />Covid cases: 32514","Date: 2022-01-03<br />Covid cases: 54958","Date: 2022-01-04<br />Covid cases: 49209","Date: 2022-01-05<br />Covid cases: 40241","Date: 2022-01-06<br />Covid cases: 36371","Date: 2022-01-07<br />Covid cases: 23206","Date: 2022-01-08<br />Covid cases: 16192","Date: 2022-01-09<br />Covid cases: 14352","Date: 2022-01-10<br />Covid cases: 25033","Date: 2022-01-11<br />Covid cases: 18537","Date: 2022-01-12<br />Covid cases: 18441","Date: 2022-01-13<br />Covid cases: 16096","Date: 2022-01-14<br />Covid cases: 13290","Date: 2022-01-15<br />Covid cases: 6759","Date: 2022-01-16<br />Covid cases: 6893","Date: 2022-01-17<br />Covid cases: 9828","Date: 2022-01-18<br />Covid cases: 10921","Date: 2022-01-19<br />Covid cases: 9030","Date: 2022-01-20<br />Covid cases: 7043","Date: 2022-01-21<br />Covid cases: 5797","Date: 2022-01-22<br />Covid cases: 3632","Date: 2022-01-23<br />Covid cases: 3397","Date: 2022-01-24<br />Covid cases: 6017","Date: 2022-01-25<br />Covid cases: 4763","Date: 2022-01-26<br />Covid cases: 4199","Date: 2022-01-27<br />Covid cases: 3634","Date: 2022-01-28<br />Covid cases: 2725","Date: 2022-01-29<br />Covid cases: 512","Date: 2022-01-30<br />Covid cases: 1425","Date: 2022-01-31<br />Covid cases: 3112"],"name":"Daily covid cases","type":"scatter","marker":{"color":"rgba(255,127,14,0.498)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,0.498)"},"error_x":{"color":"rgba(255,127,14,0.498)"},"line":{"color":"rgba(255,127,14,0.498)"},"xaxis":"x2","yaxis":"y2","frame":null}],"layout":{"xaxis":{"domain":[0,1],"automargin":true,"anchor":"y"},"xaxis2":{"domain":[0,1],"automargin":true,"anchor":"y2"},"yaxis2":{"domain":[0,0.48],"automargin":true,"anchor":"x2"},"yaxis":{"domain":[0.52,1],"automargin":true,"anchor":"x"},"annotations":[{"x":0.1,"y":0.904,"text":"Daily flight cancellation","showarrow":false,"xref":"paper","yref":"paper"},{"x":0.1,"y":0.384,"text":"Daily covid cases","showarrow":false,"xref":"paper","yref":"paper"}],"shapes":[],"images":[],"margin":{"b":40,"l":60,"t":25,"r":10},"hovermode":"closest","showlegend":true,"title":{"text":"Time trend of daily cancellation vs. daily covid cases"},"plot_bgcolor":"#e5ecf6"},"attrs":{"fa40457e3157":{"x":{},"y":{},"mode":"lines+markers","text":{},"name":"Daily flight cancellation","alpha":0.5,"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"},"fa405fd96a65":{"x":{},"y":{},"mode":"lines+markers","text":{},"name":"Daily covid cases","alpha":0.5,"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"subplot":true,"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div id="poisson-model" class="section level1">
 <h1>Poisson model</h1>
-<pre class="r"><code>poisson = glm(cancel_count ~ temperature + humidity + windspeed + covid_case,family = &quot;poisson&quot;,data=cancel_tidy)
+<pre class="r"><code>poisson = glm(daily_cancel ~ temperature + humidity + windspeed + covid_case,family = &quot;poisson&quot;,data=cancel_tidy)
 
 
 summary(poisson) </code></pre>
 <pre><code>## 
 ## Call:
-## glm(formula = cancel_count ~ temperature + humidity + windspeed + 
+## glm(formula = daily_cancel ~ temperature + humidity + windspeed + 
 ##     covid_case, family = &quot;poisson&quot;, data = cancel_tidy)
 ## 
 ## Deviance Residuals: 
@@ -690,7 +699,7 @@ summary(poisson) </code></pre>
 <pre class="r"><code>cancel_tidy %&gt;% 
   nest(df = -month) %&gt;%
   mutate(
-    models = map(.x = df, ~ glm(cancel_count ~ temperature + humidity + windspeed + covid_case,family = &quot;poisson&quot;, data = .x)),
+    models = map(.x = df, ~ glm(daily_cancel ~ temperature + humidity + windspeed + covid_case,family = &quot;poisson&quot;, data = .x)),
     results = map(models, broom::tidy)
   ) %&gt;% 
   unnest(results) %&gt;% 
@@ -744,7 +753,7 @@ summary(poisson) </code></pre>
 <pre class="r"><code>poisson_by_month = cancel_tidy %&gt;%
   nest(data = -month) %&gt;% 
   mutate(
-    models = map(.x = data, ~glm(cancel_count ~ temperature + humidity + windspeed + covid_case, family = &quot;poisson&quot;, data = .x)),
+    models = map(.x = data, ~glm(daily_cancel ~ temperature + humidity + windspeed + covid_case, family = &quot;poisson&quot;, data = .x)),
     results = map(models, broom::tidy)
     ) %&gt;% 
   select(month, results) %&gt;% 
@@ -905,7 +914,7 @@ poisson_by_month %&gt;%
 <pre class="r"><code>cancel_tidy %&gt;% 
   nest(df = -airline_name) %&gt;%
   mutate(
-    models = map(.x = df, ~ glm(cancel_count ~ temperature + humidity + windspeed + covid_case,family = &quot;poisson&quot;, data = .x)),
+    models = map(.x = df, ~ glm(daily_cancel ~ temperature + humidity + windspeed + covid_case,family = &quot;poisson&quot;, data = .x)),
     results = map(models, broom::tidy)
   ) %&gt;% 
   unnest(results) %&gt;% 
@@ -999,7 +1008,7 @@ poisson_by_month %&gt;%
 <pre class="r"><code>poisson_by_airline = cancel_tidy %&gt;%
   nest(data = -airline_name) %&gt;% 
   mutate(
-    models = map(.x = data, ~glm(cancel_count ~ temperature + humidity + windspeed + covid_case, family = &quot;poisson&quot;, data = .x)),
+    models = map(.x = data, ~glm(daily_cancel ~ temperature + humidity + windspeed + covid_case, family = &quot;poisson&quot;, data = .x)),
     results = map(models, broom::tidy)
     ) %&gt;% 
   select(airline_name, results) %&gt;% 
@@ -1319,6 +1328,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 <script>
 $(document).ready(function ()  {
