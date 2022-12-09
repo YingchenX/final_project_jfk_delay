@@ -4,6 +4,7 @@ output:
   html_document:
     toc: true
     toc_float: true
+    code_folding: null
 ---
 
 ```{r setup, include = FALSE}
@@ -45,7 +46,9 @@ Our analysis focuses on the flight delay data from [the Bureau of Transportation
 &nbsp;
 
 ## Key Questions We Focused on
+
 <br>
+
 **1. What are the key trends of the flights in JFK during last holiday season?**
 
   *  Exploratory analysis including descriptive table or histogram showing criteria’s distribution by categories or by time, and interactive maps showing the analyzed flight routes departed from JFK
@@ -65,3 +68,5 @@ Our analysis focuses on the flight delay data from [the Bureau of Transportation
 **4. How to spend my time in JFK during the flight delay?**
 
   *  A guidance to spend your time in JFK to wait for the delayed flights, and we also generated a bunch of pictures via AI (just for fun) as well
+
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>

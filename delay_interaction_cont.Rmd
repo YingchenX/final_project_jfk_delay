@@ -17,7 +17,7 @@ raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 
 <br>
 
-**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some continuous predictors and airlines, months, period of time, respectively, were significantly associated with the total delay time in minutes. To achieve it, we did some visualizations.**
+**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some continuous predictors and airlines, months, periods of time, respectively, were significantly associated with the total delay time in minutes. To achieve it, we did some visualizations.**
 
 The continuous predictors included:
 

@@ -262,4 +262,8 @@ delay %>%
       legend = list(title = list(text = '<b> Airport </b>')))
 
 ```
+
 We can observe a distinct difference in cancellation counts in each scheduled hour between the two airports.
+
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
+

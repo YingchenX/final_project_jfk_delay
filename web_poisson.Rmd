@@ -1,18 +1,12 @@
 ---
-title: "Poisson model"
+title: "Poisson Regression"
 output: 
   html_document:
     toc: true
     toc_float: true
-    output: 
-  always_allow_html: true
-
 ---
 
-```{r}
-# install.packages("vars")
-
-library(dplyr)
+```{r, include = FALSE}
 library(tidyverse)
 library(ggridges)
 library(patchwork)
@@ -22,22 +16,27 @@ library(vars)
 knitr::opts_chunk$set(
 	echo = TRUE,
 	warning = FALSE,
-	fig.width = 8, 
-  fig.height = 6,
-  out.width = "90%"
+	message = FALSE,
+	fig.width = 8,
+  out.width = "90%",
+	dpi = 300
 )
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
 cancel_airline = read_csv("tidied_data/cancel_airline.csv")
 cancel_tidy = read_csv("tidied_data/cancel_tidy.csv")
-
 ```
-# Overview
-We wanted to investigate factors that are related to - and may be used to predict daily flight cancellation count. Weather factors and COVID breakouts or lockdowns, for example, might play crucial roles in daily flight cancellations, we treated them as our primary research interests, although we did not have any precise hypothesis. 
 
-# Data description
-In this research, we look for a relationship between cancellation and a number of variables. The number of cancellations each day is therefore regarded as the result (dependent variable), and exposures of interest are regarded as the independent variables.
+<br>
+
+**We wanted to investigate factors that were related to and might be used to predict daily flight cancellation count. We hypothesized that there could be daily flight cancellations due to COVID breakouts or some specific weather conditions.**
+
+<br>
+
+## Data Description
+
+We would like to explore the relationship between cancellation and some predictors. The number of cancellations each day is therefore regarded as the result (dependent variable), and exposures of interest are regarded as the independent variables.
 
 * `daily_cancel`: daily flight cancellation count in JFK airport
 * `temperature`: daily average dry bulb temperature
@@ -48,120 +47,162 @@ In this research, we look for a relationship between cancellation and a number o
 * `year_month`: the date format in "Year Month"
 * `covid_lag6`: daily cases of COVID-19 with 6 days time lag
  
-# Pre-analysis
-## Check distribution
-Since our outcome, `daily_cancel`, is calculated using a count variable (number of cancellation) repeated over time, we modelled it using a Poisson regression model.
-```{r}
-# poisson distribution of counts
-cancel_tidy %>% 
-  plot_ly(x = ~daily_cancel, 
-   type = "histogram", marker = list(color = 'rgb(255, 156, 128)')) %>% 
-         layout(
-         title= 'Distribution of daily flight cancellation, 2021/11/1 to 2022/1/31',
-         xaxis = list(title = "Daily flight cancellation", tickangle = -45),
-         yaxis = list(title = "Count"))
+<br>
 
+### Distribution of Daily Flight Cancellations
+
+```{r, out.width = "80%"}
+cancel_tidy %>% 
+  ggplot(aes(x = daily_cancel, fill = "rgb(255, 65, 54)")) +
+  geom_histogram(alpha = .4) +
+  labs(
+    x = "Number of Daily Flight Cancellations",
+    y = "Count",
+    title = "Distribution of Daily Flight Cancellations",
+    subtitle = "11/1/2021 to 1/31/2022"
+  ) +
+  scale_x_continuous(
+    n.breaks = 10
+  ) +
+  theme(
+    legend.position = "none"
+  )
 ```
 
-## Stratification factors
-We discovered that the cancellation count each month varies by month and airline. Monthly f light cancellations were highest in January 2022, followed by December and November 2021. Monthly cancellation rates fluctuate greatly amongst airlines as well. As a result, we used the month and the airline as stratification factors.
-```{r}
+From 11/1/2021 to 1/31/2022, the minimum number of daily cancellations is `r min(cancel_tidy$daily_cancel)`, while the daily cancellations can reach up to as high as `r max(cancel_tidy$daily_cancel)`.
+
+<br>
+
+### Stratification Factors
+
+We discovered that the cancellation count each month varied by month and airline. Monthly flight cancellations were the highest in January 2022, followed by December and November 2021. Monthly cancellation rates fluctuate greatly amongst airlines as well. As a result, we used the month and the airline as stratification factors.
+
+```{r, include = FALSE}
 cancel_airline <- cancel_tidy  %>%
   group_by(year_month, airline_name) %>%
   mutate(Total_number_of_cancellation = sum(daily_cancel_by_airline)) %>%   
   dplyr::select(year_month, airline_name, Total_number_of_cancellation) %>%
-  distinct %>%
-  mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan"))  
+  distinct() %>%
+  mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan"))
+```
 
+
+```{r}
 cancel_airline %>%
+  arrange(airline_name) %>% 
   pivot_wider(
   names_from = airline_name, 
   values_from = Total_number_of_cancellation) %>%
-  head() %>% 
-  knitr::kable(digits = 2, caption = "Monthly flight Cancellation numbers by month and airline") 
-
+  knitr::kable(
+    col.names = c("Year, Month", "Alaska Airlines", "American Airlines", "Delta Air Lines", "Endeavor Air",
+                  "JetBlue Airways", "Republic Airways", "United Air Lines")) %>% 
+  kableExtra::kable_styling(bootstrap_options = "hover")
 ```
 
 
-```{r}
-bar_plot1 = cancel_airline %>% 
-  mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan")) %>% 
-  plot_ly(x = ~year_month, y = ~Total_number_of_cancellation, color = ~airline_name, type = "bar", colors = "OrRd")  %>% 
-  layout(xaxis = list(title = "Time"),
-         yaxis = list(title = "Monthly flight cancellation numbers"),
-         margin = list(b = 100),
-         barmode = 'group')
-bar_plot1
-
-bar_plot2 = cancel_airline %>% 
-  mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan")) %>% 
-  plot_ly(x = ~airline_name, y = ~Total_number_of_cancellation, color = ~year_month, type = "bar", colors = "OrRd")  %>% 
-  layout(xaxis = list(title = "Airline Name", tickangle = -45),
-         yaxis = list(title = "Monthly flight cancellation numbers"),
-         margin = list(b = 100),
-         barmode = 'group')
-bar_plot2
+```{r, fig.height = 7, out.width = "80%"}
+cancel_airline %>% 
+  mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan")) %>%
+  ggplot(aes(x = year_month, y = Total_number_of_cancellation, fill = airline_name)) +
+  geom_col(position = "dodge", alpha = .7) +
+  geom_text(aes(label = Total_number_of_cancellation), 
+            vjust = -1,
+            position = position_dodge(.9)) +
+  scale_fill_brewer(palette = "Pastel1") +
+  labs(
+    x = "",
+    y = "Count by Month",
+    fill = "Airline",
+    title = "Flight Cancellations by Month",
+    subtitle = "Nov, 2021 to Jan, 2022"
+  )
 ```
-## Create time-lag variable for COVID cases
-We discovered that the time trend of daily flight cancellations and COVID-19 cases did not coincide with one other, which makes perfect sense in reality. The rise of COVID-19 cases frequently takes time to affect our daily lives. We had strong reasons to assume that `covid_case` may impact `daily_cancel` based on our hypothesis, thus we established new variables concerning `covid_case` with a time lag.
 
-```{r}
-cancel_covid <- cancel_tidy  %>%
+
+```{r, fig.height = 7, out.width = "80%"}
+cancel_airline %>% 
+  mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan")) %>% 
+  ggplot(aes(x = airline_name, y = Total_number_of_cancellation, fill = year_month)) +
+  geom_col(position = "dodge", alpha = .7) +
+  geom_text(aes(label = Total_number_of_cancellation), 
+            vjust = -1,
+            position = position_dodge(.9)) +
+  scale_fill_brewer(palette = "Pastel1") +
+  labs(
+    x = "Airline",
+    y = "Count by Month",
+    fill = "Year, Month",
+    title = "Flight Cancellations by Month",
+    subtitle = "Nov, 2021 to Jan, 2022"
+  )
+```
+
+<br>
+
+### Lagging COVID Cases
+
+We hypothesized that the time trend of daily flight cancellations and COVID-19 cases did not coincide with one other. The rises of COVID-19 cases frequently took some time to affect our daily lives, including flight cancellations. Thus, we created new variables regarding COVID cases count with time lag.
+
+```{r, out.height = "70%"}
+cancel_covid = cancel_tidy  %>%
   dplyr::select(date, daily_cancel, covid_case) %>% 
   distinct()
 
-cancel_plot <-  cancel_covid  %>%
-  mutate(text_label = str_c("Date: ", date, "\nCancellation flight: ", daily_cancel)) %>% 
-  plot_ly(
-    x = ~date, y = ~daily_cancel, type = "scatter", mode = "lines+markers",
-   text = ~text_label, alpha = 0.5, name = 'Daily flight cancellation') %>% 
-  layout(
-         yaxis = list(title = "Daily flight cancellation"),
-         annotations = list( 
-    list(x = 0.1 , y = 0.8, text = "Daily flight cancellation", showarrow = F, xref='paper', yref='paper')))
+cancel_plot = cancel_covid %>%
+  mutate(text_label = str_c("Date: ", date, "\nCancellation Count: ", daily_cancel)) %>% 
+  plot_ly(x = ~date, y = ~daily_cancel, type = "scatter", mode = "lines+markers",
+          text = ~text_label, alpha = 0.5, hoverinfo = "text") %>% 
+  layout(annotations = list(x = 0.1 , y = 0.8, text = "Daily Flight Cncellations", showarrow = F,
+                            xref = "paper", yref = "paper"))
          
 covid_plot <-  cancel_covid  %>%
-  mutate(text_label = str_c("Date: ", date, "\nCovid cases: ", covid_case)) %>% 
+  mutate(text_label = str_c("Date: ", date, "\nCOVID Cases Count: ", covid_case)) %>% 
   plot_ly(
     x = ~date, y = ~covid_case, type = "scatter", mode = "lines+markers",
-   text = ~text_label, alpha = 0.5, name = 'Daily covid cases') %>% 
-  layout(
-         yaxis = list(title = "Daily covid cases"),
-         annotations = list( 
-    list(x = 0.1 , y = 0.8, text = "Daily covid cases", showarrow = F, xref='paper', yref='paper')))
+   text = ~text_label, alpha = 0.5, hoverinfo = "text") %>% 
+  layout(annotations = list(x = 0.1 , y = 0.8, text = "Daily COVID Cases", showarrow = F, 
+                            xref = "paper", yref = "paper"))
 
-scatter_plot <- subplot(cancel_plot, covid_plot, nrows = 2) %>% 
-  layout(title = list(text = "Time trend of daily cancellation vs. daily covid cases"),
-         plot_bgcolor='#e5ecf6') 
+scatter_plot <- subplot(cancel_plot, covid_plot, nrows = 2, shareX = TRUE) %>% 
+  layout(title = list(text = "Time Trend of Daily Cancellations vs. Daily COVID Cases"),
+         xaxis = list(title = "Date"),
+         showlegend = FALSE)
+
 scatter_plot
-
-
 ```
-We used the lag selection criteria and Akaike's information criterion (AIC) to select 6 days as the optimal time lag. Then, we construct a new variable named `covid_lag6`, which indicates the value of COVID-19 cases with a 6-day time lag.
-```{r}
 
+We used the lag selection criteria and Akaike's information criterion (AIC) to select 6 days as the optimal time lag. Then, we constructed a new variable named `covid_lag6`, equivalent to the value of COVID-19 cases with a 6-day time lag.
+
+```{r, include = FALSE}
 VARselect(data.frame(cancel_covid$daily_cancel, cancel_covid$covid_case))
 
-# Create a 1-day `covid_case` variable (using "lag()" from dplyr)
-cancel_tidy$covid_lag6 <- lag(cancel_tidy$covid_case, 6)
-
+cancel_tidy$covid_lag6 = lag(cancel_tidy$covid_case, 6)
 ```
 
-# Poisson model
-Poisson model:
-```{r, echo = FALSE, out.width = "100%", fig.cap = "(Poisson model)", fig.align = 'center'}
+<br>
+
+## Poisson Regression Model
+
+<br>
+
+```{r, echo = FALSE, out.width = "100%", fig.cap = "(Poisson Regression Model)", fig.align = 'center'}
 knitr::include_graphics("./pictures/poisson_model.png")
 ```
 
-```{r}
-poisson = glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6,family = "poisson",data=cancel_tidy)
 
+```{r, include = FALSE}
+poisson = glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6, 
+              family = "poisson",
+              data = cancel_tidy)
 
-summary(poisson) 
+summary(poisson)
 ```
 
-# Poisson model Nested by month
-```{r}
+<br>
+
+### Nested by Month
+
+```{r, out.width = "100%"}
 cancel_tidy %>% 
   nest(df = -month) %>%
   mutate(
@@ -177,7 +218,12 @@ cancel_tidy %>%
   knitr::kable(digits = 6, caption = "Poisson model nested by month")
 ```
 
-## OR and 95% CI
+<br>
+
+#### OR and 95% CI
+
+Overview of estimated OR, 95% CI and P-value.
+
 ```{r}
 poisson_by_month = cancel_tidy %>%
   nest(data = -month) %>% 
@@ -200,7 +246,10 @@ poisson_by_month %>%
   knitr::kable(digits = 3, align = "llccc", col.names = c("Month", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"), caption = "Overview of estimated OR, 95% CI and P-value")
 ```
 
-## Plot
+<br>
+
+#### Plot
+
 Create a plot showing the estimated ORs and CIs for each month
 
 ```{r}
@@ -215,16 +264,15 @@ poisson_by_month %>%
     x = "Month",
     y = "Estimated OR with CI"
   ) +
-  theme(legend.position="right", legend.title = element_blank(),
+  theme(legend.position = "right", legend.title = element_blank(),
         text = element_text(size = 10),
         axis.text.x = element_text(angle = 60, hjust = 1, size = 8)) + 
   facet_grid(. ~ term)
-
 ```
 
+<br>
 
-# Poisson model nested by airline
-
+### Nested by Airline
 
 ```{r}
 cancel_tidy %>% 
@@ -241,9 +289,12 @@ cancel_tidy %>%
     values_from = estimate) %>% 
   knitr::kable(digits = 6, caption = "Poisson model nested by airline")
 ```
-## OR and 95% CI
+
+<br>
+
+#### OR and 95% CI
+
 ```{r}
-  
 poisson_by_airline = cancel_tidy %>%
   nest(data = -airline_name) %>% 
   mutate(
@@ -262,10 +313,16 @@ poisson_by_airline = cancel_tidy %>%
 
 poisson_by_airline %>% 
   filter(term != "(Intercept)" ) %>% 
-  knitr::kable(digits = 3, align = "llccc", col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"), caption = "Overview of estimated OR, 95% CI and P-value")
+  knitr::kable(digits = 3, 
+               align = "llccc", 
+               col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"), 
+               caption = "Overview of estimated OR, 95% CI and P-value")
 ```
 
-## Plot
+<br>
+
+#### Plot
+
 Create a plot showing the estimated ORs and CIs for each airline
 
 ```{r}
@@ -280,10 +337,23 @@ poisson_by_airline %>%
     x = "Airline",
     y = "Estimated OR with CI"
   ) +
-  theme(legend.position="right", legend.title = element_blank(),
+  theme(legend.position = "right", legend.title = element_blank(),
         text = element_text(size = 10),
         axis.text.x = element_text(angle = 60, hjust = 1, size = 8)) + 
   facet_grid(. ~ term)
 
+poisson_by_airline %>%
+  filter(term != "(Intercept)") %>%
+  mutate(text_label = str_c("Airline name: ", airline_name, "\nEstimated adjusted OR: ", OR)) %>% 
+  plot_ly(
+    x = ~airline_name, y = ~OR, type = "scatter", mode = "markers",
+   text = ~text_label, alpha = 0.5, color = ~term, colors = "RdBu") %>% 
+  layout(title = 'Estimated OR with 95% CI in Daily Flight Cancellation by Airline',
+         xaxis = list(title = "Airline"),
+         yaxis = list(title = "Estimated OR with CI"))
 ```
+
+<br>
+
+## Summary
 

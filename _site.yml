@@ -6,15 +6,15 @@ navbar:
     - text: "Explore"
       menu:
       - text: "Overview"
-        href: xx.html
+        href: explore_overview.html
+      - text: "Destination Airports"
+        href: Destination.html
       - text: "Cancellation & Delay"
         href: https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/
       - text: "Categorical Predictors"
         href: delay_interaction_c.html
       - text: "Continuous Predictors"
         href: delay_interaction_cont.html
-      - text: "Destination Airports"
-        href: Destination.html
     - text: "Analysis"
       menu:
       - text: "Linear Regression"
