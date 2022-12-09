@@ -19,8 +19,8 @@ navbar:
       menu:
       - text: "Linear Regression"
         href: xx.html
-      - text: "Poission Regression"
-        href: xx.html
+      - text: "Poisson Regression"
+        href: web_poisson.html
     - text: "Report"
       href: project_report.html
   right:

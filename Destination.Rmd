@@ -1,6 +1,9 @@
 ---
 title: "Could Destination Airport Affect Delay and Cancellation?"
-output: html_document
+output:   
+  html_document:
+    toc: true
+    toc_float: true
 
 ---
 ```{r setup, include=FALSE}
@@ -20,7 +23,7 @@ cancel = read_csv("tidied_data/cancel.csv")
 <br>
 
 
-**There are `r n_distinct(delay$destination_airport)` and `r n_distinct(cancel$destination_airport)` destination airports in the delay and cancellation datasets, respectively. For the efficiency purpose in statistical analysis, we do not include destination airport as a predictor in our models.** 
+**There are `r n_distinct(delay$destination_airport)` and `r n_distinct(cancel$destination_airport)` destination airports in the delay and cancellation datasets, respectively. For the efficiency purpose in statistical analysis, we do not include destination airport as a predictor in our models.** <br>
 **However, it is still an interesting factor to explore.**
 
 <br>
@@ -29,10 +32,10 @@ cancel = read_csv("tidied_data/cancel.csv")
 ## Overall Trend 
 
 
-**First we would like to check if delay and cancellation counts differ in different destination airports.**
+First we would like to check if delay and cancellation counts differ in different destination airports.
 
 <br>
-```{r, echo = FALSE}
+```{r, echo = F}
 delay %>% 
   group_by(destination_airport) %>% 
   summarize(
@@ -49,13 +52,11 @@ delay %>%
     title = "Distribution of Delay by Destination Airport")
 ```
 
-<br>
-
-Flights from JFK to `r delay %>% count(destination_airport) %>% slice(which.max(n)) %>% pull(destination_airport)` have the highest delay occurrences with a number of `r delay %>% count(destination_airport) %>% slice(which.max(n)) %>% pull(n)`.
+Flights from JFK to `r delay %>% count(destination_airport) %>% slice(which.max(n)) %>% pull(destination_airport)` have the highest delay occurrences with a number of `r delay %>% count(destination_airport) %>% slice(which.max(n)) %>% pull(n)` and flights to `r delay %>% count(destination_airport) %>% slice(which.min(n)) %>% pull(destination_airport)` have the highest delay occurrences with a number of `r delay %>% count(destination_airport) %>% slice(which.min(n)) %>% pull(n)`.
 
 
 <br>
-```{r, echo = FALSE}
+```{r, echo = F}
 cancel %>% 
   group_by(destination_airport) %>% 
   summarize(
@@ -72,12 +73,12 @@ cancel %>%
     title = "Distribution of Cancellation by Destination Airport")
 ```
 
-<br>
 
-Flights from JFK to `r cancel %>% count(destination_airport) %>% slice(which.max(n)) %>% pull(destination_airport)` have the highest cancellation occurrences with a number of `r cancel %>% count(destination_airport) %>% slice(which.max(n)) %>% pull(n)`.
+
+Flights from JFK to `r cancel %>% count(destination_airport) %>% slice(which.max(n)) %>% pull(destination_airport)` have the highest cancellation occurrences with a number of `r cancel %>% count(destination_airport) %>% slice(which.max(n)) %>% pull(n)` and flights to `r cancel %>% count(destination_airport) %>% slice(which.min(n)) %>% pull(destination_airport)` have the highest cancellation occurrences with a number of `r cancel %>% count(destination_airport) %>% slice(which.min(n)) %>% pull(n)`.
 
 <br>
-```{r, include = FALSE}
+```{r}
 delay_dest = function(dest){
   delay %>%
     filter(
@@ -92,7 +93,7 @@ delay_dest = function(dest){
     text_label = str_c("Airport: ", destination_airport, "\nCount: ", count)
       ) %>% 
   plot_ly(x = ~destination_airport, y = ~count, text = ~text_label, hoverinfo = "text", 
-          color = "rgb(255, 65, 54)", type = "bar", alpha = .5) %>% 
+          color = ~destination_airport, type = "bar", alpha = .5) %>% 
   layout(
     xaxis = list(title = "Destination Airport"),
     yaxis = list(title = "Count"),
@@ -113,7 +114,7 @@ cancel_dest = function(dest){
     text_label = str_c("Airport: ", destination_airport, "\nCount: ", count)
       ) %>% 
     plot_ly(x = ~destination_airport, y = ~count, text = ~text_label, hoverinfo = "text",
-          color = "rgb(255, 65, 54)", type = "bar", alpha = .5) %>% 
+          color = ~destination_airport, type = "bar", alpha = .5) %>% 
     layout(
       xaxis = list(title = "Destination Airport"),
       yaxis = list(title = "Count"),
@@ -126,10 +127,9 @@ cancel_dest = function(dest){
 
 ## Stratification by Airline {.tabset}
 
+We can also take a look at whether different airlines could have different trends in delay and cancellation counts among all the destination airports.
 
-**We can also take a look at whether different airlines could have different trends in delay and cancellation counts among all the destination airports.**
 
-<br>
 
 ### Alaska
 ```{r, echo = FALSE}
@@ -174,5 +174,90 @@ delay_dest("United Air Lines")
 cancel_dest("United Air Lines")
 ```
 
+<br>
+
+## LAX and SFO {.tabset}
+We found that LAX and SFO have outstanding delay and cancellation counts, so we decided to take a closer look at the underlying factors behind those delays and cancellations.
+
+<br>
+
+```{r, echo = F}
+delay %>% 
+  filter(
+    destination_airport %in% c("LAX", "SFO"), 
+    delay_minutes > 0
+  ) %>% 
+  plot_ly(x = ~delay_minutes, color = "rgb(255, 65, 54)", alpha = .5,
+          type = "histogram") %>% 
+    layout(
+      xaxis = list(title = "Delay Time (minutes)", range = c(0, 300)),
+      yaxis = list(title = "Count"), 
+      title = "Distribution of Delay Time")
+```
+
+We can clearly observe that the delay times are clustered before 180 minutes. For the following explorations, we filtered the delay minutes between 0 to 180 minutes. 
+
+<br>
 
 
+### Delay by Airline
+```{r, echo = F}
+delay %>% 
+  filter(
+    destination_airport %in% c("LAX", "SFO"),
+    delay_minutes %in% 0:180
+  ) %>% 
+  plot_ly(x = ~destination_airport, y = ~delay_minutes, color = ~airline_name,
+          type = 'box', alpha = .5) %>% 
+    layout(
+      boxmode = "group",
+      xaxis = list(title = "Destination Airport"),
+      yaxis = list(title = "Delay Time (minutes)"),
+      legend = list(title = list(text = '<b> Airline </b>')))
+```
+The airlines which departure from JFK to the two airports are different, and there is no distinct trend in delay time in minutes among different airlines between the two airports.  
+
+
+### Delay by Month
+```{r, echo = F}
+delay %>% 
+  filter(
+    destination_airport %in% c("LAX", "SFO"),
+    delay_minutes %in% 0:180
+  ) %>% 
+  mutate(
+    month = recode(month, "11" = "Nov", "12" = "Dec", "1" = "Jan"),
+    month = as.factor(month),
+    month = fct_reorder(month, date)
+  ) %>% 
+  plot_ly(x = ~destination_airport, y = ~delay_minutes, color = ~month,
+          type = 'box', alpha = .5) %>% 
+    layout(
+      boxmode = "group",
+      xaxis = list(title = "Destination Airport"),
+      yaxis = list(title = "Delay Time (minutes)"),
+      legend = list(title = list(text = '<b> Month </b>')))
+```
+Both airports show an increasing trend in delay minutes from November to January. There is no distinct difference in delay time in minutes in different months between the two airports. 
+
+
+### Cancellation by Hour
+```{r, echo = F}
+
+delay %>% 
+  filter(
+    destination_airport %in% c("LAX", "SFO")
+  ) %>% 
+  group_by(scheduled_hour, destination_airport) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  plot_ly(x = ~scheduled_hour, y = ~count, color = ~destination_airport,
+          type = 'bar', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Scheduled Hour"),
+      yaxis = list(title = "Count"),
+      legend = list(title = list(text = '<b> Airport </b>')))
+
+```
+We can observe a distinct difference in cancellation counts in each scheduled hour between the two airports.
