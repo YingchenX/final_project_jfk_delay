@@ -526,7 +526,7 @@ broom::glance(lm_2) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.v
 
 ## Interactions
 
-From the previous exploration steps focusing on interactions, we further hypothesize 3 interaction terms ("Temperature * Month", "Carrier * Airline", "Month * Airline) that could be potentially added into the above model to enhance its predicting power.
+From the previous exploration steps focusing on interactions, we further hypothesize 3 interaction terms (`Temperature * Month`, `Carrier * Airline`, `Month * Airline`) that could be potentially added into the above model to enhance its predicting power.
 
 <br>
 
@@ -639,11 +639,13 @@ In this "Predictive Modeling" section, we fit a linear regression model with 5 p
 
 \ 4. Results seem unreliable, i.e., it is hard for us to agree on the suggested result showing weather will not affect the delay time.
 
+\ 5. Inefficient predictive modeling. Although we do not need to worry too much about the parsimony of the model when doing prediction, the number of parameters in model 1 is still too many compared to the usual predictive model. Meanwhile, even with 5 predictors, the R-square is still not strong, thus I doubt the efficiency of our final model.
+
 To this end, we come up with some possible solutions:
 
 \ 1. Try to apply a different model (other than linear regression) for the outcome data.
 
-\ 2. Collect a dataset with longer time intervals, currently, our data were collected between November 2021 to January 2022 which is a very short period to observe a predictable trend. A larger dataset with data collected on longer time intervals is needed to solve the problem.
+\ 2. Collect a dataset with longer time intervals, currently, our data were collected between November 2021 to January 2022 which is a very short period to observe a predictable trend. Meanwhile, the weather of these 3 months will be very similar in New York City, this could be the explanation of the non-commonsense finding about weather-specific variables. A larger dataset with data collected on longer time intervals is needed to solve the problem.
 
 \ 3. Modify the dependent variables, e.g., create delay time categories into "short", "bearable", "extreme", probably with multiple levels.
 
