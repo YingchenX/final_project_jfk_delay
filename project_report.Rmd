@@ -14,6 +14,10 @@ knitr::opts_chunk$set(
 
 library(tidyverse)
 library(readxl)
+library(plotly)
+
+delay = read_csv("tidied_data/delay.csv")
+cancel = read_csv("tidied_data/cancel.csv")
 
 ```
 
@@ -100,7 +104,7 @@ In this research, we look for a relationship between cancellation and a number o
 **Outcome**
 
   * `delay_minutes`: delay time in minutes
-  * `cancel_count`: daily flight cancellation counts in JFK airport
+  * `cancel_counts`: daily flight cancellation counts in JFK airport
 
 <br>
 
@@ -124,6 +128,7 @@ Continuous Variables
   *   `Humidity`: Hourly relative humidity (%)
   *   `Visibility`: Hourly visibility
   *   `Wind Speed`: Hourly wind speed (mph)
+  *   `COVID Cases`: daily cases of COVID-19 from Nov, 2021 to Jan, 2022
 
 &nbsp;
 
@@ -332,6 +337,84 @@ We found that LAX and SFO have outstanding delay and cancellation counts, so we 
 *   The airlines which departure from JFK to the two airports are different. 
 *   Both airports show an increasing trend in delay minutes from November to January. 
 *   There is a distinct difference in cancellation counts in each scheduled hour between the two airports.
+
+
+```{r, echo = F}
+
+delay_airline = delay %>% 
+  filter(
+    destination_airport %in% c("LAX", "SFO"),
+    delay_minutes %in% 0:180
+  ) %>% 
+  mutate(
+    text_label = airline_name
+      ) %>% 
+  plot_ly(x = ~destination_airport, y = ~delay_minutes, color = ~airline_name,
+          text = ~text_label, hoverinfo = "text", type = 'box', alpha = .5) %>% 
+    layout(
+      boxmode = "group",
+      xaxis = list(title = "Destination Airport", mirror = FALSE),
+      yaxis = list(title = "Delay Time (minutes)"),
+      legend = list(title = list(text = '<b> Airline </b>')))
+
+delay_month = delay %>% 
+  filter(
+    destination_airport %in% c("LAX", "SFO"),
+    delay_minutes %in% 0:180
+  ) %>% 
+  mutate(
+    month = recode(month, "11" = "Nov", "12" = "Dec", "1" = "Jan"),
+    month = as.factor(month),
+    month = fct_reorder(month, date),
+    text_label = str_c("Month: ", month)
+  ) %>% 
+  plot_ly(x = ~destination_airport, y = ~delay_minutes, color = ~month,
+          text = ~text_label, hoverinfo = "text", type = 'box', alpha = .5) %>% 
+    layout(
+      boxmode = "group",
+      xaxis = list(title = "Destination Airport", mirror = FALSE),
+      yaxis = list(title = "Delay Time (minutes)"),
+      legend = FALSE,
+      offsetgroup="A")
+
+cancel_hour = delay %>% 
+  filter(
+    destination_airport %in% c("LAX", "SFO")
+  ) %>% 
+  group_by(scheduled_hour, destination_airport) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  mutate(
+    text_label = str_c("Airport: ", destination_airport, "\nCount: ", count)
+      ) %>% 
+  plot_ly(x = ~scheduled_hour, y = ~count, color = ~destination_airport, text = ~text_label,
+          hoverinfo = "text", type = 'bar', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Scheduled Hour"),
+      yaxis = list(title = "Count"),
+      annotations = list(x = 8 , y = 300, text = "Cancel by Schedule Hour"), font = list(size = 16), showarrow = FALSE, xref = "paper", yref = "scheduled_hour",
+      margin = list(l = 50, r = 50, b = 50, t = 50))
+
+Delay = subplot(delay_airline, delay_month) %>% 
+  layout(
+    annotations = list(
+          list(x = 0.1, y = 1.1, text = "Delay by Airline", font = list(size = 16), showarrow = F, xref = "paper", yref = "paper"),
+          list(x = 0.92, y = 1.1, text = "Delay by Month", font = list(size = 16), showarrow = F, xref = "paper", yref = "paper")
+        ),
+    showlegend = FALSE, margin = list(l = 50, r = 50, b = 70, t = 50)
+      )
+
+subplot(Delay, cancel_hour, nrows = 2) %>% 
+  layout(
+    showlegend = FALSE
+  )
+ 
+```
+
+
+
+
 
 
 &nbsp;
