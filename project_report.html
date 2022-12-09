@@ -533,6 +533,10 @@ location information</a> - The Humanitarian Data Exchange</li>
 </div>
 <div id="variables-of-interest" class="section level3">
 <h3>2.2 Variables of Interest</h3>
+<p>In this research, we look for a relationship between cancellation and
+a number of variables. The number of cancellations each day is therefore
+regarded as the result (dependent variable), and exposures of interest
+are regarded as the independent variables.</p>
 <p><strong>Outcome</strong></p>
 <ul>
 <li><code>delay_minutes</code>: delay time in minutes</li>
@@ -629,6 +633,8 @@ daily_weather = noaa %&gt;%
   ) %&gt;% 
   drop_na(daily_average_dew_point_temperature)</code></pre>
 <p><strong>COVID</strong></p>
+<p>We loaded the online data set of covid cases, limiting the date to
+our interested time frame from 2020-10-31 to 2021-1-31.</p>
 <pre class="r"><code>covid = 
   GET(&quot;https://data.cityofnewyork.us/resource/rc75-m7u3.csv&quot;) %&gt;% 
   content(&quot;parsed&quot;) 
@@ -642,6 +648,18 @@ covid_df = covid %&gt;%
   ) %&gt;% 
   mutate_if(is.character, as.numeric)</code></pre>
 <p><strong>Delay</strong></p>
+<ul>
+<li>Due to the scale of data set, here we chose to focus on the top 7
+players in the US regarding annual carrying capacity, including:
+<code>Endeavor Air</code>, <code>American Airlines</code>,
+<code>Alaska Airlines</code>, <code>JetBlue Airways</code>,
+<code>Delta Air Lines</code>, <code>United Air Lines</code>, and
+<code>Republic Airways</code>.</li>
+<li>We imported the delay data by each carrier in our within our
+interested time frame from 2020-10-31 to 2021-1-31, and merged them into
+one data frame.</li>
+<li>(Do we need to describe how we define delay?)</li>
+</ul>
 <pre class="r"><code>library(stringr)
 library(rvest)
 library(httr)
@@ -702,11 +720,16 @@ full_delay_df =
   select(-departure_delay_minutes) %&gt;% 
   relocate(delay_minutes, .after = actual_departure_time)</code></pre>
 <p><strong>Cancellation</strong></p>
+<p>We define those whose <code>actual_elapsed_time_minutes == 0</code>
+as cancellation.</p>
 <pre class="r"><code>full_cancel_df = 
   delay_cancel %&gt;% 
   filter(actual_elapsed_time_minutes == 0) %&gt;% 
   select(airline_name:scheduled_departure_time, scheduled_elapsed_time_minutes)</code></pre>
 <p><strong>Airport Info</strong></p>
+<p>We imported JFK and the destination airports’ location data set,
+including the unique identifier and geographic information for each
+airport.</p>
 <pre class="r"><code>airport = read_csv(&quot;data/us-airports.csv&quot;) %&gt;% 
   slice(-1) %&gt;% 
   select(airport = iata_code, name, lat = latitude_deg, long = longitude_deg, region_name, local_region, municipality)
@@ -720,6 +743,9 @@ airport_info =
 
 airport_info = left_join(airport_info, airport, by = &quot;airport&quot;)</code></pre>
 <p><strong>Export</strong></p>
+<p>We exported the cleaned data sets separately regarding hourly
+weather, daily weather, covid cases, delay information, cancellation
+information, and airport locations.</p>
 <pre class="r"><code>write_csv(noaa_df, &quot;tidied_data/hourly_weather.csv&quot;)
 write_csv(daily_weather, &quot;tidied_data/daily_weather.csv&quot;)
 write_csv(covid_df, &quot;tidied_data/covid.csv&quot;)

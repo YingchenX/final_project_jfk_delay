@@ -95,6 +95,8 @@ Considering the availability and scale of the flight data, we focus on JFK Airpo
 
 ### 2.2 Variables of Interest
 
+In this research, we look for a relationship between cancellation and a number of variables. The number of cancellations each day is therefore regarded as the result (dependent variable), and exposures of interest are regarded as the independent variables.
+
 **Outcome**
 
   * `delay_minutes`: delay time in minutes
@@ -188,6 +190,8 @@ daily_weather = noaa %>%
 
 **COVID**
 
+We loaded the online data set of covid cases, limiting the date to our interested time frame from 2020-10-31 to 2021-1-31.
+
 ```{r, eval = F}
 covid = 
   GET("https://data.cityofnewyork.us/resource/rc75-m7u3.csv") %>% 
@@ -204,6 +208,10 @@ covid_df = covid %>%
 ```
 
 **Delay**
+
+* Due to the scale of data set, here we chose to focus on the top 7 players in the US regarding annual carrying capacity, including: `Endeavor Air`, `American Airlines`, `Alaska Airlines`, `JetBlue Airways`, `Delta Air Lines`, `United Air Lines`, and `Republic Airways`.
+* We imported the delay data by each carrier in our within our interested time frame from 2020-10-31 to 2021-1-31, and merged them into one data frame.
+* (Do we need to describe how we define delay?)
 
 ```{r, eval = F}
 library(stringr)
@@ -269,6 +277,8 @@ full_delay_df =
 
 **Cancellation**
 
+We define those whose `actual_elapsed_time_minutes == 0` as cancellation.
+
 ```{r, eval = F}
 full_cancel_df = 
   delay_cancel %>% 
@@ -277,6 +287,8 @@ full_cancel_df =
 ```
 
 **Airport Info**
+
+We imported JFK and the destination airports' location data set, including the unique identifier and geographic information for each airport. 
 
 ```{r, eval = F}
 airport = read_csv("data/us-airports.csv") %>% 
@@ -295,6 +307,8 @@ airport_info = left_join(airport_info, airport, by = "airport")
 
 
 **Export**
+
+We exported the cleaned data sets separately regarding hourly weather, daily weather, covid cases, delay information, cancellation information, and airport locations.
 
 ```{r, eval = F}
 write_csv(noaa_df, "tidied_data/hourly_weather.csv")
