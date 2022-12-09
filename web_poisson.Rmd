@@ -285,5 +285,14 @@ poisson_by_airline %>%
         axis.text.x = element_text(angle = 60, hjust = 1, size = 8)) + 
   facet_grid(. ~ term)
 
+poisson_by_airline %>%
+  filter(term != "(Intercept)") %>%
+  mutate(text_label = str_c("Airline name: ", airline_name, "\nEstimated adjusted OR: ", OR)) %>% 
+  plot_ly(
+    x = ~airline_name, y = ~OR, type = "scatter", mode = "markers",
+   text = ~text_label, alpha = 0.5, color = ~term, colors = "RdBu") %>% 
+  layout(title = 'Estimated OR with 95% CI in Daily Flight Cancellation by Airline',
+         xaxis = list(title = "Airline"),
+         yaxis = list(title = "Estimated OR with CI"))
 ```
 
