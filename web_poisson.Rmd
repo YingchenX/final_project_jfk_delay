@@ -373,3 +373,10 @@ poisson_by_airline %>%
 
 ## Summary
 
+Our Poisson regression model indicates that all our main effects (weather-related factors and COVID-19 cases) are statistically significant, as we proposed. Since the data exploration and pre-analysis indicated that there indeed are differences by month and airline, we then stratified our Poisson model by these two factors. An interesting finding is that although the regression output shows that daily COVID-19 cases have a statistically significant effect on daily flight cancellation, after stratifying month and airline, there is no obvious trend between daily COVID-19 cases and daily flight cancellation based on graph. 
+
+## Discussion
+
+The daily cancellation flight dataset was extracted from the delay dataset, therefore we only evaluate one source of cancellation, flight cancellation due to delay. Furthermore, we hypothesized that just two factors, adverse weather and COVID-19 cases, affect daily flight cancellations. More elements that might influence real-life cancellation were not considered. As a result, we should note the constraint that this cancellation data does not include cancellations due to other factors, such as air traffic limitations. This restricted the information we could obtain from the cancellation dataset, preventing us from adjusting for variables we suspected were confounding the correlations.
+
+What's more, the association between COVID-19 cases and daily flight cancellations was not as strong as we expected.  One reason might be that the research window was too short to discover the association because COVID-19 cases had a time lag and we only counted 3-month cancellations and COVID-19 cases.
