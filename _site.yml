@@ -37,4 +37,5 @@ output:
   html_document:
     theme: journal
     always_allow_html: true
+    code_folding: hide
     

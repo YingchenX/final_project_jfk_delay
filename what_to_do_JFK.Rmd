@@ -4,8 +4,7 @@ output:
   html_document:
     toc: true
     toc_float: true
-    output: 
-  always_allow_html: true
+    code_folding: null
 ---
 
 ```{r setup, include = FALSE}
@@ -16,8 +15,6 @@ knitr::opts_chunk$set(
 ```
 
 &nbsp;
-
-Here are 10 things to do on a layover at JFK Airport.
 
 # 1. Eat
 
