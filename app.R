@@ -40,7 +40,7 @@ airlines = cancel %>% arrange(airline_name) %>% distinct(airline_name) %>% pull(
 months = delay %>% distinct(month) %>% pull()
 
 ui = fluidPage(
-  headerPanel(h3("Flight Cancelation and Delay")),
+  headerPanel(h3("Flight Cancellation and Delay")),
   sidebarPanel(
     selectInput(
       inputId = "airline_choice",
@@ -54,7 +54,7 @@ ui = fluidPage(
       selected = "Dec, 2021")),
   mainPanel(
     tabsetPanel(type = "tabs",
-                tabPanel("Cancelation", fluidRow(br(), plotlyOutput("cancel"))),
+                tabPanel("Cancellation", fluidRow(br(), plotlyOutput("cancel"))),
                 tabPanel("Delay", fluidRow(br(), plotlyOutput("delay"))))))
 
 
@@ -134,7 +134,7 @@ server = function(input, output) {
     subplot(list(plot3, plot4), nrows = 1, margin = 0.06) %>% 
       layout(
         annotations = list(
-          list(x = 0.06, y = 1.1, text = "Number of Cancelations by Day", font = list(size = 16), showarrow = F, xref = "paper", yref = "paper"),
+          list(x = 0.06, y = 1.1, text = "Number of Cancellations by Day", font = list(size = 16), showarrow = F, xref = "paper", yref = "paper"),
           list(x = 0.94, y = 1.1, text = "Number of COVID Cases by Day", font = list(size = 16), showarrow = F, xref = "paper", yref = "paper")
         ),
         margin = list(l = 50, r = 50, b = 50, t = 30),
