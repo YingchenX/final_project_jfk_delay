@@ -33,6 +33,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
@@ -228,6 +229,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -338,7 +342,7 @@ div.tocify {
       <a href="xx.html">Overview</a>
     </li>
     <li>
-      <a href="https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/">Cancel &amp; Delay</a>
+      <a href="https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/">Cancellation &amp; Delay</a>
     </li>
     <li>
       <a href="delay_interaction_c.html">Categorical Predictors</a>
@@ -347,7 +351,7 @@ div.tocify {
       <a href="delay_interaction_cont.html">Continuous Predictors</a>
     </li>
     <li>
-      <a href="Destination.html">Fun Facts</a>
+      <a href="Destination.html">Destination Airports</a>
     </li>
   </ul>
 </li>
@@ -362,7 +366,7 @@ div.tocify {
       <a href="xx.html">Linear Regression</a>
     </li>
     <li>
-      <a href="xx.html">Poission Regression</a>
+      <a href="web_poisson.html">Poisson Regression</a>
     </li>
   </ul>
 </li>
@@ -395,6 +399,14 @@ div.tocify {
 </div><!--/.navbar -->
 
 <div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
 
 
 
@@ -432,12 +444,17 @@ factors that are potentially related with flight delay (e.g., airlines,
 weather, and COVID conditions), in order to give the holiday travelers a
 better sense of what to expect regarding flight delay for this holiday
 season.</p>
-<p>Our analysis focuses on the flight delay data from the Bureau of
-Transportation Statistics (BTS), with the most popular airlines’ data in
-the manually selected time ranges of last holiday season (2021.11.1 -
-2022.1.31). Meanwhile, the weather condition information was obtained
-from the National Oceanic and Atmospheric Administration (NOAA), and
-COVID information from NYC OpenData.</p>
+<p>Our analysis focuses on the flight delay data from <a
+href="https://www.transtats.bts.gov/ONTIME/">the Bureau of
+Transportation Statistics (BTS)</a>, with the most popular airlines’
+data in the manually selected time ranges of last holiday season
+(11/1/2021 - 1/31/2022). Meanwhile, the weather condition information
+was obtained from <a
+href="https://www.ncdc.noaa.gov/cdo-web/datatools/lcd">the National
+Oceanic and Atmospheric Administration (NOAA)</a>, and COVID information
+from <a
+href="https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3">the
+NYC Department of Health and Mental Hygiene (DOHMH)</a>.</p>
 <p> </p>
 </div>
 <div id="key-questions-we-focused-on" class="section level2">
@@ -506,6 +523,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 <script>
 $(document).ready(function ()  {

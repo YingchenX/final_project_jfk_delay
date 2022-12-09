@@ -3,7 +3,7 @@ title: "Delay Data Exploration for Categorical Predictors"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE,
                       message = FALSE)
@@ -16,9 +16,49 @@ raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 
 <br>
 
+**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some categorical predictors including period of time, months, and airlines, were significantly associated with the total delay time in minutes. To achieve it, we did some visualizations.**
+
+The categorical predictors included:
+
+*   **Period of Time** (no scheduled hour for flight falls within 0 - 4 in the raw dataset)
+
+    *   Morning: if scheduled hour for flight falls within 5 - 8
+  
+    *   Noon: if scheduled hour for flight falls within 9 - 13
+  
+    *   Afternoon: if scheduled hour for flight falls within 14 - 17
+  
+    *   Night: if scheduled hour for flight falls within 18 - 23
+    
+*   **Month**
+
+    *   Nov: November, 2021
+    
+    *   Dec: December, 2021
+    
+    *   Jan: January, 2022
+
+*   **Airlines**
+
+    *   Alaska Airlines
+    
+    *   American Airlines
+    
+    *   Delta Air Lines
+    
+    *   Endeavor Air
+    
+    *   JetBlue Airways
+    
+    *   Republic Airways
+    
+    *   United Air Lines
+
+<br>
 
 ## Interaction between Categorical Predictors {.tabset}
-```{r, include = FALSE}
+
+```{r}
 hour_air = function(air){
   raw_df %>% 
   filter(
@@ -28,9 +68,9 @@ hour_air = function(air){
     hour_c = fct_reorder(hour_c, delay)
     ) %>% 
   plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
-      xaxis = list(title = "Hour"),
+      xaxis = list(title = "Period of Time"),
       yaxis = list(title = "Delay Time (minutes)"))
 }
 
@@ -42,7 +82,7 @@ month_air = function(air){
     month = fct_reorder(month, delay)
     ) %>% 
   plot_ly(x = ~month, y = ~delay, color = ~month,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       xaxis = list(title = "Month"),
       yaxis = list(title = "Delay Time (minutes)"))
@@ -56,9 +96,9 @@ raw_df %>%
     hour_c = fct_reorder(hour_c, delay)
     ) %>% 
   plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
-      xaxis = list(title = "Hour"),
+      xaxis = list(title = "Period of Time"),
       yaxis = list(title = "Delay Time (minutes)"))
 }
 
@@ -69,10 +109,10 @@ hour_month_air = function(air){
     mutate(
       month = fct_reorder(month, date)) %>% 
     plot_ly(x = ~hour_c, y = ~delay, color = ~month,
-            type = 'box', mode = 'markers', alpha = .5) %>% 
+            type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       boxmode = "group",
-      xaxis = list(title = "Hour"),
+      xaxis = list(title = "Period of Time"),
       yaxis = list(title = "Delay Time (minutes)"))
 }
 
@@ -80,9 +120,10 @@ hour_month_air = function(air){
 
 <br>
 
-### Hour*Airline 
+### Period*Airline 
 
 #### Before Stratification by Airline
+
 ```{r, echo = FALSE}
 raw_df %>% 
   mutate(
@@ -90,58 +131,68 @@ raw_df %>%
     hour_c = fct_reorder(hour_c, delay)
     ) %>% 
   plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
-      xaxis = list(title = "Hour"),
+      xaxis = list(title = "Period of Time"),
       yaxis = list(title = "Delay Time (minutes)"))
 ```
 
 #### Stratification by Airline {.tabset}
+
 ##### Alaska
+
 ```{r, echo = FALSE}
 hour_air("Alaska Airlines")
 ```
 
 ##### American
+
 ```{r, echo = FALSE}
 hour_air("American Airlines")
 ```
 
 ##### Delta
+
 ```{r, echo = FALSE}
 hour_air("Delta Air Lines")
 ```
 
 ##### Endeavor
+
 ```{r, echo = FALSE}
 hour_air("Endeavor Air")
 ```
 
 ##### JetBlue
+
 ```{r, echo = FALSE}
 hour_air("JetBlue Airways")
 ```
 
 ##### Republic
+
 ```{r, echo = FALSE}
 hour_air("Republic Airways")
 ```
 
 ##### United
+
 ```{r, echo = FALSE}
 hour_air("United Air Lines")
 ```
 
 
 ### Month*Airline
+
 #### Before Stratification by Airline
+
 ```{r, echo = FALSE}
 raw_df %>% 
   mutate(
     month = fct_reorder(month, delay)
     ) %>% 
   plot_ly(x = ~month, y = ~delay, color = ~month,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       xaxis = list(title = "Month"),
       yaxis = list(title = "Delay Time (minutes)"))
@@ -150,121 +201,144 @@ raw_df %>%
 
 
 #### Stratification by Airline {.tabset}
+
 ##### Alaska
+
 ```{r, echo = FALSE}
 month_air("Alaska Airlines")
 ```
 
 ##### American
+
 ```{r, echo = FALSE}
 month_air("American Airlines")
 ```
 
 ##### Delta
+
 ```{r, echo = FALSE}
 month_air("Delta Air Lines")
 ```
 
 ##### Endeavor
+
 ```{r, echo = FALSE}
 month_air("Endeavor Air")
 ```
 
 ##### JetBlue
+
 ```{r, echo = FALSE}
 month_air("JetBlue Airways")
 ```
 
 ##### Republic
+
 ```{r, echo = FALSE}
 month_air("Republic Airways")
 ```
 
 ##### United
+
 ```{r, echo = FALSE}
 month_air("United Air Lines")
 ```
 
 
-### Month*Hour
+### Month*Period
+
 #### Before Stratification by Month
+
 ```{r, echo = FALSE}
 raw_df %>% 
   mutate(
     hour_c = fct_reorder(hour_c, delay)
     ) %>% 
   plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
-      xaxis = list(title = "Hour"),
+      xaxis = list(title = "Period of Time"),
       yaxis = list(title = "Delay Time (minutes)"))
 
 ```
 
 #### Stratification by Month {.tabset}
+
 ##### Nov
+
 ```{r, echo = FALSE}
 hour_month("Nov")
 ```
 
 ##### Dec
+
 ```{r, echo = FALSE}
 hour_month("Dec")
 ```
 
 ##### Jan
+
 ```{r, echo = FALSE}
 hour_month("Jan")
 ```
 
 ### Three-ways Interaction
+
 #### Before Stratification by Airline
+
 ```{r, echo = FALSE}
 raw_df %>% 
   mutate(
     month = fct_reorder(month, date)) %>% 
   plot_ly(x = ~hour_c, y = ~delay, color = ~month,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       boxmode = "group",
-      xaxis = list(title = "Hour"),
+      xaxis = list(title = "Period of Time"),
       yaxis = list(title = "Delay Time (minutes)"))
 ```
 
 #### Stratification by Airline {.tabset}
+
 ##### Alaska
+
 ```{r, echo = FALSE}
 hour_month_air("Alaska Airlines")
 ```
 
 ##### American
+
 ```{r, echo = FALSE}
 hour_month_air("American Airlines")
 ```
 
 ##### Delta
+
 ```{r, echo = FALSE}
 hour_month_air("Delta Air Lines")
 ```
 
 ##### Endeavor
+
 ```{r, echo = FALSE}
 hour_month_air("Endeavor Air")
 ```
 
 ##### JetBlue
+
 ```{r, echo = FALSE}
 hour_month_air("JetBlue Airways")
 ```
 
 ##### Republic
+
 ```{r, echo = FALSE}
 hour_month_air("Republic Airways")
 ```
 
 ##### United
+
 ```{r, echo = FALSE}
 hour_month_air("United Air Lines")
 ```
-
 

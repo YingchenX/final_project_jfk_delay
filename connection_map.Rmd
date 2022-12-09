@@ -31,7 +31,6 @@ jfk = airport %>%
 
 ## Create Flight Connection Map
 
-
 ```{r}
 map("world",
     regions = c("usa"), 
@@ -56,6 +55,8 @@ for (i in (1:dim(dest)[1])) {
 }
 ```
 
+
+## An Interactive Map Embedded in the Website
 
 ```{r}
 airport = read_csv("tidied_data/airport.csv")

@@ -7,20 +7,20 @@ navbar:
       menu:
       - text: "Overview"
         href: xx.html
-      - text: "Cancel & Delay"
+      - text: "Cancellation & Delay"
         href: https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/
       - text: "Categorical Predictors"
         href: delay_interaction_c.html
       - text: "Continuous Predictors"
         href: delay_interaction_cont.html
-      - text: "Fun Facts"
+      - text: "Destination Airports"
         href: Destination.html
     - text: "Analysis"
       menu:
       - text: "Linear Regression"
         href: xx.html
-      - text: "Poission Regression"
-        href: xx.html
+      - text: "Poisson Regression"
+        href: web_poisson.html
     - text: "Report"
       href: project_report.html
   right:
