@@ -1,5 +1,5 @@
 ---
-title: "Flight Delay and Cancelation"
+title: "Flight Delay and Cancellation"
 output: 
   html_document:
     toc: true
@@ -23,11 +23,14 @@ h1.title {
 
 &nbsp;
 
-```{r, echo = FALSE, out.width = "100%", fig.cap = "(Generated via [Midjourney](https://midjourney.com/))", fig.align = 'center'}
+```{r, echo = FALSE, out.width = "88%", fig.cap = "(Generated via [Midjourney](https://midjourney.com/))", fig.align = 'center'}
 knitr::include_graphics("./pictures/Jialu_Cheng_a_colorful_the_united_states_flight_route_map.png")
 ```
 
 &nbsp;
+
+<br>
+<br>
 
 ## Website Overview
 <br>
