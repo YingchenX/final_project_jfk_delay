@@ -12,6 +12,8 @@ library(ggridges)
 library(patchwork)
 library(plotly)
 library(vars)
+library(magrittr)
+library(kableExtra)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -198,8 +200,20 @@ poisson = glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6,
               family = "poisson",
               data = cancel_tidy)
 
-summary(poisson)
+poisson %>% 
+  broom::tidy() %>% 
+  mutate(OR = exp(estimate),
+    p.value = format(p.value, scientific = TRUE, digits = 3)
+  ) %>% 
+  dplyr::select(term, estimate, OR, p.value) %>% 
+  knitr::kable(digits = 3, col.names = c("Terms", "Estimate (log(OR))", "Estimated adjusted OR", "P-value"), caption = "Poisson model") %>% 
+  kable_styling()
 ```
+The above is the outcome of Poisson regression. All predictor coefficients are statistically significant (associated with a p-value of 0.05), indicating that temperature, humidity, windspeed, and COVID-19 cases indeed impact the rate of daily flight cancellation.
+
+Exponentiating the Poisson regression coefficient provides the incidence rate ratio of daily flight cancellation. Take `temperature` as an example; its parameter estimate is -0.119, which means that increasing the temperature by one degree Fahrenheit should decrease the difference in the logs of predicted daily flight cancellations by 0.119 occurrences while holding the other variables in the model constant.
+
+We obtained an estimated adjusted OR after exponentiating all of the coefficients. Again, take `temperature` as an example: a one-degree Fahrenheit increase in temperature is expected to reduce the estimated rate ratio of daily flight cancellations by a factor of 0.888 while holding all other variables constant in the model.
 
 <br>
 
@@ -218,7 +232,8 @@ cancel_tidy %>%
   pivot_wider(
     names_from = term, 
     values_from = estimate) %>% 
-  knitr::kable(digits = 6, caption = "Poisson model nested by month")
+  knitr::kable(digits = 6, caption = "Poisson model nested by month")%>% 
+  kable_styling()
 ```
 
 <br>
@@ -246,7 +261,8 @@ poisson_by_month = cancel_tidy %>%
 
 poisson_by_month %>% 
   filter(term != "(Intercept)" ) %>% 
-  knitr::kable(digits = 3, align = "llccc", col.names = c("Month", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"), caption = "Overview of estimated OR, 95% CI and P-value")
+  knitr::kable(digits = 3, align = "llccc", col.names = c("Month", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"), caption = "Overview of estimated OR, 95% CI and P-value") %>% 
+  kable_styling()
 ```
 
 <br>
@@ -290,7 +306,8 @@ cancel_tidy %>%
   pivot_wider(
     names_from = term, 
     values_from = estimate) %>% 
-  knitr::kable(digits = 6, caption = "Poisson model nested by airline")
+  knitr::kable(digits = 6, caption = "Poisson model nested by airline") %>% 
+  kable_styling()
 ```
 
 <br>
@@ -319,7 +336,8 @@ poisson_by_airline %>%
   knitr::kable(digits = 3, 
                align = "llccc", 
                col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"), 
-               caption = "Overview of estimated OR, 95% CI and P-value")
+               caption = "Overview of estimated OR, 95% CI and P-value")%>% 
+  kable_styling()
 ```
 
 <br>
