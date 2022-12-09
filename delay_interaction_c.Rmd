@@ -20,7 +20,7 @@ raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 
 The categorical predictors included:
 
-*   **Period of Time** (no scheduled hour falls within 0 - 4 in the raw dataset)
+*   **Period of Time** (no scheduled hour for flight falls within 0 - 4 in the raw dataset)
 
     *   Morning: if scheduled hour for flight falls within 5 - 8
   
