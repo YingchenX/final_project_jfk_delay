@@ -301,7 +301,10 @@ pairwise.t.test(log_df$delay, log_df$hour_c, p.adjust.method = "bonferroni")
 
 ### continuous predictors
 
-```{r function for scatterplot, include=FALSE}
+```{r function for scatterplot}
+
+#function for scatterplot
+
 scat_con = function(con){
   
   scat = log_df %>%
@@ -310,6 +313,7 @@ scat_con = function(con){
     layout(
       yaxis = list(title = "Log(Delay Time)"))
 }
+
 ```
 
 <br>
@@ -561,7 +565,7 @@ cv_df %>%
     values_to = "rmse",
     names_prefix = "rmse_") %>% 
   mutate(model = fct_inorder(model)) %>% 
-  ggplot(aes(x = model, y = rmse)) + 
+  ggplot(aes(x = model, y = rmse, fill = model)) + 
   geom_violin() +
   labs(x = "Model", y = "Root Mean Square Error (RMSE)",
        title = "Model Comparison of the Cross-Validated Prediction Error") +
@@ -597,7 +601,7 @@ log_df %>%
   add_residuals(lm_1) %>%
     add_predictions(lm_1) %>% 
   ggplot(aes(x = pred, y = resid)) + 
-  geom_point()
+  geom_point(color = "orange")
 ```
 
 **Highlights:** 
@@ -615,6 +619,8 @@ log_df %>%
 
 
 # Conclusion and Discussion
+
+<br>
 
 In this "Predictive Modeling" section, we fit a linear regression model with 5 predictors, they are: airlines, months, time of the day, carrier delay time, and late arrival delay time. This model is tested to be significant and without collinearity, however, there are still many problems with our current model:
 
