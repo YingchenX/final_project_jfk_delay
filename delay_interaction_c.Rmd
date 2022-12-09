@@ -16,11 +16,11 @@ raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 
 <br>
 
-**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some categorical predictors including period of time, months, and airlines, were significantly associated with the total delay time in minutes. To achieve it, we did some visualizations.**
+**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some categorical predictors including periods of time, months, and airlines, were significantly associated with the total delay time in minutes. To achieve it, we did some visualizations.**
 
 The categorical predictors included:
 
-*   **Period of Time** (no scheduled hour for flight falls within 0 - 4 in the raw dataset)
+*   **Periods of Time** (no scheduled hour for flight falls within 0 - 4 in the raw dataset)
 
     *   Morning: if scheduled hour for flight falls within 5 - 8
   
@@ -30,7 +30,7 @@ The categorical predictors included:
   
     *   Night: if scheduled hour for flight falls within 18 - 23
     
-*   **Month**
+*   **Months**
 
     *   Nov: November, 2021
     

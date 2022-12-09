@@ -81,8 +81,33 @@ To keep our models parsimonious, we did not include destination airport as a pre
 
 ## [Cancellation and Delay](https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/)
 
+We then created a **Shiny App** for the audience to engage in our data exploration process. The audience could select which airline and which month they concern and get the user-selected outputs. In the **Cancellation** tab, they could observe the number of cancellations and the number of COVID cases in each day of a month. In the **Delay** tab, they could observe the number of delays and the average delay time in minutes in each day of a month.
+
+<br>
 
 ## [Categorical Predictors](delay_interaction_c.html)
 
+**Delay time** in minutes is one of our outcome of interests and we decided to conduct a **linear regression model**. Besides the main effects, we would like to check if there are any significant effect modifiers in our model. In this part, we investigated the interaction between the categorical predictors, including:
+
+*   Periods of Time
+*   Months
+*   Airlines
+
+
+<br>
 
 ## [Continuous Predictors](delay_interaction_cont.html)
+
+In our drafted **linear regression model**, there are a few continuous predictors:
+
+*   Carrier Delay
+*   Extreme Weather Delay
+*   Late Arrival Delay
+*   National Aviation System (NAS) Delay
+*   Security Delay
+*   Temperature
+*   Humidity
+*   Visibility
+*   Wind Speed
+
+We were also interested in whether our continuous predictors could have different effects on different levels of periods of time, months, or airlines. Through the plots with different strata, there could be a few trends to explore.
