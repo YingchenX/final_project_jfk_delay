@@ -18,6 +18,7 @@ library(plotly)
 
 delay = read_csv("tidied_data/delay.csv")
 cancel = read_csv("tidied_data/cancel.csv")
+raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 
 ```
 
@@ -414,9 +415,6 @@ subplot(Delay, cancel_hour, nrows = 2) %>%
 
 
 
-
-
-
 &nbsp;
 
 ### 3.2 Cancellation and Delay
@@ -430,7 +428,45 @@ We then created a **Shiny App** for the audience to engage in our data explorati
 ### 3.3 Categorical Predictors
 
 **Delay time** in minutes is one of our outcome of interests and we decided to conduct a **linear regression model**. Besides the main effects, we would like to check if there are any significant effect modifiers in our model. In this part, we investigated the interaction between the categorical predictors, including Periods of Time， Months，and Airlines.  
-We could clearly observe that between groups differences are existed, and adding interaction terms between the categorical predictors could be one of the options for building the linear regression model.
+We could clearly observe that between groups differences are existed, and adding interaction terms between the categorical predictors could be one of the options for building the linear regression model. The following plots could hint that interactions between the categorical variables might exist, but we still need statistical analysis to prove our findings.
+
+
+```{r}
+raw_df %>% 
+  mutate(
+    month = fct_reorder(month, date)) %>% 
+  plot_ly(x = ~hour_c, y = ~delay, color = ~airline,
+          type = "box", mode = "markers", alpha = .5) %>% 
+    layout(
+      boxmode = "group",
+      xaxis = list(title = "Period of Time"),
+      yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)),
+      title = "Period and Airline Interaction")
+
+raw_df %>% 
+  mutate(
+    month = fct_reorder(month, date)) %>% 
+  plot_ly(x = ~month, y = ~delay, color = ~airline,
+          type = "box", mode = "markers", alpha = .5) %>% 
+    layout(
+      boxmode = "group",
+      xaxis = list(title = "Month"),
+      yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)),
+      title = "Month and Airline Interaction")
+
+raw_df %>% 
+  mutate(
+    month = fct_reorder(month, date)) %>% 
+  plot_ly(x = ~hour_c, y = ~delay, color = ~month,
+          type = "box", mode = "markers", alpha = .5) %>% 
+    layout(
+      boxmode = "group",
+      xaxis = list(title = "Period of Time"),
+      yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)),
+      title = "Hour and Month Interaction")
+
+```
+
 
 &nbsp;
 
@@ -442,7 +478,36 @@ We were also interested in whether our continuous predictors, including Carrier 
 
 *    Temperature * Month
 
-As a result, these interaction terms in addition to other predictors would be further analyze using statistical testing, such as cross validation, ANOVA, Type III analysis.ition to other predictors.
+
+```{r}
+raw_df %>% 
+  mutate(
+    text_label = str_c(airline, "\nCarrier Delay: ", carrierd, "\nDelay Time: ", delay)
+  ) %>% 
+  plot_ly(x = ~carrierd, y = ~delay, color = ~airline,
+          text = ~text_label, hoverinfo = "text",
+          type = "scatter", mode = "markers", alpha = .7) %>% 
+  layout(
+    xaxis = list(title = "Carrier Delay (minutes)", range = c(0, 400)),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)),
+    title = "Carrier Delay vs Delay Time by Airline")
+
+raw_df %>%
+  mutate(
+    text_label = str_c("Month: ", month, "\nTemperature: ", temperature, "\nDelay Time: ", delay),
+    month = fct_reorder(month, date)
+    ) %>% 
+  plot_ly(x = ~temperature, y = ~delay, color = ~month,
+          text = ~text_label, hoverinfo = "text",
+          type = "scatter", mode = "markers", alpha = .5) %>% 
+  layout(
+    xaxis = list(title = "Carrier Delay (minutes)"),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)),
+    title = "Temperature vs Delay Time by Month")
+```
+
+
+As a result, these interaction terms in addition to other predictors would be further analyzed using statistical testing. Some possible analysis we would consider could be models cross validation, ANOVA test, Type III analysis.
 
 &nbsp;
 
