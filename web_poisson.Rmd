@@ -149,7 +149,7 @@ cancel_tidy$covid_lag6 <- lag(cancel_tidy$covid_case, 6)
 
 # Poisson model
 Poisson model:
-```{r, echo = FALSE, out.width = "100%", fig.cap = "(Poisson model))", fig.align = 'center'}
+```{r, echo = FALSE, out.width = "100%", fig.cap = "(Poisson model)", fig.align = 'center'}
 knitr::include_graphics("./pictures/poisson_model.png")
 ```
 
