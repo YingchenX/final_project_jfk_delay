@@ -33,13 +33,25 @@ daily_weather = read_csv("tidied_data/daily_weather.csv")
 ## Outcome: mutate count cancellation data
 Count numbers of cancellation per day
 ```{r}
-cancel <- cancel_raw %>% 
-  mutate(number = 1)%>% 
+cancel1 <- cancel_raw %>% 
+  mutate(number = 1) %>% 
+  mutate(number = as.numeric(number)) %>% 
+  group_by(date, airline_name) %>% 
+  mutate(daily_cancel_by_airline = sum(number)) %>% 
+  select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes, -number) 
+
+cancel2 <- cancel_raw %>% 
+  mutate(number = 1) %>% 
   mutate(number = as.numeric(number)) %>% 
   group_by(date) %>% 
-  mutate(cancel_count = sum(number)) %>% 
-  select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes, -number) %>%
-  distinct
+  mutate(daily_cancel = sum(number)) %>% 
+  select(-flight_number,-destination_airport,-scheduled_hour,-scheduled_departure_time,-scheduled_elapsed_time_minutes, -number) 
+
+cancel <- cancel1 %>% left_join(cancel2, by = c("airline_name", "date", "month", "day", "year"))  %>% 
+  distinct 
+  
+  
+
 
 ```
 
@@ -66,6 +78,7 @@ mutate(covid_case = case_count) %>%
   select(-case_count)
 
 ```
+
 ## Final Tidied dataset
 ```{r}
 
@@ -85,7 +98,8 @@ cancel_tidy <- cancel_tidy%>%
     month1 = ifelse(month == "November", "Nov", 
                         ifelse(month == "December", "Dec", "Jan")),
     year_month = paste(year, month1, sep="-")) %>% 
-    filter(!is.na(cancel_count))  %>% 
+    filter(!is.na(daily_cancel))  %>% 
+    filter(!is.na(daily_cancel_by_airline))  %>% 
     select(-month1, -date.y, -date.x)
 
 write_csv(cancel_tidy, "tidied_data/cancel_tidy.csv")
@@ -96,7 +110,7 @@ Since our outcome, `cancel_coun`t, is calculated using a count variable (number 
 ```{r}
 # poisson distribution of counts
 cancel_tidy %>% 
-  ggplot(aes(x = cancel_count)) + 
+  ggplot(aes(x = daily_cancel)) + 
   geom_histogram(binwidth = 1.8) +
   theme_light() +
   labs(x = "Numbers of cancellation per day",
@@ -110,7 +124,7 @@ Cancellation count per month show difference both by month and airline, therefor
 ```{r}
 cancel_airline <- cancel_tidy  %>%
   group_by(year_month, airline_name) %>%
-  mutate(Total_number_of_cancellation = sum(cancel_count)) 
+  mutate(Total_number_of_cancellation = sum(daily_cancel)) 
 
 cancel_airline %>%
   select(year_month, airline_name, Total_number_of_cancellation) %>%
@@ -144,7 +158,7 @@ ggplotly(plot_cancel_airline)
 
 # Poisson model
 ```{r}
-poisson = glm(cancel_count ~ temperature + humidity + windspeed + covid_case,family = "poisson",data=cancel_tidy)
+poisson = glm(daily_cancel ~ temperature + humidity + windspeed + covid_case,family = "poisson",data=cancel_tidy)
 
 
 summary(poisson) 
@@ -155,7 +169,7 @@ summary(poisson)
 cancel_tidy %>% 
   nest(df = -month) %>%
   mutate(
-    models = map(.x = df, ~ glm(cancel_count ~ temperature + humidity + windspeed + covid_case,family = "poisson", data = .x)),
+    models = map(.x = df, ~ glm(daily_cancel ~ temperature + humidity + windspeed + covid_case,family = "poisson", data = .x)),
     results = map(models, broom::tidy)
   ) %>% 
   unnest(results) %>% 
@@ -172,7 +186,7 @@ cancel_tidy %>%
 poisson_by_month = cancel_tidy %>%
   nest(data = -month) %>% 
   mutate(
-    models = map(.x = data, ~glm(cancel_count ~ temperature + humidity + windspeed + covid_case, family = "poisson", data = .x)),
+    models = map(.x = data, ~glm(daily_cancel ~ temperature + humidity + windspeed + covid_case, family = "poisson", data = .x)),
     results = map(models, broom::tidy)
     ) %>% 
   select(month, results) %>% 
@@ -220,7 +234,7 @@ poisson_by_month %>%
 cancel_tidy %>% 
   nest(df = -airline_name) %>%
   mutate(
-    models = map(.x = df, ~ glm(cancel_count ~ temperature + humidity + windspeed + covid_case,family = "poisson", data = .x)),
+    models = map(.x = df, ~ glm(daily_cancel ~ temperature + humidity + windspeed + covid_case,family = "poisson", data = .x)),
     results = map(models, broom::tidy)
   ) %>% 
   unnest(results) %>% 
@@ -237,7 +251,7 @@ cancel_tidy %>%
 poisson_by_airline = cancel_tidy %>%
   nest(data = -airline_name) %>% 
   mutate(
-    models = map(.x = data, ~glm(cancel_count ~ temperature + humidity + windspeed + covid_case, family = "poisson", data = .x)),
+    models = map(.x = data, ~glm(daily_cancel ~ temperature + humidity + windspeed + covid_case, family = "poisson", data = .x)),
     results = map(models, broom::tidy)
     ) %>% 
   select(airline_name, results) %>% 
