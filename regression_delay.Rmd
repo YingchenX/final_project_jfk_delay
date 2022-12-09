@@ -616,4 +616,27 @@ log_df %>%
 
 # Conclusion and Discussion
 
+In this "Predictive Modeling" section, we fit a linear regression model with 5 predictors, they are: airlines, months, time of the day, carrier delay time, and late arrival delay time. This model is tested to be significant and without collinearity, however, there are still many problems with our current model:
+
+\ 1. Relatively small R-square value
+
+\ 2. The bad fit of residuals versus fits plot
+
+\ 3. Unclear linearity between the outcome variable and each predictor
+
+\ 4. Results seem unreliable, i.e., it is hard for us to agree on the suggested result showing weather will not affect the delay time.
+
+To this end, we come up with some possible solutions:
+
+\ 1. Try to apply a different model (other than linear regression) for the outcome data
+
+\ 2. Collect a dataset with longer time intervals, currently, our data were collected between November 2021 to January 2022 which is a very short period to observe a predictable trend. A larger dataset with data collected on longer time intervals is needed to solve the problem.
+
+\ 3. Modify the dependent variables, e.g., change to categorical delay in time, probably with multiple levels
+
+\ 4. Modify the independent variables, e.g., humidity, which was observed a non-linear relationship with delay time, can be changed to ordinal data.
+
+
+We hope we can solve the above problems later with more effort.
+
 
