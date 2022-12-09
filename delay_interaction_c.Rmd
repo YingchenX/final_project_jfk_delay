@@ -16,9 +16,11 @@ raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 
 <br>
 
-**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some categorical predictors including periods of time, months, and airlines, were significantly associated with the total delay time in minutes. To achieve it, we did some visualizations.**
+**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some categorical predictors including periods of time, months, and airlines, were significantly associated with the total delay time in minutes. To achieve it, we did some visualizations. For tidiness of visualizations, we have adjusted the range of axis.**
 
-The categorical predictors included:
+<br>
+
+The categorical predictors included are:
 
 *   **Periods of Time** (no scheduled hour for flight falls within 0 - 4 in the raw dataset)
 
@@ -56,8 +58,6 @@ The categorical predictors included:
 
 <br>
 
-## Interaction between Categorical Predictors {.tabset}
-
 ```{r}
 hour_air = function(air){
   raw_df %>% 
@@ -71,7 +71,7 @@ hour_air = function(air){
           type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       xaxis = list(title = "Period of Time"),
-      yaxis = list(title = "Delay Time (minutes)"))
+      yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 }
 
 month_air = function(air){
@@ -85,7 +85,7 @@ month_air = function(air){
           type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       xaxis = list(title = "Month"),
-      yaxis = list(title = "Delay Time (minutes)"))
+      yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 }
 
 hour_month = function(mon){
@@ -99,7 +99,7 @@ raw_df %>%
           type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       xaxis = list(title = "Period of Time"),
-      yaxis = list(title = "Delay Time (minutes)"))
+      yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 }
 
 hour_month_air = function(air){
@@ -113,12 +113,13 @@ hour_month_air = function(air){
     layout(
       boxmode = "group",
       xaxis = list(title = "Period of Time"),
-      yaxis = list(title = "Delay Time (minutes)"))
+      yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 }
 
 ```
 
-<br>
+
+## Interaction between Categorical Predictors {.tabset}
 
 ### Period*Airline 
 
@@ -134,8 +135,9 @@ raw_df %>%
           type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       xaxis = list(title = "Period of Time"),
-      yaxis = list(title = "Delay Time (minutes)"))
+      yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 ```
+
 
 #### Stratification by Airline {.tabset}
 
@@ -195,7 +197,7 @@ raw_df %>%
           type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       xaxis = list(title = "Month"),
-      yaxis = list(title = "Delay Time (minutes)"))
+      yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 
 ```
 
@@ -258,7 +260,7 @@ raw_df %>%
           type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       xaxis = list(title = "Period of Time"),
-      yaxis = list(title = "Delay Time (minutes)"))
+      yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 
 ```
 
@@ -295,7 +297,7 @@ raw_df %>%
     layout(
       boxmode = "group",
       xaxis = list(title = "Period of Time"),
-      yaxis = list(title = "Delay Time (minutes)"))
+      yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 ```
 
 #### Stratification by Airline {.tabset}

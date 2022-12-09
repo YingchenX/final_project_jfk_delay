@@ -17,7 +17,9 @@ raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 
 <br>
 
-**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some continuous predictors and airlines, months, periods of time, respectively, were significantly associated with the total delay time in minutes. To achieve it, we did some visualizations.**
+**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some continuous predictors and airlines, months, periods of time, respectively, were significantly associated with the total delay time in minutes. To achieve it, we did some visualizations. For tidiness of visualizations, we have adjusted the range of axis.**
+
+<br>
 
 The continuous predictors included:
 
@@ -49,24 +51,31 @@ The continuous predictors included:
 cont_airline = function(cont){
   
   airline = raw_df %>% 
-  plot_ly(x = ~cont, y = ~delay, color = ~airline,
-          type = "scatter", mode = "markers", alpha = .5) %>% 
-  layout(yaxis = list(title = "Delay Time (minutes)"))
+    mutate(
+      text_label = str_c("Airline: ", airline)
+    ) %>% 
+    plot_ly(x = ~cont, y = ~delay, color = ~airline,
+            text = ~text_label, hoverinfo = "text",
+            type = "scatter", mode = "markers", alpha = .5)
 }
 
 cont_month = function(cont){
   month = raw_df %>%
-    mutate(month = fct_reorder(month, date)) %>% 
-  plot_ly(x = ~cont, y = ~delay, color = ~month,
-          type = "scatter", mode = "markers", alpha = .5) %>% 
-  layout(yaxis = list(title = "Delay Time (minutes)"))
+    mutate(
+      text_label = str_c("Month: ", month),
+      month = fct_reorder(month, date)) %>% 
+    plot_ly(x = ~cont, y = ~delay, color = ~month,
+          text = ~text_label, hoverinfo = "text",
+          type = "scatter", mode = "markers", alpha = .5)
 }
   
 cont_hour = function(cont){
   hour = raw_df %>% 
-  plot_ly(x = ~cont, y = ~delay, color = ~hour_c,
-          type = "scatter", mode = "markers", alpha = .5) %>% 
-  layout(yaxis = list(title = "Delay Time (minutes)"))
+    mutate(
+      text_label = str_c("Period: ", hour_c)) %>% 
+        plot_ly(x = ~cont, y = ~delay, color = ~hour_c,
+          text = ~text_label, hoverinfo = "text",
+          type = "scatter", mode = "markers", alpha = .5)
 }
 
 ```
@@ -82,13 +91,19 @@ cont_hour = function(cont){
 
 ```{r, echo = FALSE}
 cont_airline(raw_df$carrierd) %>% 
-  layout(xaxis = list(title = "Carrier Delay (minutes)"))
+  layout(
+    xaxis = list(title = "Carrier Delay (minutes)", range = c(0, 400)),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_month(raw_df$carrierd) %>% 
-  layout(xaxis = list(title = "Carrier Delay (minutes)"))
+  layout(
+    xaxis = list(title = "Carrier Delay (minutes)", range = c(0, 400)),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_hour(raw_df$carrierd) %>% 
-  layout(xaxis = list(title = "Carrier Delay (minutes)"))
+  layout(
+    xaxis = list(title = "Carrier Delay (minutes)", range = c(0, 400)),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 ```
 
@@ -96,52 +111,76 @@ cont_hour(raw_df$carrierd) %>%
 
 ```{r, echo = FALSE}
 cont_airline(raw_df$extrmwd) %>% 
-  layout(xaxis = list(title = "Extreme Weather Delay (minutes)"))
+  layout(
+    xaxis = list(title = "Extreme Weather Delay (minutes)", range = c(0, 200)),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 200)))
 
 cont_month(raw_df$extrmwd) %>% 
-  layout(xaxis = list(title = "Extreme Weather Delay (minutes)"))
+  layout(
+    xaxis = list(title = "Extreme Weather Delay (minutes)", range = c(0, 200)),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 200)))
 
 cont_hour(raw_df$extrmwd) %>% 
-  layout(xaxis = list(title = "Extreme Weather Delay (minutes)"))
+  layout(
+    xaxis = list(title = "Extreme Weather Delay (minutes)", range = c(0, 200)),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 200)))
 ```
 
 #### Late Arrival Delay
 
 ```{r, echo = FALSE}
 cont_airline(raw_df$latarrd) %>% 
-  layout(xaxis = list(title = "Late Arrival Delay (minutes)"))
+  layout(
+    xaxis = list(title = "Late Arrival Delay (minutes)", range = c(0, 400)),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_month(raw_df$latarrd) %>% 
-  layout(xaxis = list(title = "Late Arrival Delay (minutes)"))
+  layout(
+    xaxis = list(title = "Late Arrival Delay (minutes)", range = c(0, 400)),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_hour(raw_df$latarrd) %>% 
-  layout(xaxis = list(title = "Late Arrival Delay (minutes)"))
+  layout(
+    xaxis = list(title = "Late Arrival Delay (minutes)", range = c(0, 400)),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 ```
 
 #### NAS Delay
 
 ```{r, echo = FALSE}
 cont_airline(raw_df$nasd) %>% 
-  layout(xaxis = list(title = "NAS Delay (minutes)"))
+  layout(
+    xaxis = list(title = "NAS Delay (minutes)", range = c(0, 100)),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 200)))
 
 cont_month(raw_df$nasd) %>% 
-  layout(xaxis = list(title = "NAS Delay (minutes)"))
+  layout(
+    xaxis = list(title = "NAS Delay (minutes)", range = c(0, 100)),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 200)))
 
 cont_hour(raw_df$nasd) %>% 
-  layout(xaxis = list(title = "NAS Delay (minutes)"))
+  layout(
+    xaxis = list(title = "NAS Delay (minutes)", range = c(0, 100)),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 200)))
 ```
 
 #### Security Delay
 
 ```{r, echo = FALSE}
 cont_airline(raw_df$securityd) %>% 
-  layout(xaxis = list(title = "Security Delay (minutes)"))
+  layout(
+    xaxis = list(title = "Security Delay (minutes)"),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_month(raw_df$securityd) %>% 
-  layout(xaxis = list(title = "Security Delay (minutes)"))
+  layout(
+    xaxis = list(title = "Security Delay (minutes)"),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_hour(raw_df$securityd) %>% 
-  layout(xaxis = list(title = "Security Delay (minutes)"))
+  layout(
+    xaxis = list(title = "Security Delay (minutes)"),
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 ```
 
 
@@ -150,56 +189,81 @@ cont_hour(raw_df$securityd) %>%
 #### Temperature
 
 ```{r, echo = FALSE}
+
 cont_airline(raw_df$temperature) %>% 
-  layout(xaxis = list(title = "Temperature (°F)"))
+  layout(
+    xaxis = list(title = "Temperature (°F)"),
+    yaxis = list(title = "Delay Time (minutes)"))
 
 cont_month(raw_df$temperature) %>% 
-  layout(xaxis = list(title = "Temperature (°F)"))
+  layout(
+    xaxis = list(title = "Temperature (°F)"),
+    yaxis = list(title = "Delay Time (minutes)"))
 
 cont_hour(raw_df$temperature) %>% 
-  layout(xaxis = list(title = "Temperature (°F)"))
+  layout(
+    xaxis = list(title = "Temperature (°F)"),
+    yaxis = list(title = "Delay Time (minutes)"))
 ```
 
 #### Humidity
 
 ```{r, echo = FALSE}
 cont_airline(raw_df$humidity) %>% 
-  layout(xaxis = list(title = "Humidity (%)"))
+  layout(
+    xaxis = list(title = "Humidity (%)"),
+    yaxis = list(title = "Delay Time (minutes)"))
 
 cont_month(raw_df$humidity) %>% 
-  layout(xaxis = list(title = "Humidity (%)"))
+  layout(
+    xaxis = list(title = "Humidity (%)"),
+    yaxis = list(title = "Delay Time (minutes)"))
 
 cont_hour(raw_df$humidity) %>% 
-  layout(xaxis = list(title = "Humidity (%)"))
+  layout(
+    xaxis = list(title = "Humidity (%)"),
+    yaxis = list(title = "Delay Time (minutes)"))
 ```
 
 #### Visibility
 
 ```{r, echo = FALSE}
 cont_airline(raw_df$visibility) %>% 
-  layout(xaxis = list(title = "Visibility"))
+  layout(
+    xaxis = list(title = "Visibility"),
+    yaxis = list(title = "Delay Time (minutes)"))
 
 cont_month(raw_df$visibility) %>% 
-  layout(xaxis = list(title = "Visibility"))
+  layout(
+    xaxis = list(title = "Visibility"),
+    yaxis = list(title = "Delay Time (minutes)"))
 
 cont_hour(raw_df$visibility) %>% 
-  layout(xaxis = list(title = "Visibility"))
+  layout(
+    xaxis = list(title = "Visibility"),
+    yaxis = list(title = "Delay Time (minutes)"))
 ```
 
 #### Wind Speed
 
 ```{r, echo = FALSE}
 cont_airline(raw_df$wind_s) %>% 
-  layout(xaxis = list(title = "Wind Speed (mph)"))
+  layout(
+    xaxis = list(title = "Wind Speed (mph)"),
+    yaxis = list(title = "Delay Time (minutes)"))
 
 cont_month(raw_df$wind_s) %>% 
-  layout(xaxis = list(title = "Wind Speed (mph)"))
+  layout(
+    xaxis = list(title = "Wind Speed (mph)"),
+    yaxis = list(title = "Delay Time (minutes)"))
 
 cont_hour(raw_df$wind_s) %>% 
-  layout(xaxis = list(title = "Wind Speed (mph)"))
+  layout(
+    xaxis = list(title = "Wind Speed (mph)"),
+    yaxis = list(title = "Delay Time (minutes)"))
 ```
 
-###
+
 
 <br>
 
