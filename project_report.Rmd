@@ -19,7 +19,6 @@ library(plotly)
 delay = read_csv("tidied_data/delay.csv")
 cancel = read_csv("tidied_data/cancel.csv")
 raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
-
 ```
 
 <style type="text/css">
@@ -55,7 +54,7 @@ Using JFK departed flights as an example, we’re interested in exploring the fa
 Commercial aviation is a complex distributed transportation system. The typical operation of a commercial flight can take place at terminal boundaries, airports, runways, and airspace, being susceptible to different kinds of delays. Some examples include mechanical problems, weather conditions, ground delays, air traffic control, runway queues and capacity constraints.
 
 
-```{r, echo = FALSE, out.width = "100%", fig.cap= "Common reasons for delay in the US, 2022", fig.align = 'center'}
+```{r, echo = FALSE, out.width = "100%", fig.cap = "Common reasons for delay in the US, 2022", fig.align = 'center'}
 knitr::include_graphics("./pictures/delay-reason.jpg")
 ```
 
@@ -79,33 +78,50 @@ Pilots, flight attendants and aircrafts may have different schedules due to lega
 
 ### 1.3 Initial Questions
 
-Considering the availability and scale of the flight data, we focus on JFK Airport's delay and cancellation data from Nov. 1st, 2020 to Jan 31st, 2021. And then find the weather and covid cases data within that time range accordingly. Based on these information, our final questions are below:
+As in the draft project proposal, we would like to do some reviews on the three airports serving New York City, i.e., JFK, LGA, and EWR. The initial questions we would like to focus on included the comparisons among these three airports, such as restaurants, shops and stores, lounges, and other facilities/services. 
 
-* What are the key trends of the flights in JFK during last holiday season?
-* What are the potential factors that contribute to the flight delay in JFK during last holiday season?
-* Are there significant associations of multiple factors with JFK flight delays during last holiday season?
+However, considering the availability and scale of the accessible and available data, we switched our main topic to focus on JFK Airport's delay and cancellation data from 11/1/2021 to 1/31/2022. And the weather and COVID cases data within that time range were accordingly. Based on these information, our final questions are below:
 
-&nbsp;
-
-## 2 Data Source and Cleaning
-
-### 2.1 Data Source
-
-*   [JFK flight delay and cancellation data between Nov 2020 and Jan 2021](https://www.transtats.bts.gov/ONTIME/) - The Bureau of Transportation Statistics (BTS) 
-*   [Weather condition data](https://www.ncdc.noaa.gov/cdo-web/datatools/lcd) - The National Oceanic and Atmospheric Administration (NOAA) 
-*   [COVID data](https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3) - NYC OpenData
-*   [Airport location information](https://data.humdata.org/dataset/ourairports-usa) - The Humanitarian Data Exchange
+* What were the key trends of the flights at JFK during last holiday season?
+* What were the potential factors that might contribute to the flight delay/cancellation at JFK during last holiday season?
+* Were there significant associations of multiple factors with JFK flight delays during last holiday season?
 
 &nbsp;
 
-### 2.2 Variables of Interest
+## 2 Data Sources and Cleaning
 
-In this research, we look for a relationship between cancellation and a number of variables. The number of cancellations each day is therefore regarded as the result (dependent variable), and exposures of interest are regarded as the independent variables.
+We used three primary datasets for statistical analysis, and an additional supplemental dataset for interactive mapping.
+
+### Delay and Cancellation
+
+[Flight delay and cancellation data for JFK departures](https://www.transtats.bts.gov/ONTIME/) was obtained from the Bureau of Transportation Statistics (BTS). We first wrote a function to iterate on the reading-in process for each airline of interest from November 2021 to January 2022. Some new variable were created for subsequent analysis use, including scheduled hours for flight's departures, year, month, day, etc. Delay minutes were manually calculated as the time difference in actual departure time and scheduled departure time. Flights with actual elapsed time minutes equal to 0 were treated as cancellation. Air carriers were recoded as airline names to be more clear.
+
+<br>
+
+### Weather
+
+[Hourly and daily weather information](https://www.ncdc.noaa.gov/cdo-web/datatools/lcd) from 11/1/2021 to 1/31/2022 was obtained from the National Oceanic and Atmospheric Administration (NOAA). We selected the specific zip code for JFK and downloaded the raw data thereof. To align the time unit of weather with flight information, considering data availability, we picked the weather at the 51th minute to represent the weather of the hour, and the weather at 23:59 to represent the weather condition of the day. Only date and hourly/daily weather condition of interest were kept in the resulted tidied dataset.
+
+<br>
+
+### COVID Cases
+
+[Daily COVID cases count](https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3) from 11/1/2021 to 1/31/2022 was obtained, by API, from NYC OpenData, provided by the NYC Department of Health and Mental Hygiene (DOHMH). The resulted dataset included date, year, month, day, and daily case counts.
+
+<br>
+
+### Airport Location
+
+An additional source for the interactive map was [U.S. domestic airport location information](https://data.humdata.org/dataset/ourairports-usa) from The Humanitarian Data Exchange, where we extracted the latitude and longitute for those airports with delay and/or cancellation records.
+
+&nbsp;
+
+### Summary of Variables of Interest
 
 **Outcome**
 
-  * `delay_minutes`: delay time in minutes
-  * `cancel_counts`: daily flight cancellation counts in JFK airport
+  * *Delay Time*: Delay time in minutes
+  * *Flgiht Cancellation Count*: Daily flight cancellation counts at JFK airport
 
 <br>
 
@@ -113,217 +129,23 @@ In this research, we look for a relationship between cancellation and a number o
 
 Categorical Variables
 
-  *   `Periods of Time`: Morning, Noon, Afternoon, Night
-  *   `Months`: November, 2021; December, 2021; January, 2022
-  *   `Airlines`: Alaska Airlines, American Airlines, Delta Air Lines, Endeavor Air, JetBlue Airways, Republic Airways, United Air Lines
-  *   `Destination Airports`: 66 destination airports with records of delay/cancellation
+  *   *Periods of Time*: Morning, Noon, Afternoon, Night
+  *   *Months*: November, 2021; December, 2021; January, 2022
+  *   *Airlines*: Alaska Airlines, American Airlines, Delta Air Lines, Endeavor Air, JetBlue Airways, Republic Airways, United Air Lines
+  *   *Destination Airports*: 66 destination airports with records of delay/cancellation
 
 Continuous Variables
 
-  *   `Carrier Delay`: Carrier delay in minutes
-  *   `Extreme Weather Delay`: Extreme weather delay in minutes
-  *   `Late Arrival Delay`: Late arrival delay in minutes
-  *   `NAS Delay`: National Aviation System (NAS) delay in minutes
-  *   `Security Delay`: Security delay in minutes
-  *   `Temperature`: Hourly dry bulb temperature (°F)
-  *   `Humidity`: Hourly relative humidity (%)
-  *   `Visibility`: Hourly visibility
-  *   `Wind Speed`: Hourly wind speed (mph)
-  *   `COVID Cases`: daily cases of COVID-19 from Nov, 2021 to Jan, 2022
-
-&nbsp;
-
-### 2.3 Data Cleaning
-
-**Weather Condition**
-
-First, we imported the NOAA weather data. To align the time unit of weather with flight information, also considering data availability, we picked the weather at the 51th minute to represent the weather condition of the hour, and the weather at 23:59 to represent the weather condition of the day.
-
-```{r, eval = F}
-noaa = read_csv("data/weather.csv", na = c("","NA"))
-
-noaa_df = noaa %>%
-  janitor::clean_names() %>% 
-  select(date, starts_with("hourly")) %>% 
-  mutate(
-    date = str_replace_all(date, "T", "-")
-  ) %>% 
-  separate(date, c("year", "month", "day", "hour", "minute", "second"), remove = FALSE) %>% 
-  filter(minute == "51") %>% 
-  select(-minute, -second) %>% 
-  mutate(
-    date = as.Date(str_left(date, n = 10), format = "%Y-%m-%d"),
-    year = as.numeric(year),
-    month = as.numeric(month),
-    day = as.numeric(day),
-    hour = as.numeric(hour)
-  )
-
-daily_weather_condition = noaa %>%
-  janitor::clean_names() %>% 
-  select(date, daily_weather) %>% 
-  filter(!is.na(daily_weather)) %>% 
-  mutate(
-    date = str_replace_all(date, "T", "-")
-  ) %>% 
-  separate(date, c("year", "month", "day", "hour", "minute", "second")) %>% 
-  select(-c(hour:second)) %>% 
-  mutate(
-    year = as.numeric(year),
-    month = as.numeric(month),
-    day = as.numeric(day)
-  )
-
-noaa_df = left_join(noaa_df, daily_weather_condition, by = c("year", "month", "day"))
-
-daily_weather = noaa %>%
-  janitor::clean_names() %>% 
-  select(date, starts_with("daily")) %>% 
-  mutate(
-    date = str_replace_all(date, "T", "-")
-  ) %>% 
-  separate(date, c("year", "month", "day", "hour", "minute", "second"), remove = FALSE) %>% 
-  filter(minute == "59") %>% 
-  select(-c(hour:second)) %>% 
-  mutate(
-    date = as.Date(str_left(date, n = 10), format = "%Y-%m-%d"),
-    year = as.numeric(year),
-    month = as.numeric(month),
-    day = as.numeric(day)
-  ) %>% 
-  drop_na(daily_average_dew_point_temperature)
-```
-
-**COVID**
-
-We loaded the online data set of covid cases, limiting the date to our interested time frame from 2020-10-31 to 2021-1-31.
-
-```{r, eval = F}
-covid = 
-  GET("https://data.cityofnewyork.us/resource/rc75-m7u3.csv") %>% 
-  content("parsed") 
-
-covid_df = covid %>% 
-  select(date = date_of_interest, case_count) %>%
-  filter(date < "2022-01-31" & date >= "2021-10-31") %>% 
-  separate(date, c("year", "month", "day"), remove = FALSE) %>% 
-  mutate(
-    date = as.Date(date, format = "%Y-%m-%d")
-  ) %>% 
-  mutate_if(is.character, as.numeric)
-```
-
-**Delay**
-
-* Due to the scale of data set, here we chose to focus on the top 7 players in the US regarding annual carrying capacity, including: `Endeavor Air`, `American Airlines`, `Alaska Airlines`, `JetBlue Airways`, `Delta Air Lines`, `United Air Lines`, and `Republic Airways`.
-* We imported the delay data by each carrier in our within our interested time frame from 2020-10-31 to 2021-1-31, and merged them into one data frame.
-* (Do we need to describe how we define delay?)
-
-```{r, eval = F}
-library(stringr)
-library(rvest)
-library(httr)
-library(forstringr)
-
-
-read_csv_function = function(path) {
-  
-  df = read_csv(path, 
-                skip = 7, 
-                cols(.default = "c")) %>%
-    janitor::row_to_names(1) %>% 
-    janitor::clean_names()
-  
-  df
-  
-}
-
-delay_cancel = 
-  tibble(
-    files = list.files("data/delay/"),
-    path = str_c("data/delay/", files)
-  ) %>% 
-  mutate(data = map(path, read_csv_function)) %>% 
-  unnest(data) %>% 
-  select(-files, -path) %>%
-  mutate(
-    airline_name = case_when(
-      carrier_code == "9E" ~ "Endeavor Air",
-      carrier_code == "AA" ~ "American Airlines",
-      carrier_code == "AS" ~ "Alaska Airlines",
-      carrier_code == "B6" ~ "JetBlue Airways",
-      carrier_code == "DL" ~ "Delta Air Lines",
-      carrier_code == "UA" ~ "United Air Lines",
-      carrier_code == "YX" ~ "Republic Airways",
-      TRUE      ~ ""
-    ),
-    scheduled_hour = str_left(scheduled_departure_time, 2)
-  ) %>% 
-  separate(date_mm_dd_yyyy, into = c("month", "day", "year"), sep = "/", remove = FALSE) %>%
-  mutate(
-    year = as.numeric(year),
-    month = as.numeric(month),
-    day = as.numeric(day),
-    date_mm_dd_yyyy = as.Date(date_mm_dd_yyyy, format = "%m/%d/%Y")
-  ) %>%
-  select(airline_name, date = date_mm_dd_yyyy, everything(), -carrier_code, -tail_number, -wheels_off_time) %>% 
-  arrange(date) %>% 
-  relocate(scheduled_hour, .before = scheduled_departure_time)
-
-full_delay_df = 
-  delay_cancel %>% 
-  filter(actual_elapsed_time_minutes != 0) %>% 
-  mutate(
-    delay_minutes = as.numeric(as.POSIXct(actual_departure_time, format = "%H:%M") - as.POSIXct(scheduled_departure_time, format = "%H:%M")) / 60,
-    delay_minutes = ifelse(delay_minutes < -100, delay_minutes + 1440, delay_minutes)
-  ) %>% 
-  select(-departure_delay_minutes) %>% 
-  relocate(delay_minutes, .after = actual_departure_time)
-```
-
-**Cancellation**
-
-We define those whose `actual_elapsed_time_minutes == 0` as cancellation.
-
-```{r, eval = F}
-full_cancel_df = 
-  delay_cancel %>% 
-  filter(actual_elapsed_time_minutes == 0) %>% 
-  select(airline_name:scheduled_departure_time, scheduled_elapsed_time_minutes)
-```
-
-**Airport Info**
-
-We imported JFK and the destination airports' location data set, including the unique identifier and geographic information for each airport. 
-
-```{r, eval = F}
-airport = read_csv("data/us-airports.csv") %>% 
-  slice(-1) %>% 
-  select(airport = iata_code, name, lat = latitude_deg, long = longitude_deg, region_name, local_region, municipality)
-
-airport_info =
-  delay_cancel %>% 
-  distinct(destination_airport) %>% 
-  rename(airport = destination_airport) %>% 
-  rbind("JFK") %>% 
-  arrange(airport)
-
-airport_info = left_join(airport_info, airport, by = "airport")
-```
-
-
-**Export**
-
-We exported the cleaned data sets separately regarding hourly weather, daily weather, covid cases, delay information, cancellation information, and airport locations.
-
-```{r, eval = F}
-write_csv(noaa_df, "tidied_data/hourly_weather.csv")
-write_csv(daily_weather, "tidied_data/daily_weather.csv")
-write_csv(covid_df, "tidied_data/covid.csv")
-write_csv(full_delay_df, "tidied_data/delay.csv")
-write_csv(full_cancel_df, "tidied_data/cancel.csv")
-write_csv(airport_info, "tidied_data/airport.csv")
-```
+  *   *Carrier Delay*: Carrier delay in minutes
+  *   *Extreme Weather Delay*: Extreme weather delay in minutes
+  *   *Late Arrival Delay*: Late arrival delay in minutes
+  *   *NAS Delay*: National Aviation System (NAS) delay in minutes
+  *   *Security Delay*: Security delay in minutes
+  *   *Temperature*: Hourly dry bulb temperature (°F)
+  *   *Humidity*: Hourly relative humidity (%)
+  *   *Visibility*: Hourly visibility
+  *   *Wind Speed*: Hourly wind speed (mph)
+  *   *COVID Cases Count*: New daily cases of COVID; and, daily cases of COVID with 6 days' lag in time
 
 &nbsp;
 
@@ -341,7 +163,6 @@ We found that LAX and SFO have outstanding delay and cancellation counts, so we 
 
 
 ```{r, echo = F}
-
 delay_airline = delay %>% 
   filter(
     destination_airport %in% c("LAX", "SFO"),
@@ -376,7 +197,7 @@ delay_month = delay %>%
       xaxis = list(title = "Destination Airport", mirror = FALSE),
       yaxis = list(title = "Delay Time (minutes)"),
       legend = FALSE,
-      offsetgroup="A")
+      offsetgroup = "A")
 
 cancel_hour = delay %>% 
   filter(
@@ -394,7 +215,7 @@ cancel_hour = delay %>%
     layout(
       xaxis = list(title = "Scheduled Hour"),
       yaxis = list(title = "Count"),
-      annotations = list(x = 8 , y = 300, text = "Cancel by Schedule Hour"), font = list(size = 16), showarrow = FALSE, xref = "paper", yref = "scheduled_hour",
+      annotations = list(x = 8 , y = 300, text = "Cancel by Scheduled Hour"), font = list(size = 16), showarrow = FALSE, xref = "paper", yref = "scheduled_hour",
       margin = list(l = 50, r = 50, b = 50, t = 50))
 
 Delay = subplot(delay_airline, delay_month) %>% 
