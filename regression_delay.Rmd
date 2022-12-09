@@ -165,7 +165,7 @@ We first produce boxplots to visualize the distribution of delay time across eac
 
 * For continuous variables:
 
-We first produce scatterplots to visualize the relationship between the continuous outcome and each continuous predictor to see if there is a linear relationship. We also calculate Pearson correlation coefficient between all continuous variables. For those linear, we use correlation coefficient to measure the associations.
+We first produce scatterplots to visualize the relationship between the continuous outcome and each continuous predictor to see if there is a linear relationship. We also calculate Pearson correlation coefficients for all continuous variables to measure the associations and detect if any strong linear correlations.
 
 
 ### Categorical predictors
@@ -350,264 +350,29 @@ _Highlights:_
 
 * A clear linear relationships is observed between delay time (the outcome) and Carrier Delay.
  
-* The Pearson correlation coefficients are greater than .50 for the relationships between delay time and 2 predictors (i.e., carrier delay and late arrival delay). Noticeably, the correlation coefficient for the relationship between delay time and carrier delay ~0.80, which is very high.
+* The Pearson correlation coefficients are greater than .50 for the relationships between delay time and 2 predictors (i.e., carrier delay and late arrival delay). Noticeably, the correlation coefficient for the relationship between delay time and carrier delay is 0.80, which indicates a strong correlation.
 
-### Independent variables / predictors (categorical)
 
-cat_sum = raw_df %>% 
-  select(airline, month, hour) %>% 
-  mutate(
-    airline = as.factor(airline),
-    month = as.factor(month),
-    hour = as.factor(hour)
-    ) %>% 
-  summary(maxsum = 24)
 
-cat_sum
+# Step 2: Model fitting
 
-### Independent variables / predictors (continuous)
+According to the result from Step 1, we get a sense of what predictors should be included in the linear regression model. They are `airline`, `month`, `times in a day`, `carrier delay`, and `late arrival delay`.
 
-con_sum_df = raw_df %>% 
-  select(-date, -airline, -month, -hour)
+Before fitting the linear model with these 5 predictors, let's check their independence using correlation to filter out highly correlated variables.
 
-con_sum = skim(con_sum_df) %>%
-  dplyr::select(-n_missing, -complete_rate) %>% 
-  mutate(
-    mean = numeric.mean,
-    sd = numeric.sd,
-    histogram = numeric.hist,
-    var = skim_variable,
-    min = numeric.p0,
-    max = numeric.p100,
-    median = numeric.p50,
-    q1 = numeric.p25,
-    q3 = numeric.p75
-  ) %>% 
-  dplyr::select(-numeric.mean, -numeric.sd, -numeric.hist, -skim_variable, -numeric.p0, -numeric.p100, -numeric.p50, -numeric.p25, -numeric.p75) %>% 
-  relocate(var, mean, min, q1, median, q3, max, sd, histogram)
-
-con_sum
-
-
-Next, as mentioned above, we want to further categorize variable `hour`.
-
-_Motivation:_ 
-
-To increase the power of our model by reducing the number of parameters involved and to be more efficient and concise.
-
-_Rationale for the categorization of `hour`:_
-
-Based on the previous inspection of variable `hour`, we could see that: except for 5, 8, 10, 22, and 23, the frequencies of the other classes are roughly even (between 1000-2000). Take this into consideration, our rationale for classification will be a combination of convention and the desire to achieve a uniform distribution.
-
-Thus, we would categorize `hour` into the following 4 categories:
-
-_morning_: 5-8
-
-_noon_: 9-13
-
-_afternoon_: 14-17 
-
-_night_:18-23 
-
-Now, we can start categorize `hour`
-
-
-As usual, check if it was done properly
-```{r}
-summary(as.factor(raw_df$hour_c))
-sum(is.na(raw_df))
-```
-
-
-_0_ 'NA' and the distribution looks good.
-
-Now, since we are not yet able to decide the variable type of the rest of the predictors, we need further analysis.
-
-## Step 2: Check Assumptions for Regression
-
-## Assumption 1: Linearity
-
-Do simple linear regression for each independent variable, along with scatterplots to assess the linearity
-
-### Continuous vars
-
-* temperature
-
-```{r message=FALSE, warning=FALSE}
-lrTemp = lm(delay~temperature, data = raw_df)
-summary(lrTemp) %>% broom::glance()
-summary(lrTemp) %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value)
-
-plot(delay~temperature, data = raw_df)
-```
-
-* humidity
-
-```{r message=FALSE, warning=FALSE}
-lrHum = lm(delay~humidity, data = raw_df)
-summary(lrHum) %>% broom::glance()
-summary(lrHum) %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value)
-
-plot(delay~humidity, data = raw_df)
-```
-
-* visibility
-
-```{r message=FALSE, warning=FALSE}
-lrVis = lm(delay~visibility, data = raw_df)
-summary(lrVis) %>% broom::glance()
-summary(lrVis) %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value)
-
-plot(delay~visibility, data = raw_df)
-```
-
-* wind speed
-
-```{r message=FALSE, warning=FALSE}
-lrWin = lm(delay~wind_s, data = raw_df)
-summary(lrWin) %>% broom::glance()
-summary(lrWin) %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value)
-
-plot(delay~wind_s, data = raw_df)
-```
-
-* carrier delay
-
-```{r message=FALSE, warning=FALSE}
-lrCar = lm(delay~carrierd, data = raw_df)
-summary(lrCar) %>% broom::glance()
-summary(lrCar) %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value)
-
-plot(delay~carrierd, data = raw_df)
-```
-
-* extreme weather delay
-
-```{r message=FALSE, warning=FALSE}
-lrExw = lm(delay~extrmwd, data = raw_df)
-summary(lrExw) %>% broom::glance()
-summary(lrExw) %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value)
-
-plot(delay~extrmwd, data = raw_df)
-```
-
-* NAS delay
-
-```{r message=FALSE, warning=FALSE}
-lrNas = lm(delay~nasd, data = raw_df)
-summary(lrNas) %>% broom::glance()
-summary(lrNas) %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value)
-
-plot(delay~nasd, data = raw_df)
-```
-
-* security delay
-
-```{r message=FALSE, warning=FALSE}
-lrSec = lm(delay~securityd, data = raw_df)
-summary(lrSec) %>% broom::glance()
-summary(lrSec) %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value) 
-
-plot(delay~securityd, data = raw_df)
-```
-
-* late arrival delay
-
-```{r message=FALSE, warning=FALSE}
-lrLat = lm(delay~latarrd, data = raw_df)
-summary(lrLat) %>% broom::glance()
-summary(lrLat) %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value)
-
-plot(delay~latarrd, data = raw_df)
-```
-
-### Categorical vars
-
-First, tell R that they are categorical variables
-```{r}
-raw_df = 
-  raw_df %>% 
-  mutate(
-    month = fct_infreq(as.factor(month)),
-    hour_c = fct_infreq(hour_c),
-    airline = fct_infreq(airline)
-    )
-```
-
-* month
-
-```{r message=FALSE, warning=FALSE}
-lrMon = lm(delay~month, data = raw_df)
-summary(lrMon) %>% broom::glance()
-summary(lrMon) %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value)
-```
-
-* hour
-
-```{r}
-lrHour = lm(delay~hour_c, data = raw_df)
-summary(lrHour) %>% broom::glance()
-summary(lrHour) %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value)
-```
-
-* airline
-
-```{r}
-lrAL = lm(delay~airline, data = raw_df)
-summary(lrAL) %>% broom::glance()
-summary(lrAL) %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value)
-```
-
-The above results were not very straightforward, but give us a sense that we could include `carrierd` and `latarrd` in to the final model, according to the R-squared values.
-
-
-## Assumption 2: Independence of observations
-
-Use correlation to assess the relationship between all independent variables and make sure they aren’t too highly correlated.
-
-First, it's time to remove variable `date` as it is not one of the predictors
-
-```{r}
-raw_df = raw_df %>% 
-  select(-date)
-```
-
-Correlation matrix 
-
-_NOTE:_ This approach is not meaningful for our nominal predictors `month`, `airline`, or `hour_c`. you can ignore them.
 
 ```{r}
 cor = raw_df %>% 
-  select(-delay) %>% 
+  select(airline, month, hour_c, carrierd, latarrd) %>% 
   mutate(
     airline = as.numeric(airline),
     month = as.numeric(month),
     hour_c = as.numeric(hour_c)
     ) %>% 
+  rename(
+     "carrier delay" = carrierd,
+     "late arrival delay" = latarrd,
+    "times in a day" = hour_c) %>% 
   cor(method = c("pearson", "kendall", "spearman"))
 
 round(cor, 2)
@@ -616,230 +381,23 @@ color = colorRampPalette(c("Blue", "white", "Red"))(20)
 heatmap(x = cor, col = color, symm = TRUE)
 ```
 
-Looks good, pretty independent.
+_Highlights:_
 
-*Could considering removing 1 of (`visibility` and `humidity`) as they have a moderate correlation coefficient  (-0.54)
+* All predictors are highly independent to each other.
 
 
-## Assumption 3: Normality
+As we see above, independence assumption is met and thus we can add all these 5 predictors into to linear regression model.
 
-Check this after we make the model.
-
-## Assumption 4: Homoscedasticity
-
-Check this after we make the model.
-
-# Step 3: Building linear regression model
-
-## Perform linear regression with all predictors
+## Linear regression, no interaction
 ```{r}
-lm_all = lm(delay ~ ., data = raw_df)
-summary(lm_all)
+lm_pre = lm(delay ~ airline + month + hour_c + carrierd + latarrd, data = raw_df)
+broom::glance(lm_pre) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16'))
 ```
 
-_Note:_ 
+_Highlights:_ 
 
-R-squared = 0.9467 -> good 
+* The R-squared value for this model is 0.854, which means more than 85% of the variance for delay time can be explained by this regression model.
 
-F-statistic: 
-F-value = 2.639e+04 -> large, variance between >> variance within, good  
-p-value < 2.2e-16 -> small, significant, good
+* The F-value is 4818 (very large) with p-value < 2.2e-16 (very small), which suggests that this regression model is statistically significant.
 
-_The F-test of overall significance indicates whether this current linear regression model provides a better fit to the data than a model that contains no independent variables._
-
-`humidity` -> p-value = 0.497590 (not significant) under this model
--> given what's mentioned above, remove 
-
-`wind_s` -> p-value = 0.618192 (not significant) under this model
--> remove
-
-
-Fit lm without  `wind_s` or `humidity`
-```{r}
-raw_df_10 = raw_df %>% 
-  select(-humidity, -wind_s)
-
-lm_10 = lm(delay ~ ., data = raw_df_10)
-summary(lm_10)
-```
-
-_Note:_ 
-
-R-squared = 0.9467 -> same, good 
-
-F-statistic: 
-F-value = 2.932e+04 -> close, large, variance between >> variance within, good
-p-value < 2.2e-16 -> same, small, significant, good
-
-## Fit the best subset linear model
-
-The function regsubsets() will produce the best model with 1 predictor, the best model with 2 predictors, 3 predictors, … up to 14 predictors(nvmax=14 option).
-
-```{r}
-library(leaps)
-
-bestsub.lm <- regsubsets(delay ~ ., 
-                            data = raw_df_10, nvmax = 18)
-
-sum.bestsub.lm = summary(bestsub.lm)
-```
-
-We have 18 predictor parameters, and the sample size 29725 will be sufficient for it ("One in ten" rule)
-
-Check some measures to select the best subset model
-
-_Note:_
-
-A small value of Cp means that the model is relatively precise.
-
-A larger R-squared value means that the independent variables explain a larger percentage of the variation in the independent variable.
-
-A lower BIC implies either fewer explanatory variables, better fit, or both.
-
-```{r}
-cbind( 
-    Cp = summary(bestsub.lm)$cp,
-    r2 = summary(bestsub.lm)$rsq,
-    BIC = summary(bestsub.lm)$bic
-)
-```
-
-
-```{r}
-which.max(sum.bestsub.lm$rsq)
-```
-
-
-```{r}
-sum.bestsub.lm$which[18,]
-```
-
-All true -> keep all
-
-## Fit the regression model
-```{r}
-Best_lm = lm(delay ~  .,
-              data = raw_df_10)
-summary(Best_lm) %>% broom::glance()
-summary(Best_lm) %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value)
-  
-```
-
-## Check for residual normality
-```{r}
-library("olsrr")
-
-ols_plot_resid_fit(Best_lm)
-
-# residual vs fitted
-plot(Best_lm, 1)
-
-#qq plot
-plot(Best_lm, 2)
-
-
-```
-
-## Check for heteroscadacity
-
-
-```{r}
-plot(Best_lm, 3)
-```
-
-
-# Step 4: Fit stratum-specific models
-
-Stratum of interest: 
-
-1. month
-
-2. airline
-
-3. hour_c
-
-## Fit month-specific model
-
-we can nest within months and fit month-specific models associating delay with the rest of variables
-
-```{r}
-nest_lm_m =
-  raw_df_10 %>% 
-  select(-airline, -hour_c) %>% 
-  nest(data = -month) %>% 
-  mutate(
-    models = map(data, ~lm(delay ~ ., data = .x)),
-    results = map(models, broom::tidy)) %>% 
-  select(-data, -models) %>% 
-  unnest(results)
-
-nest_lm_m %>% 
-  select(month, term, estimate) %>% 
-  mutate(term = fct_inorder(term)) %>% 
-  pivot_wider(
-    names_from = term, values_from = estimate) %>% 
-  knitr::kable(digits = 3)
-```
-
-
-## Fit airline-specific model
-
-we can nest within airlines and fit airline-specific models associating delay with the rest of variables
-
-```{r}
-nest_lm_a =
-  raw_df_10 %>% 
-  select(-month, -hour_c) %>% 
-  nest(data = -airline) %>% 
-  mutate(
-    models = map(data, ~lm(delay ~ ., data = .x)),
-    results = map(models, broom::tidy)) %>% 
-  select(-data, -models) %>% 
-  unnest(results)
-
-nest_lm_a %>% 
-  select(airline, term, estimate) %>% 
-  mutate(term = fct_inorder(term)) %>% 
-  pivot_wider(
-    names_from = term, values_from = estimate) %>% 
-  knitr::kable(digits = 3)
-```
-
-
-## Fit hour-specific model
-
-we can nest within hour categories and fit hour-specific models associating delay with the rest of variables
-
-```{r}
-nest_lm_h =
-  raw_df_10 %>% 
-  select(-airline, -month) %>% 
-  nest(data = -hour_c) %>% 
-  mutate(
-    models = map(data, ~lm(delay ~ ., data = .x)),
-    results = map(models, broom::tidy)) %>% 
-  select(-data, -models) %>% 
-  unnest(results)
-
-nest_lm_h %>% 
-  select(hour_c, term, estimate) %>% 
-  mutate(term = fct_inorder(term)) %>% 
-  pivot_wider(
-    names_from = term, values_from = estimate) %>% 
-  knitr::kable(digits = 3)
-```
-
-
-# Step 5: Add interaction terms
-## Carrier * airline 
-```{r}
-int1_lm = lm(delay ~ . + carrierd*airline,
-              data = raw_df_10)
-
-anova(int1_lm)
-```
-
-significant
 
