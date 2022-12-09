@@ -27,7 +27,7 @@ The mutual interest about travel and the shared experience of waiting for delaye
 
 Our technical skill sets of coding in R would thank to [P8105 Data Science I](https://p8105.com/index.html) taught by Prof. Jeff Goldsmith in fall 2022.
 
-## About Us
+## Collaborators
 
 * [Fengyi Ma](https://www.linkedin.com/in/fengyi-fiona-ma-945842255/)
 
