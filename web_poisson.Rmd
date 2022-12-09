@@ -10,13 +10,14 @@ output:
 ---
 
 ```{r}
-
+# install.packages("vars")
 
 library(dplyr)
 library(tidyverse)
 library(ggridges)
 library(patchwork)
 library(plotly)
+library(vars)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -45,6 +46,7 @@ In this research, we look for a relationship between cancellation and a number o
 * `covid_case`: new daily cases of COVID-19
 * `airline_name`: domestic airline 
 * `year_month`: the date format in "Year Month"
+* `covid_lag6`: daily cases of COVID-19 with 6 days time lag
  
 # Pre-analysis
 ## Check distribution
@@ -67,7 +69,7 @@ Cancellation count per month show difference both by month and airline, therefor
 cancel_airline <- cancel_tidy  %>%
   group_by(year_month, airline_name) %>%
   mutate(Total_number_of_cancellation = sum(daily_cancel_by_airline)) %>%   
-  select(year_month, airline_name, Total_number_of_cancellation) %>%
+  dplyr::select(year_month, airline_name, Total_number_of_cancellation) %>%
   distinct %>%
   mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan"))  
 
@@ -100,10 +102,12 @@ bar_plot2 = cancel_airline %>%
          barmode = 'group')
 bar_plot2
 ```
-lag covid-19
+## Create time-lag variable for COVID cases
+We discovered that the time trend of daily flight cancellations and COVID-19 cases did not coincide with one other, which makes perfect sense in reality. The rise of COVID-19 cases frequently takes time to affect our daily lives. We had strong reasons to assume that `covid_case` may impact `daily_cancel` based on our hypothesis, thus we established new variables concerning `covid_case` with a time lag.
+
 ```{r}
 cancel_covid <- cancel_tidy  %>%
-  select(date, daily_cancel, covid_case) %>% 
+  dplyr::select(date, daily_cancel, covid_case) %>% 
   distinct()
 
 cancel_plot <-  cancel_covid  %>%
@@ -133,10 +137,19 @@ scatter_plot
 
 
 ```
+We used the lag selection criteria and Akaike's information criterion (AIC) to select 6 days as the optimal time lag. Then, we construct a new variable named `covid_lag6`, which indicates the value of COVID-19 cases with a 6-day time lag.
+```{r}
+
+VARselect(data.frame(cancel_covid$daily_cancel, cancel_covid$covid_case))
+
+# Create a 1-day `covid_case` variable (using "lag()" from dplyr)
+cancel_tidy$covid_lag6 <- lag(cancel_tidy$covid_case, 6)
+
+```
 
 # Poisson model
 ```{r}
-poisson = glm(daily_cancel ~ temperature + humidity + windspeed + covid_case,family = "poisson",data=cancel_tidy)
+poisson = glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6,family = "poisson",data=cancel_tidy)
 
 
 summary(poisson) 
@@ -147,11 +160,11 @@ summary(poisson)
 cancel_tidy %>% 
   nest(df = -month) %>%
   mutate(
-    models = map(.x = df, ~ glm(daily_cancel ~ temperature + humidity + windspeed + covid_case,family = "poisson", data = .x)),
+    models = map(.x = df, ~ glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6,family = "poisson", data = .x)),
     results = map(models, broom::tidy)
   ) %>% 
   unnest(results) %>% 
-  select(month, term, estimate) %>% 
+  dplyr::select(month, term, estimate) %>% 
   mutate(term = fct_inorder(term)) %>% 
   pivot_wider(
     names_from = term, 
@@ -164,10 +177,10 @@ cancel_tidy %>%
 poisson_by_month = cancel_tidy %>%
   nest(data = -month) %>% 
   mutate(
-    models = map(.x = data, ~glm(daily_cancel ~ temperature + humidity + windspeed + covid_case, family = "poisson", data = .x)),
+    models = map(.x = data, ~glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6, family = "poisson", data = .x)),
     results = map(models, broom::tidy)
     ) %>% 
-  select(month, results) %>% 
+  dplyr::select(month, results) %>% 
   unnest(results) %>% 
   mutate(
     OR = exp(estimate),
@@ -175,7 +188,7 @@ poisson_by_month = cancel_tidy %>%
     CI_upper = exp(estimate + 1.96 * std.error),
     p.value = format(p.value, scientific = TRUE, digits = 3)
   ) %>% 
-  select(month, term, OR, CI_lower,CI_upper, p.value) 
+  dplyr::select(month, term, OR, CI_lower,CI_upper, p.value) 
 
 poisson_by_month %>% 
   filter(term != "(Intercept)" ) %>% 
@@ -212,11 +225,11 @@ poisson_by_month %>%
 cancel_tidy %>% 
   nest(df = -airline_name) %>%
   mutate(
-    models = map(.x = df, ~ glm(daily_cancel ~ temperature + humidity + windspeed + covid_case,family = "poisson", data = .x)),
+    models = map(.x = df, ~ glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6,family = "poisson", data = .x)),
     results = map(models, broom::tidy)
   ) %>% 
   unnest(results) %>% 
-  select(airline_name, term, estimate) %>% 
+  dplyr::select(airline_name, term, estimate) %>% 
   mutate(term = fct_inorder(term)) %>% 
   pivot_wider(
     names_from = term, 
@@ -229,10 +242,10 @@ cancel_tidy %>%
 poisson_by_airline = cancel_tidy %>%
   nest(data = -airline_name) %>% 
   mutate(
-    models = map(.x = data, ~glm(daily_cancel ~ temperature + humidity + windspeed + covid_case, family = "poisson", data = .x)),
+    models = map(.x = data, ~glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6, family = "poisson", data = .x)),
     results = map(models, broom::tidy)
     ) %>% 
-  select(airline_name, results) %>% 
+  dplyr::select(airline_name, results) %>% 
   unnest(results) %>% 
   mutate(
     OR = exp(estimate),
@@ -240,7 +253,7 @@ poisson_by_airline = cancel_tidy %>%
     CI_upper = exp(estimate + 1.96 * std.error),
     p.value = format(p.value, scientific = TRUE, digits = 3)
   ) %>% 
-  select(airline_name, term, OR, CI_lower,CI_upper, p.value) 
+  dplyr::select(airline_name, term, OR, CI_lower,CI_upper, p.value) 
 
 poisson_by_airline %>% 
   filter(term != "(Intercept)" ) %>% 
