@@ -3,7 +3,7 @@ title: "Delay Data Exploration for Continuous Predictors"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE,
                       message = FALSE)
@@ -17,32 +17,56 @@ raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 
 <br>
 
-```{r, include = FALSE}
+**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some continuous predictors and airlines, months, period of time, respectively, were significantly associated with the total delay time in minutes. To achieve it, we did some visualizations.**
 
+The continuous predictors included:
+
+*   **Types of Delay** (in minutes; five categories in total, determined by the U.S. Department of Transportation, reported by [the Bureau of Transportation](https://www.bts.gov/explore-topics-and-geography/topics/airline-time-performance-and-causes-flight-delays))
+
+    *   Carrier Delay: The cause of the cancellation or delay was due to circumstances within the airline's control (e.g. maintenance or crew problems, aircraft cleaning, baggage loading, fueling, etc.)
+  
+    *   Extreme Weather Delay: Significant meteorological conditions (actual or forecasted) that, in the judgment of the carrier, delays or prevents the operation of a flight such as tornado, blizzard or hurricane
+  
+    *   Late Arrival Delay: A previous flight with same aircraft arrived late, causing the present flight to depart late
+  
+    *   National Aviation System (NAS) Delay: Delays and cancellations attributable to the national aviation system that refer to a broad set of conditions, such as non-extreme weather conditions, airport operations, heavy traffic volume, and air traffic control
+  
+    *   Security Delay: Delays or cancellations caused by evacuation of a terminal or concourse, re-boarding of aircraft because of security breach, inoperative screening equipment and/or long lines in excess of 29 minutes at screening areas  
+
+*   **Weather Specific**
+
+    *   Temperature: Hourly dry bulb temperature (°F)
+    
+    *   Humidity: Hourly relative humidity (%)
+    
+    *   Visibility: Hourly visibility
+    
+    *   Wind Speed: Hourly wind speed (mph)
+
+<br>
+
+```{r}
 cont_airline = function(cont){
   
   airline = raw_df %>% 
   plot_ly(x = ~cont, y = ~delay, color = ~airline,
-          type = 'scatter', mode = 'markers', alpha = .5) %>% 
-  layout(
-    yaxis = list(title = "Delay Time (minutes)"))
+          type = "scatter", mode = "markers", alpha = .5) %>% 
+  layout(yaxis = list(title = "Delay Time (minutes)"))
 }
 
 cont_month = function(cont){
   month = raw_df %>%
     mutate(month = fct_reorder(month, date)) %>% 
   plot_ly(x = ~cont, y = ~delay, color = ~month,
-          type = 'scatter', mode = 'markers', alpha = .5) %>% 
-  layout(
-    yaxis = list(title = "Delay Time (minutes)"))
+          type = "scatter", mode = "markers", alpha = .5) %>% 
+  layout(yaxis = list(title = "Delay Time (minutes)"))
 }
   
 cont_hour = function(cont){
   hour = raw_df %>% 
   plot_ly(x = ~cont, y = ~delay, color = ~hour_c,
-          type = 'scatter', mode = 'markers', alpha = .5) %>% 
-  layout(
-    yaxis = list(title = "Delay Time (minutes)"))
+          type = "scatter", mode = "markers", alpha = .5) %>% 
+  layout(yaxis = list(title = "Delay Time (minutes)"))
 }
 
 ```
@@ -53,7 +77,9 @@ cont_hour = function(cont){
 <br>
 
 ### Types of Delay{.tabset}
+
 #### Carrier Delay
+
 ```{r, echo = FALSE}
 cont_airline(raw_df$carrierd) %>% 
   layout(xaxis = list(title = "Carrier Delay (minutes)"))
@@ -67,6 +93,7 @@ cont_hour(raw_df$carrierd) %>%
 ```
 
 #### Extreme Weather Delay
+
 ```{r, echo = FALSE}
 cont_airline(raw_df$extrmwd) %>% 
   layout(xaxis = list(title = "Extreme Weather Delay (minutes)"))
@@ -78,7 +105,8 @@ cont_hour(raw_df$extrmwd) %>%
   layout(xaxis = list(title = "Extreme Weather Delay (minutes)"))
 ```
 
-#### Late Arrival Delay 
+#### Late Arrival Delay
+
 ```{r, echo = FALSE}
 cont_airline(raw_df$latarrd) %>% 
   layout(xaxis = list(title = "Late Arrival Delay (minutes)"))
@@ -91,6 +119,7 @@ cont_hour(raw_df$latarrd) %>%
 ```
 
 #### NAS Delay
+
 ```{r, echo = FALSE}
 cont_airline(raw_df$nasd) %>% 
   layout(xaxis = list(title = "NAS Delay (minutes)"))
@@ -103,6 +132,7 @@ cont_hour(raw_df$nasd) %>%
 ```
 
 #### Security Delay
+
 ```{r, echo = FALSE}
 cont_airline(raw_df$securityd) %>% 
   layout(xaxis = list(title = "Security Delay (minutes)"))
@@ -116,19 +146,22 @@ cont_hour(raw_df$securityd) %>%
 
 
 ### Weather Specific{.tabset}
+
 #### Temperature
+
 ```{r, echo = FALSE}
 cont_airline(raw_df$temperature) %>% 
-  layout(xaxis = list(title = "Temperature (F)"))
+  layout(xaxis = list(title = "Temperature (°F)"))
 
 cont_month(raw_df$temperature) %>% 
-  layout(xaxis = list(title = "Temperature (F)"))
+  layout(xaxis = list(title = "Temperature (°F)"))
 
 cont_hour(raw_df$temperature) %>% 
-  layout(xaxis = list(title = "Temperature (F)"))
+  layout(xaxis = list(title = "Temperature (°F)"))
 ```
 
 #### Humidity
+
 ```{r, echo = FALSE}
 cont_airline(raw_df$humidity) %>% 
   layout(xaxis = list(title = "Humidity (%)"))
@@ -141,6 +174,7 @@ cont_hour(raw_df$humidity) %>%
 ```
 
 #### Visibility
+
 ```{r, echo = FALSE}
 cont_airline(raw_df$visibility) %>% 
   layout(xaxis = list(title = "Visibility"))
@@ -153,6 +187,7 @@ cont_hour(raw_df$visibility) %>%
 ```
 
 #### Wind Speed
+
 ```{r, echo = FALSE}
 cont_airline(raw_df$wind_s) %>% 
   layout(xaxis = list(title = "Wind Speed (mph)"))
@@ -164,8 +199,14 @@ cont_hour(raw_df$wind_s) %>%
   layout(xaxis = list(title = "Wind Speed (mph)"))
 ```
 
+###
 
+<br>
 
+Based on the graphs, we found that there could be significant interactions between:
 
+1.    Carrier Delay * Airline
 
+2.    Temperature * Month
 
+As a result, we would like to focus on these interaction terms in addition to other predictors.
