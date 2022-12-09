@@ -339,19 +339,19 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="xx.html">Overview</a>
+      <a href="explore_overview.html">Overview</a>
     </li>
     <li>
-      <a href="https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/">Cancel &amp; Delay</a>
+      <a href="Destination.html">Destination Airports</a>
+    </li>
+    <li>
+      <a href="https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/">Cancellation &amp; Delay</a>
     </li>
     <li>
       <a href="delay_interaction_c.html">Categorical Predictors</a>
     </li>
     <li>
       <a href="delay_interaction_cont.html">Continuous Predictors</a>
-    </li>
-    <li>
-      <a href="Destination.html">Fun Facts</a>
     </li>
   </ul>
 </li>
@@ -366,7 +366,7 @@ div.tocify {
       <a href="xx.html">Linear Regression</a>
     </li>
     <li>
-      <a href="xx.html">Poission Regression</a>
+      <a href="web_poisson.html">Poisson Regression</a>
     </li>
   </ul>
 </li>
@@ -535,18 +535,36 @@ location information</a> - The Humanitarian Data Exchange</li>
 <h3>2.2 Variables of Interest</h3>
 <p><strong>Outcome</strong></p>
 <ul>
-<li><code>delay_minutes</code>: minutes of delay</li>
-<li><code>cancel_count</code>: daily flight cancellation count in JFK
+<li><code>delay_minutes</code>: delay time in minutes</li>
+<li><code>cancel_count</code>: daily flight cancellation counts in JFK
 airport</li>
 </ul>
+<p><br></p>
 <p><strong>Potential Predictors</strong></p>
+<p>Categorical Variables</p>
 <ul>
-<li><code>temperature</code>: daily average dry bulb temperature</li>
-<li><code>humidity</code>: daily average relative humidity</li>
-<li><code>windspeed</code>: daily average relative windspeed</li>
-<li><code>covid_case</code>: new daily cases of COVID-19</li>
-<li><code>airline_name</code>: domestic airline</li>
-<li><code>year_month</code>: the date format in “Year Month”s</li>
+<li><code>Periods of Time</code>: Morning, Noon, Afternoon, Night</li>
+<li><code>Months</code>: November, 2021; December, 2021; January,
+2022</li>
+<li><code>Airlines</code>: Alaska Airlines, American Airlines, Delta Air
+Lines, Endeavor Air, JetBlue Airways, Republic Airways, United Air
+Lines</li>
+<li><code>Destination Airports</code>: 66 destination airports with
+records of delay/cancellation</li>
+</ul>
+<p>Continuous Variables</p>
+<ul>
+<li><code>Carrier Delay</code>: Carrier delay in minutes</li>
+<li><code>Extreme Weather Delay</code>: Extreme weather delay in
+minutes</li>
+<li><code>Late Arrival Delay</code>: Late arrival delay in minutes</li>
+<li><code>NAS Delay</code>: National Aviation System (NAS) delay in
+minutes</li>
+<li><code>Security Delay</code>: Security delay in minutes</li>
+<li><code>Temperature</code>: Hourly dry bulb temperature (°F)</li>
+<li><code>Humidity</code>: Hourly relative humidity (%)</li>
+<li><code>Visibility</code>: Hourly visibility</li>
+<li><code>Wind Speed</code>: Hourly wind speed (mph)</li>
 </ul>
 <p> </p>
 </div>
@@ -624,7 +642,13 @@ covid_df = covid %&gt;%
   ) %&gt;% 
   mutate_if(is.character, as.numeric)</code></pre>
 <p><strong>Delay</strong></p>
-<pre class="r"><code>read_csv_function = function(path) {
+<pre class="r"><code>library(stringr)
+library(rvest)
+library(httr)
+library(forstringr)
+
+
+read_csv_function = function(path) {
   
   df = read_csv(path, 
                 skip = 7, 
@@ -705,19 +729,82 @@ write_csv(airport_info, &quot;tidied_data/airport.csv&quot;)</code></pre>
 <p> </p>
 </div>
 </div>
-<div id="exploratory-analysis" class="section level2">
-<h2>3 Exploratory Analysis</h2>
-<div id="visualization" class="section level3">
-<h3>3.1 Visualization</h3>
+<div id="explore" class="section level2">
+<h2>3 Explore</h2>
+<div id="desination-airport" class="section level3">
+<h3>3.1 Desination Airport</h3>
+<p>There are 66 and 65 destination airports in the delay and
+cancellation datasets, respectively. For the efficiency purpose in
+statistical analysis, we do not include destination airport as a
+predictor in our models, but we still kept it as one of the predictor to
+explore.<br />
+First, we checked if delay and cancellation counts differ in different
+destination airports. Flights from JFK to LAX have the highest delay
+occurrences with a number of 2293 and flights to BGR have the highest
+delay occurrences with a number of 6. Flights from JFK to SFO have the
+highest cancellation occurrences with a number of 76 and flights to BZN
+have the highest cancellation occurrences with a number of 1. We also
+took a look at whether different airlines could have different trends in
+delay and cancellation counts among all the destination airports, but
+there is no significant findings.<br />
+We found that LAX and SFO have outstanding delay and cancellation
+counts, so we decided to take a closer look at the underlying factors
+behind those delays and cancellations. Some interesting findings
+are:</p>
+<ul>
+<li>The airlines which departure from JFK to the two airports are
+different.</li>
+<li>Both airports show an increasing trend in delay minutes from
+November to January.</li>
+<li>There is a distinct difference in cancellation counts in each
+scheduled hour between the two airports.</li>
+</ul>
 <p> </p>
 </div>
-<div id="mapping" class="section level3">
-<h3>3.2 Mapping</h3>
+<div id="cancellation-and-delay" class="section level3">
+<h3>3.2 Cancellation and Delay</h3>
+<p>We then created a <strong>Shiny App</strong> for the audience to
+engage in our data exploration process. The audience could select which
+airline and which month they concern and get the user-selected outputs.
+In the <strong>Cancellation</strong> tab, they could observe the number
+of cancellations and the number of COVID cases in each day of a month.
+In the <strong>Delay</strong> tab, they could observe the number of
+delays and the average delay time in minutes in each day of a month.</p>
+<p> </p>
+</div>
+<div id="categorical-predictors" class="section level3">
+<h3>3.3 Categorical Predictors</h3>
+<p><strong>Delay time</strong> in minutes is one of our outcome of
+interests and we decided to conduct a <strong>linear regression
+model</strong>. Besides the main effects, we would like to check if
+there are any significant effect modifiers in our model. In this part,
+we investigated the interaction between the categorical predictors,
+including Periods of Time， Months，and Airlines.<br />
+We could clearly observe that between groups differences are existed,
+and adding interaction terms between the categorical predictors could be
+one of the options for building the linear regression model.</p>
+<p> </p>
+</div>
+<div id="continuous-predictors" class="section level3">
+<h3>3.4 Continuous Predictors</h3>
+<p>We were also interested in whether our continuous predictors,
+including Carrier Delay, Extreme Weather Delay, Late Arrival Delay, NAS
+Delay, Security Delay, Temperature, Humidity, Visibility, Wind Speed,
+could have different effects on different levels of periods of time,
+months, or airlines. Based on the graphs, we found that there could be
+significant interactions between:</p>
+<ul>
+<li><p>Carrier Delay * Airline</p></li>
+<li><p>Temperature * Month</p></li>
+</ul>
+<p>As a result, these interaction terms in addition to other predictors
+would be further analyze using statistical testing, such as cross
+validation, ANOVA, Type III analysis.ition to other predictors.</p>
 <p> </p>
 </div>
 </div>
-<div id="additional-anslysis" class="section level2">
-<h2>4 Additional Anslysis</h2>
+<div id="statistical-anslysis" class="section level2">
+<h2>4 Statistical Anslysis</h2>
 <div id="linear-regression" class="section level3">
 <h3>4.1 Linear Regression</h3>
 <p> </p>
@@ -735,7 +822,7 @@ write_csv(airport_info, &quot;tidied_data/airport.csv&quot;)</code></pre>
 </div>
 <div id="next-steps" class="section level3">
 <h3>5.2 Next Steps</h3>
-<p> </p>
+<p>  these interathese intera</p>
 </div>
 </div>
 

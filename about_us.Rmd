@@ -1,7 +1,8 @@
 ---
 title: "About Us"
 output: 
-  html_document
+  html_document:
+    code_folding: null
 ---
 
 ```{r setup, include = FALSE}
@@ -27,14 +28,57 @@ The mutual interest about travel and the shared experience of waiting for delaye
 
 Our technical skill sets of coding in R would thank to [P8105 Data Science I](https://p8105.com/index.html) taught by Prof. Jeff Goldsmith in fall 2022.
 
-## Collaborators
+<br>
 
-* [Fengyi Ma](https://www.linkedin.com/in/fengyi-fiona-ma-945842255/)
+## Collaborators {.tabset}
 
-* [Jialu Cheng](https://www.linkedin.com/in/jialu-cheng-b775b61a4/)
 
-* [Siyue Gao](https://siyuegao1205.github.io/siyuegao_website.github.io/)
+### Fengyi Ma
 
-* [Yeque Sun](https://www.linkedin.com/in/yequesun/)
 
-* [Yingchen Xu](https://www.linkedin.com/in/yingchen-xu-bb0558232/)
+[Fengyi Ma](https://www.linkedin.com/in/fengyi-fiona-ma-945842255/)  
+Second-Year MPH Candidate  
+Major in Epidemiology  
+Certificate in Applied Biostatistics and Public Health Data Science  
+Email: [fm2751@cumc.columbia.edu](mailto:fm2751@cumc.columbia.edu)
+
+
+### Jialu Cheng
+
+
+[Jialu Cheng](https://www.linkedin.com/in/jialu-cheng-b775b61a4/)  
+Second-Year MPH Candidate    
+Major in Epidemiology    
+Certificate in Applied Biostatistics and Public Health Data Science  
+Email: [jc5457@cumc.columbia.edu](mailto:jc5457@cumc.columbia.edu)
+
+
+### Siyue Gao
+
+
+[Siyue Gao](https://siyuegao1205.github.io/siyuegao_website.github.io/)  
+Second-Year MPH Candidate    
+Major in Environmental Health Sciences    
+Certificate in Applied Biostatistics and Public Health Data Science  
+Email: [sg3889@cumc.columbia.edu](mailto:sg3889@cumc.columbia.edu)
+
+
+### Yeque Sun
+
+
+[Yeque Sun](https://www.linkedin.com/in/yequesun/)  
+Second-Year MPH Candidate    
+Major in Environmental Health Sciences    
+Certificate in Applied Biostatistics and Public Health Data Science  
+Email: [ys3508@cumc.columbia.edu](mailto:ys3508@cumc.columbia.edu)
+
+
+### Yingchen Xu
+
+
+[Yingchen Xu](https://yingchenx.github.io/)  
+Second-Year MPH Candidate  
+Major in Biostatistics  
+Certificate in Advanced Epidemiology  
+Email: [yx2711@cumc.columbia.edu](mailto:yx2711@cumc.columbia.edu)
+
