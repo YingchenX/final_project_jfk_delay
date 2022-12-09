@@ -3,7 +3,7 @@ title: "Delay Data Exploration for Categorical Predictors"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE,
                       message = FALSE)
@@ -18,7 +18,7 @@ raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 
 
 ## Interaction between Categorical Predictors {.tabset}
-```{r, include = FALSE}
+```{r}
 hour_air = function(air){
   raw_df %>% 
   filter(
@@ -28,9 +28,9 @@ hour_air = function(air){
     hour_c = fct_reorder(hour_c, delay)
     ) %>% 
   plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
-      xaxis = list(title = "Hour"),
+      xaxis = list(title = "Period of Time"),
       yaxis = list(title = "Delay Time (minutes)"))
 }
 
@@ -42,7 +42,7 @@ month_air = function(air){
     month = fct_reorder(month, delay)
     ) %>% 
   plot_ly(x = ~month, y = ~delay, color = ~month,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       xaxis = list(title = "Month"),
       yaxis = list(title = "Delay Time (minutes)"))
@@ -56,9 +56,9 @@ raw_df %>%
     hour_c = fct_reorder(hour_c, delay)
     ) %>% 
   plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
-      xaxis = list(title = "Hour"),
+      xaxis = list(title = "Period of Time"),
       yaxis = list(title = "Delay Time (minutes)"))
 }
 
@@ -69,10 +69,10 @@ hour_month_air = function(air){
     mutate(
       month = fct_reorder(month, date)) %>% 
     plot_ly(x = ~hour_c, y = ~delay, color = ~month,
-            type = 'box', mode = 'markers', alpha = .5) %>% 
+            type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       boxmode = "group",
-      xaxis = list(title = "Hour"),
+      xaxis = list(title = "Period of Time"),
       yaxis = list(title = "Delay Time (minutes)"))
 }
 
@@ -80,7 +80,7 @@ hour_month_air = function(air){
 
 <br>
 
-### Hour*Airline 
+### Period*Airline 
 
 #### Before Stratification by Airline
 ```{r, echo = FALSE}
@@ -90,9 +90,9 @@ raw_df %>%
     hour_c = fct_reorder(hour_c, delay)
     ) %>% 
   plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
-      xaxis = list(title = "Hour"),
+      xaxis = list(title = "Period of Time"),
       yaxis = list(title = "Delay Time (minutes)"))
 ```
 
@@ -141,7 +141,7 @@ raw_df %>%
     month = fct_reorder(month, delay)
     ) %>% 
   plot_ly(x = ~month, y = ~delay, color = ~month,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       xaxis = list(title = "Month"),
       yaxis = list(title = "Delay Time (minutes)"))
@@ -186,7 +186,7 @@ month_air("United Air Lines")
 ```
 
 
-### Month*Hour
+### Month*Period
 #### Before Stratification by Month
 ```{r, echo = FALSE}
 raw_df %>% 
@@ -194,9 +194,9 @@ raw_df %>%
     hour_c = fct_reorder(hour_c, delay)
     ) %>% 
   plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
-      xaxis = list(title = "Hour"),
+      xaxis = list(title = "Period of Time"),
       yaxis = list(title = "Delay Time (minutes)"))
 
 ```
@@ -224,10 +224,10 @@ raw_df %>%
   mutate(
     month = fct_reorder(month, date)) %>% 
   plot_ly(x = ~hour_c, y = ~delay, color = ~month,
-          type = 'box', mode = 'markers', alpha = .5) %>% 
+          type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       boxmode = "group",
-      xaxis = list(title = "Hour"),
+      xaxis = list(title = "Period of Time"),
       yaxis = list(title = "Delay Time (minutes)"))
 ```
 
