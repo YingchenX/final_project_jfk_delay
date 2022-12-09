@@ -35,6 +35,9 @@ Our technical skill sets of coding in R would thank to [P8105 Data Science I](ht
 
 ### Fengyi Ma
 
+```{r, echo = FALSE, out.width = "20%", fig.align = 'left'}
+knitr::include_graphics("./pictures/fengyi.jpg")
+```
 
 [Fengyi Ma](https://www.linkedin.com/in/fengyi-fiona-ma-945842255/)  
 Second-Year MPH Candidate  
@@ -46,6 +49,10 @@ Email: [fm2751@cumc.columbia.edu](mailto:fm2751@cumc.columbia.edu)
 ### Jialu Cheng
 
 
+```{r, echo = FALSE, out.width = "20%", fig.align = 'left'}
+knitr::include_graphics("./pictures/jialu.jpg")
+```
+
 [Jialu Cheng](https://www.linkedin.com/in/jialu-cheng-b775b61a4/)  
 Second-Year MPH Candidate    
 Major in Epidemiology    
@@ -55,6 +62,9 @@ Email: [jc5457@cumc.columbia.edu](mailto:jc5457@cumc.columbia.edu)
 
 ### Siyue Gao
 
+```{r, echo = FALSE, out.width = "20%", fig.align = 'left'}
+knitr::include_graphics("./pictures/siyue.jpg")
+```
 
 [Siyue Gao](https://siyuegao1205.github.io/siyuegao_website.github.io/)  
 Second-Year MPH Candidate    
@@ -65,6 +75,9 @@ Email: [sg3889@cumc.columbia.edu](mailto:sg3889@cumc.columbia.edu)
 
 ### Yeque Sun
 
+```{r, echo = FALSE, out.width = "20%", fig.align = 'left'}
+knitr::include_graphics("./pictures/yeque.jpg")
+```
 
 [Yeque Sun](https://www.linkedin.com/in/yequesun/)  
 Second-Year MPH Candidate    
@@ -75,6 +88,9 @@ Email: [ys3508@cumc.columbia.edu](mailto:ys3508@cumc.columbia.edu)
 
 ### Yingchen Xu
 
+```{r, echo = FALSE, out.width = "20%", fig.align = 'left'}
+knitr::include_graphics("./pictures/yingchen.jpg")
+```
 
 [Yingchen Xu](https://yingchenx.github.io/)  
 Second-Year MPH Candidate  
