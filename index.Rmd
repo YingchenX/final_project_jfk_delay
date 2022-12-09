@@ -28,42 +28,50 @@ h1.title {
 knitr::include_graphics("./pictures/Jialu_Cheng_a_colorful_the_united_states_flight_route_map.png")
 ```
 
+<br>
 &nbsp;
 
-<br>
-<br>
 
 ## Website Overview
 <br>
 
-Where are you heading to during the holiday season? As the holiday season approaches, the demand for departure flights from NYC is booming. However, trip planning is always accompanied by the issue of potential flight delay, especially in busy metropolitan airports like JFK. Using JFK departed flights as an example, we’re interested in exploring the factors that are potentially related with flight delay (e.g., airlines, weather, and COVID conditions), in order to give the holiday travelers a better sense of what to expect regarding flight delay for this holiday season. 
+Where are you heading to during the holiday season? 
+
+As the holiday season approaches, the demand for departure flights from NYC is booming. However, trip planning is always accompanied by the issue of potential flight delay, especially in busy metropolitan airports like JFK. Using JFK departed flights as an example, we’re interested in exploring the factors that are potentially related with flight delay (e.g., airlines, weather, and COVID conditions), in order to give the holiday travelers a better sense of what to expect regarding flight delay for this holiday season. 
 
 Our analysis focuses on the flight delay data from [the Bureau of Transportation Statistics (BTS)](https://www.transtats.bts.gov/ONTIME/), with the most popular airlines’ data in the manually selected time ranges of last holiday season (11/1/2021 - 1/31/2022). Meanwhile, the weather condition information was obtained from [the National Oceanic and Atmospheric Administration (NOAA)](https://www.ncdc.noaa.gov/cdo-web/datatools/lcd), and COVID information from [the NYC Department of Health and Mental Hygiene (DOHMH)](https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3). 
 
 &nbsp;
 
-## Key Questions We Focused on
+## Key Questions We Care About
 
 <br>
 
 **1. What are the key trends of the flights in JFK during last holiday season?**
 
-  *  Exploratory analysis including descriptive table or histogram showing criteria’s distribution by categories or by time, and interactive maps showing the analyzed flight routes departed from JFK
+  * Which flight route from JFK, or which carrier had a record of delay or cancellation? 
+      *  Let's map it!
+  * How's the pattern of delay or cancellation looks like? Is there any similarity with those pattern of covid cases? 
+      *  Piles of plots generated here, for each carrier, in each day of the months!
   
   
-**2. What are the potential factors that contribute to the flight delay in JFK during last holiday season?**
+**2. What are the potential factors that contribute to the flight delay or cancellation in JFK during last holiday season?**
 
-  *  Heatmap to visualize the impact of each factor
-  *  Stratified analyses of flight delay data to test the difference among categories for each factor
+  *  Could categorical variables like the departure periods in a day, the month of departure, or type of carriers affect the minute of flight delay? 
+      *  Before we put them in a linear model, let's do some stratified analysis first!
+  *  Could continuous variables like types of delay, or weather specific indexes (temperature, humidity, visibility, wind speed, etc.) affect the minute of flight delay? 
+      *  Before we put them in a linear model, let's do some interaction check first!
   
-  
-**3. Are there significant associations of multiple factors with JFK flight delays during last holiday season?**
 
-  *  Regression analysis
+**3. Are there significant associations of multiple factors with JFK flight delays and cancellations during last holiday season?**
+
+  *  Let's do some regression analysis! 
+      *  Linear regression for delays (continuous) 
+      *  Poisson regression for cancellations (count)
 
 
 **4. How to spend my time in JFK during the flight delay?**
 
-  *  A guidance to spend your time in JFK to wait for the delayed flights, and we also generated a bunch of pictures via AI (just for fun) as well
+  *  A guidance to spend your time in JFK to wait for the delayed flights, and we also generated a bunch of pictures via AI as well (just for fun)! 
 
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
