@@ -1,0 +1,88 @@
+---
+title: "Overview of Data Exploration"
+output:
+  html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
+
+library(tidyverse)
+library(leaflet)
+```
+
+<br>
+
+**In the explore section, we would like to walk you through our data exploration process and help you to get an insight of how we drafted our models and how we selected variables through various types of visualizations.**
+
+
+<br>
+
+## [Destination Airports](Destination.html)
+
+```{r, include = F}
+airport = read_csv("tidied_data/airport.csv")
+
+delay = read_csv("tidied_data/delay.csv") %>% 
+  select(airline_name:destination_airport) %>% 
+  mutate(
+    category = "delay"
+  )
+
+cancel = read_csv("tidied_data/cancel.csv") %>% 
+  select(airline_name:destination_airport) %>% 
+  mutate(
+    category = "cancel"
+  )
+
+summary = bind_rows(delay, cancel)
+```
+
+
+```{r, include = F}
+summary_sub = 
+  summary %>% 
+  group_by(destination_airport) %>% 
+  summarise(
+    count = n()
+  )
+
+airport = 
+  airport %>% 
+  rename(destination_airport = airport)
+
+all = left_join(summary_sub, airport, by = "destination_airport")
+```
+
+
+```{r, out.width = "100%"}
+content = paste(sep = "<br/>",
+  "<b><a href='https://www.jfkairport.com/'>John F. Kennedy International Airport</a></b>",
+  "Jamaica, Queens",
+  "New York, NY 11430"
+)
+
+all %>% 
+  leaflet() %>% 
+  addTiles() %>%
+  setView(-95, 39, zoom = 4) %>% 
+  addCircleMarkers(~ long, ~ lat, radius = ~ scales::rescale(count, c(1, 10)), color = "rgb(255, 65, 54)", 
+                   label = paste("Destination: ", all$municipality, " Count: ", all$count)) %>% 
+  addPopups(-73.77932, 40.63945, content, options = popupOptions(closeButton = TRUE))
+```
+
+Here is an interactive map showing 66 destination airports which were departed from JFK with records of delay/cancellation from Nov, 2021 to Jan, 2022. <br>
+To keep our models parsimonious, we did not include destination airport as a predictor. However, it is still an interesting factor to explore. We investigated the distribution of delay and cancellation counts by each destination airports, and check if the distribution differs by different airlines. Moreover, we found that LAX and SFO have outstanding counts of delay and cancellation and we took a closer look at the underlying factors behind those delays and cancellations.  
+
+<br>
+
+
+## [Cancellation and Delay](https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/)
+
+
+## [Categorical Predictors](delay_interaction_c.html)
+
+
+## [Continuous Predictors](delay_interaction_cont.html)

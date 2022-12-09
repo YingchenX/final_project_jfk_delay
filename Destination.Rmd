@@ -187,8 +187,7 @@ delay %>%
     destination_airport %in% c("LAX", "SFO"), 
     delay_minutes > 0
   ) %>% 
-  plot_ly(x = ~delay_minutes, color = "rgb(255, 65, 54)", alpha = .5,
-          type = "histogram") %>% 
+  plot_ly(x = ~delay_minutes, color = "rgb(255, 65, 54)", alpha = .5, type = "histogram") %>% 
     layout(
       xaxis = list(title = "Delay Time (minutes)", range = c(0, 300)),
       yaxis = list(title = "Count"), 
@@ -252,8 +251,11 @@ delay %>%
   summarize(
     count = n()
   ) %>% 
-  plot_ly(x = ~scheduled_hour, y = ~count, color = ~destination_airport,
-          type = 'bar', alpha = .5) %>% 
+  mutate(
+    text_label = str_c("Hour: ", scheduled_hour, "\nCount: ", count)
+      ) %>% 
+  plot_ly(x = ~scheduled_hour, y = ~count, color = ~destination_airport, text = ~text_label,
+          hoverinfo = "text", type = 'bar', alpha = .5) %>% 
     layout(
       xaxis = list(title = "Scheduled Hour"),
       yaxis = list(title = "Count"),
