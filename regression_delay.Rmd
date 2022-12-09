@@ -128,6 +128,8 @@ sum(is.na(raw_df)) #_0_ -> good
 
 # Data description
 
+
+Thus
 ...
 
 # Step 1: Data Exploration
@@ -150,6 +152,35 @@ his %>%
          yaxis = list(title = "Frequency"))
 ```
 
+_Problems with the current outcome variable:_
+
+* Skewness: This distribution is highly skewed, thus, we decided to keep only those delay time smaller than 60, which stands for bearable delay.
+
+* Disagreement: The scale of the outcome variable (delay in time) is from 0 to +infinity, whereas the scale of the linear function is from -infinity to +infinity, we need to apply a log transformation to the outcome variable to make its scale agree with the model we proposed.
+
+## Data Cleaning and Normalization (Log Transformation)
+
+```{r}
+log_df = raw_df %>% 
+  filter(delay <= 60) %>% 
+  mutate(log(as.data.frame(delay))) %>% 
+  select(-date)
+
+his = log_df %>% 
+  plot_ly(x = ~delay, 
+   type = "histogram", marker = list(color = 'rgb(255, 156, 128)'))
+
+his %>% 
+         layout(
+         title = 'Distribution of log delay (minutes), 2021/11/1 to 2022/1/31',
+         xaxis = list(title = "Log(delay)", tickangle = -45),
+         yaxis = list(title = "Frequency"))
+```
+
+_Highlights:_
+
+* Now, the distribution looks less skewed and the underlying scales for both side of equation will be in agreement.
+
 ## Explore the effect of potential predictors
 
 _Motivation:_
@@ -165,7 +196,7 @@ We first produce boxplots to visualize the distribution of delay time across eac
 
 * For continuous variables:
 
-We first produce scatterplots to visualize the relationship between the continuous outcome and each continuous predictor to see if there is a linear relationship. We also calculate Pearson correlation coefficients for all continuous variables to measure the associations and detect if any strong linear correlations.
+We first produce scatterplots to visualize the relationship between the continuous outcome and each continuous predictor to see if there is a linear relationship. We also calculate correlation coefficients for all continuous variables to measure the associations and detect if any strong linear correlations.
 
 
 ### Categorical predictors
@@ -173,11 +204,11 @@ We first produce scatterplots to visualize the relationship between the continuo
 ```{r function for boxplot, include=FALSE}
 box_cat = function(cat){
   
-  box = raw_df %>% 
+  box = log_df %>% 
   plot_ly(x = ~cat, y = ~delay, color = ~cat,
           type = 'box', colors = "viridis") %>%  
   layout(
-    yaxis = list(title = "Delay Time (minutes)"))
+    yaxis = list(title = "Log(Delay Time)"))
 
 }
 ```
@@ -187,69 +218,69 @@ Airlines
 
 ```{r}
 #boxplot
-box_cat(raw_df$airline) %>% 
+box_cat(log_df$airline) %>% 
   layout(xaxis = list(title = "Airline"))
 
 #One-way ANOVA
-aov(delay ~ airline, data = raw_df) %>% summary()
+aov(delay ~ airline, data = log_df) %>% summary()
 
 #Pairwise t-tests (Bonferroni)
-pairwise.t.test(raw_df$delay, raw_df$airline, p.adjust.method = "bonferroni")
+pairwise.t.test(log_df$delay, log_df$airline, p.adjust.method = "bonferroni")
 ```
 
 _Highlights:_
 
 * Since the overall p-value (<2e-16) is less than .05, this is an indication that each airline group does not have the same average delay time (in minutes).
 
-* The adjusted p-value for the mean difference in delay time between American Airlines _vs._ JetBlue Airways is 3.6e-06.
+* The adjusted p-value for the mean difference in delay time between JetBlue Airways _vs._ American Airlines and Delta Air Lines both are <2e-16, which suggests highly different.
 
-* The adjusted p-value for the mean difference in delay time between Delta Air Lines _vs._ JetBlue Airways < 2e-16.
+* The adjusted p-value for the mean difference in delay time between American Airlines _vs._ Republic Airways is 1.6e-10, which also suggests highly different.
 
 
 Months
 
 ```{r}
 #boxplot
-box_cat(raw_df$month) %>% 
+box_cat(log_df$month) %>% 
   layout(xaxis = list(title = "Month"))
 
 #One-way ANOVA
-aov(delay ~ month, data = raw_df) %>% summary()
+aov(delay ~ month, data = log_df) %>% summary()
 
 #Pairwise t-tests (Bonferroni)
-pairwise.t.test(raw_df$delay, raw_df$month, p.adjust.method = "bonferroni")
+pairwise.t.test(log_df$delay, log_df$month, p.adjust.method = "bonferroni")
 ```
 
 _Highlights:_
 
-* Since the overall p-value (<2e-16) is less than .05, this is an indication that each month group does not have the same average delay time.
+* Since the overall p-value (1.17e-11) is less than .05, this is an indication that each month group does not have the same average delay time.
 
-* The adjusted p-value for the mean difference in delay time between November, 2021 _vs._ December, 2021 is .0015.
+* The adjusted p-value for the mean difference in delay time between November, 2021 _vs._ December, 2021 is 0.00039, which suggests significantly different.
 
-* The adjusted p-value for the mean difference in delay time between November, 2021 _vs._ January, 2022 and December, 2021 _vs._ January, 2022 both < 2e-16.
+* The adjusted p-value for the mean difference in delay time between November, 2021 _vs._ January, 2022 is 3.9e-12, which suggests highly different.
 
 
 Times of the day ("hour_c")
 
 ```{r}
 #boxplot
-box_cat(raw_df$hour_c) %>% 
+box_cat(log_df$hour_c) %>% 
   layout(xaxis = list(title = "Times of the day"))
 
 #One-way ANOVA
-aov(delay ~ hour_c, data = raw_df) %>% summary()
+aov(delay ~ hour_c, data = log_df) %>% summary()
 
 #Pairwise t-tests (Bonferroni)
-pairwise.t.test(raw_df$delay, raw_df$hour_c, p.adjust.method = "bonferroni")
+pairwise.t.test(log_df$delay, log_df$hour_c, p.adjust.method = "bonferroni")
 ```
 
 _Highlights:_
 
-* Since the overall p-value (0.000146) is less than .05, this is an indication that each hour group does not have the same average delay time.
+* Since the overall p-value (<2e-16) is less than .05, this is an indication that each hour group does not have the same average delay time.
 
-* The adjusted p-value for the mean difference in delay time between morning _vs._ night is 6.7e-05.
+* The adjusted p-value for the mean difference in delay time between morning _vs._ night is <2e-16, which suggests highly different.
 
-* The adjusted p-value for the mean difference in delay time between noon _vs._ afternoon is 1.00.
+* The adjusted p-value for the mean difference in delay time between noon _vs._ night is 1.4e-07, which also suggests highly different.
 
 
 ### Continuous predictors
@@ -257,11 +288,11 @@ _Highlights:_
 ```{r function for scatterplot, include=FALSE}
 scat_con = function(con){
   
-  scat = raw_df %>%
+  scat = log_df %>%
   plot_ly(x = ~con, y = ~delay,
           type = 'scatter', mode = 'markers', alpha = .5) %>% 
     layout(
-      yaxis = list(title = "Delay Time (minutes)"))
+      yaxis = list(title = "Log(Delay Time)"))
 }
 ```
 
@@ -269,7 +300,7 @@ scat_con = function(con){
 Carrier Delay
 
 ```{r}
-scat_con(raw_df$carrierd) %>% 
+scat_con(log_df$carrierd) %>% 
   layout(xaxis = list(title = "Carrier Delay (minutes)"))
 ```
 
@@ -277,7 +308,7 @@ scat_con(raw_df$carrierd) %>%
 Extreme Weather Delay
 
 ```{r}
-scat_con(raw_df$extrmwd) %>% 
+scat_con(log_df$extrmwd) %>% 
   layout(xaxis = list(title = "Extreme Weather Delay (minutes)"))
 ```
 
@@ -285,7 +316,7 @@ scat_con(raw_df$extrmwd) %>%
 Late Arrival Delay
 
 ```{r}
-scat_con(raw_df$latarrd) %>% 
+scat_con(log_df$latarrd) %>% 
   layout(xaxis = list(title = "Late Arrival Delay (minutes)"))
 ```
 
@@ -293,7 +324,7 @@ scat_con(raw_df$latarrd) %>%
 NAS Delay
 
 ```{r}
-scat_con(raw_df$nasd) %>% 
+scat_con(log_df$nasd) %>% 
   layout(xaxis = list(title = "NAS Delay (minutes)"))
 ```
 
@@ -301,7 +332,7 @@ scat_con(raw_df$nasd) %>%
 Security Delay
 
 ```{r}
-scat_con(raw_df$securityd) %>% 
+scat_con(log_df$securityd) %>% 
   layout(xaxis = list(title = "Security Delay (minutes)"))
 ```
 
@@ -309,7 +340,7 @@ scat_con(raw_df$securityd) %>%
 Temperature
 
 ```{r}
-scat_con(raw_df$temperature) %>% 
+scat_con(log_df$temperature) %>% 
   layout(xaxis = list(title = "Temperature"))
 ```
 
@@ -317,7 +348,7 @@ scat_con(raw_df$temperature) %>%
 Humidity
 
 ```{r}
-scat_con(raw_df$humidity) %>% 
+scat_con(log_df$humidity) %>% 
   layout(xaxis = list(title = "Humidity"))
 ```
 
@@ -325,7 +356,7 @@ scat_con(raw_df$humidity) %>%
 Visibility
 
 ```{r}
-scat_con(raw_df$visibility) %>% 
+scat_con(log_df$visibility) %>% 
   layout(xaxis = list(title = "Visibility"))
 ```
 
@@ -333,7 +364,7 @@ scat_con(raw_df$visibility) %>%
 Wind Speed
 
 ```{r}
-scat_con(raw_df$wind_s) %>% 
+scat_con(log_df$wind_s) %>% 
   layout(xaxis = list(title = "Wind Speed"))
 ```
 
@@ -341,29 +372,46 @@ scat_con(raw_df$wind_s) %>%
 Pearson correlation 
 
 ```{r}
-raw_df %>% 
-  select(-date, -airline, -month, -hour_c) %>% 
-  cor(y = raw_df$delay, x = .)
+cor_po = log_df %>% 
+  select(-airline, -month, -hour_c) %>% 
+  cor(y = log_df$delay, x = ., method = c("pearson", "kendall", "spearman")) 
+
+round(cor_po, 2)
 ```
 
 _Highlights:_
-
-* A clear linear relationships is observed between delay time (the outcome) and Carrier Delay.
  
-* The Pearson correlation coefficients are greater than .50 for the relationships between delay time and 2 predictors (i.e., carrier delay and late arrival delay). Noticeably, the correlation coefficient for the relationship between delay time and carrier delay is 0.80, which indicates a strong correlation.
-
+* The Pearson correlation coefficient for the relationships between delay time and carrier delay is also greater than .50, which suggests potential linear association between the two.
 
 
 # Step 2: Model fitting
 
-According to the result from Step 1, we get a sense of what predictors should be included in the linear regression model. They are `airline`, `month`, `times in a day`, `carrier delay`, and `late arrival delay`.
+_Motivation:_
 
-Before fitting the linear model with these 5 predictors, let's check their independence using correlation to filter out highly correlated variables.
+To build a linear model for predicting the delay in time
 
+_Plan:_
+
+We proposed 2 rationales for modeling:
+
+* Rationale 1 (Model 1):
+
+According to the result from Step 1, we get a sense of what predictors should be included in the linear regression model. They are `airline`, `month`, `times in a day` (aka. `hour_c`), `carrier delay` (aka. `carrierd`), `Extreme Weather Delay` (aka. `extrmwd`), `security delayand` (aka. `securityd`), and `late arrival delay` (aka. `latarrd`).
+
+* Rationale 2 (Model 2):
+
+Given the large sample size (n=8617), we include all predictors of interests into the linear regression model, while ignoring the results from any hypothesis testing. 
+
+
+## Fitting Model 1
+
+Before fitting the linear model with these 7 predictors, let's check their independence using correlation to filter out highly correlated variables.
+
+### Check collinearity
 
 ```{r}
-cor = raw_df %>% 
-  select(airline, month, hour_c, carrierd, latarrd) %>% 
+cor_1 = log_df %>% 
+  select(airline, month, hour_c, carrierd, latarrd, extrmwd, securityd) %>% 
   mutate(
     airline = as.numeric(airline),
     month = as.numeric(month),
@@ -375,29 +423,98 @@ cor = raw_df %>%
     "times in a day" = hour_c) %>% 
   cor(method = c("pearson", "kendall", "spearman"))
 
-round(cor, 2)
+round(cor_1, 2)
 
-color = colorRampPalette(c("Blue", "white", "Red"))(20)
-heatmap(x = cor, col = color, symm = TRUE)
+color = colorRampPalette(c("Blue", "White", "Red"))(20)
+heatmap(x = cor_1, col = color, symm = TRUE)
 ```
 
 _Highlights:_
 
 * All predictors are highly independent to each other.
 
+As we see above, independence assumption is met and thus we can add all these 7 predictors into to linear regression model.
 
-As we see above, independence assumption is met and thus we can add all these 5 predictors into to linear regression model.
+### Model 1, without interaction
 
-## Linear regression, no interaction
 ```{r}
-lm_pre = lm(delay ~ airline + month + hour_c + carrierd + latarrd, data = raw_df)
-broom::glance(lm_pre) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16'))
+lm_1 = lm(delay ~ airline + month + hour_c + carrierd + latarrd + extrmwd + securityd, data = log_df)
+broom::glance(lm_1) %>% select(statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16'))
 ```
 
 _Highlights:_ 
 
-* The R-squared value for this model is 0.854, which means more than 85% of the variance for delay time can be explained by this regression model.
+* The F-value is 402 (very large) with p-value < 2.2e-16 (very small), which suggests that this regression model is statistically significant.
 
-* The F-value is 4818 (very large) with p-value < 2.2e-16 (very small), which suggests that this regression model is statistically significant.
 
+## Fitting Model 2
+
+
+### Model 2, without interaction
+
+```{r}
+lm_2 = lm(delay ~ ., data = log_df)
+broom::glance(lm_2) %>% select(statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16'))
+```
+
+_Highlights:_ 
+
+* The F-value is 308 (very large) with p-value < 2.2e-16 (very small), which suggests that this regression model is also statistically significant.
+
+
+## Interactions and Model Comparison
+
+From the previous exploration steps focusing on interactions, we further hypothesize 3 interaction terms ("Temperature * Month", "Carrier * Airline", "Month * Airline) that could be potentially added into the above model to enhance its predicting power.
+
+To examine if the addition of interaction terms is necessary, we have 4 linear models to be compared, they are:
+
+\ Model 1. delay ~ airline + month + hour_c + carrierd + latarrd + extrmwd + securityd
+
+\ Model 2. delay ~ .
+
+\ Model 3. delay ~ airline + month + hour_c + carrierd + latarrd + extrmwd + securityd + temperature + temperature * month + carrierd * airline + month * airline, by assuming an interaction between temperature and month, we need to include both variable into the model as well.
+
+\ Model 4. delay ~ . + temperature * month + carrierd * airline + month * airline
+
+
+### Cross-validation
+
+```{r}
+set.seed(123)
+
+# Cross Validation
+cv_df =
+  crossv_mc(log_df, 100) %>% 
+  mutate(train = map(train, as_tibble),
+         test = map(test, as_tibble)) %>% 
+  mutate(
+    model1 = map(train, ~lm(delay ~ airline + month + hour_c + carrierd + latarrd + extrmwd + securityd, data = .x)),
+    model2 = map(train, ~lm(delay ~ ., data = .x)),
+    model3 = map(train, ~lm(delay ~ airline + month + hour_c + carrierd + latarrd + extrmwd + securityd + temperature + temperature * month + carrierd * airline + month * airline, data = .x)),
+    model4 = map(train, ~lm(delay ~ . + temperature * month + carrierd * airline + month * airline, data = .x))) %>% 
+  mutate(rmse_model1 = map2_dbl(model1, test, ~rmse(model = .x, data = .y)),
+         rmse_model2 = map2_dbl(model2, test, ~rmse(model = .x, data = .y)),
+         rmse_model3 = map2_dbl(model3, test, ~rmse(model = .x, data = .y)),
+         rmse_model4 = map2_dbl(model4, test, ~rmse(model = .x, data = .y)))
+
+cv_df %>% 
+  select(starts_with("rmse")) %>% 
+  pivot_longer(
+    everything(),
+    names_to = "model", 
+    values_to = "rmse",
+    names_prefix = "rmse_") %>% 
+  mutate(model = fct_inorder(model)) %>% 
+  ggplot(aes(x = model, y = rmse)) + 
+  geom_violin() +
+  labs(x = "Model", y = "Root Mean Square Error (RMSE)",
+       title = "Model Comparison of the Cross-Validated Prediction Error") +
+  scale_x_discrete(labels = c("Model 1", "Model 2", "Model 3", "Model 4"))
+```
+
+_Highlights:_ 
+
+* The RMSE for all 4 models are below 1, suggesting an accurate prediction.
+
+* On the RMSE scale, there is not much difference between the 4 models, so we will choose model 1 for parsimony.
 
