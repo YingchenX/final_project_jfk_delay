@@ -83,7 +83,6 @@ cont_hour = function(cont){
 
 ## Interaction for Continuous Predictors 
 
-<br>
 
 ### Types of Delay{.tabset}
 
@@ -193,17 +192,17 @@ cont_hour(raw_df$securityd) %>%
 cont_airline(raw_df$temperature) %>% 
   layout(
     xaxis = list(title = "Temperature (°F)"),
-    yaxis = list(title = "Delay Time (minutes)"))
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_month(raw_df$temperature) %>% 
   layout(
     xaxis = list(title = "Temperature (°F)"),
-    yaxis = list(title = "Delay Time (minutes)"))
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_hour(raw_df$temperature) %>% 
   layout(
     xaxis = list(title = "Temperature (°F)"),
-    yaxis = list(title = "Delay Time (minutes)"))
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 ```
 
 #### Humidity
@@ -212,17 +211,17 @@ cont_hour(raw_df$temperature) %>%
 cont_airline(raw_df$humidity) %>% 
   layout(
     xaxis = list(title = "Humidity (%)"),
-    yaxis = list(title = "Delay Time (minutes)"))
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_month(raw_df$humidity) %>% 
   layout(
     xaxis = list(title = "Humidity (%)"),
-    yaxis = list(title = "Delay Time (minutes)"))
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_hour(raw_df$humidity) %>% 
   layout(
     xaxis = list(title = "Humidity (%)"),
-    yaxis = list(title = "Delay Time (minutes)"))
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 ```
 
 #### Visibility
@@ -231,17 +230,17 @@ cont_hour(raw_df$humidity) %>%
 cont_airline(raw_df$visibility) %>% 
   layout(
     xaxis = list(title = "Visibility"),
-    yaxis = list(title = "Delay Time (minutes)"))
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_month(raw_df$visibility) %>% 
   layout(
     xaxis = list(title = "Visibility"),
-    yaxis = list(title = "Delay Time (minutes)"))
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_hour(raw_df$visibility) %>% 
   layout(
     xaxis = list(title = "Visibility"),
-    yaxis = list(title = "Delay Time (minutes)"))
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 ```
 
 #### Wind Speed
@@ -250,22 +249,24 @@ cont_hour(raw_df$visibility) %>%
 cont_airline(raw_df$wind_s) %>% 
   layout(
     xaxis = list(title = "Wind Speed (mph)"),
-    yaxis = list(title = "Delay Time (minutes)"))
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_month(raw_df$wind_s) %>% 
   layout(
     xaxis = list(title = "Wind Speed (mph)"),
-    yaxis = list(title = "Delay Time (minutes)"))
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 
 cont_hour(raw_df$wind_s) %>% 
   layout(
     xaxis = list(title = "Wind Speed (mph)"),
-    yaxis = list(title = "Delay Time (minutes)"))
+    yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 ```
 
 
 
 <br>
+
+### Interpretation
 
 Based on the graphs, we found that there could be significant interactions between:
 
@@ -273,4 +274,4 @@ Based on the graphs, we found that there could be significant interactions betwe
 
 2.    Temperature * Month
 
-As a result, we would like to focus on these interaction terms in addition to other predictors.
+For the following statistical analysis, we would focus on these interaction terms to see if they are necessary to be included in our linear regression model.
