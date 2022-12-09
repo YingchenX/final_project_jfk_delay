@@ -6,7 +6,7 @@ output:
     toc_float: true
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -30,30 +30,30 @@ h1.title {
 
 &nbsp;
 
-# 01 Introduction 
+## 1 Introduction 
 
-## 1.1 Motivation
+### 1.1 Motivation
 
 Most of us have experienced waiting at the airport for the delayed flight. As the holiday season approaches, departure on-time have becoming more and more challenging. This year, there are already [more than 4,000 flights delayed](https://www.npr.org/2022/11/27/1139327883/flights-delayed-canceled-holiday-travel-thanksgiving) as holiday travel spikes in the U.S. The flight delay issue especially concerns busy metropolitan airports like JFK.
 
-```{r, echo=FALSE, out.width="100%", fig.cap="JFK Airport in 2022 holiday season: We can't stress this enough — plan ahead and arrive early", fig.align = 'center'}
+```{r, echo = FALSE, out.width = "100%", fig.cap = "JFK Airport in 2022 holiday season: We can't stress this enough — plan ahead and arrive early", fig.align = 'center'}
 knitr::include_graphics("./pictures/jfk.gif")
 ```
 
 Source: [Twitter@JFKairport](https://twitter.com/JFKairport/status/1596760846075850752?s=20&t=izIa7AkbJaJ96p0IvvPFVw)
 
-
 Using JFK departed flights as an example, we’re interested in exploring the factors that are potentially related with flight delay (e.g., airlines, weather, and COVID conditions). By doing so, we'd like to give the holiday travelers a better sense of what to expect regarding flight delay for this holiday season, in order to make better travel plans accordingly. 
 
 &nbsp;
 
-## 1.2 Related Work
+### 1.2 Related Work
 
-### Common reasons for flight delay
+#### Common Reasons for Flight Delays
+
 Commercial aviation is a complex distributed transportation system. The typical operation of a commercial flight can take place at terminal boundaries, airports, runways, and airspace, being susceptible to different kinds of delays. Some examples include mechanical problems, weather conditions, ground delays, air traffic control, runway queues and capacity constraints.
 
 
-```{r, echo=FALSE, out.width="100%", fig.cap="Common reasons for delay in the US, 2022", fig.align = 'center'}
+```{r, echo = FALSE, out.width = "100%", fig.cap= "Common reasons for delay in the US, 2022", fig.align = 'center'}
 knitr::include_graphics("./pictures/delay-reason.jpg")
 ```
 
@@ -61,11 +61,11 @@ Source: [transtats.bts.gov](https://www.transtats.bts.gov/OT_Delay/OT_DelayCause
 
 &nbsp;
 
-### Typical operation of a commercial flight
+#### Typical Operation of a Commercial Flight
 
 The following scheme is repeated several times throughout the day for each flight in the system: 
 
-```{r, echo=FALSE, out.width="100%", fig.cap="A typical operation of a commercial flight", fig.align = 'center'}
+```{r, echo = FALSE, out.width = "100%", fig.cap = "A typical operation of a commercial flight", fig.align = 'center'}
 knitr::include_graphics("./pictures/operation-flow.png")
 ```
 
@@ -75,7 +75,7 @@ Pilots, flight attendants and aircrafts may have different schedules due to lega
 
 &nbsp;
 
-## 1.3 Initial Questions
+### 1.3 Initial Questions
 
 Considering the availability and scale of the flight data, we focus on JFK Airport's delay and cancellation data from Nov. 1st, 2020 to Jan 31st, 2021. And then find the weather and covid cases data within that time range accordingly. Based on these information, our final questions are below:
 
@@ -85,9 +85,9 @@ Considering the availability and scale of the flight data, we focus on JFK Airpo
 
 &nbsp;
 
-# 02 Data Source and Cleaning
+## 2 Data Source and Cleaning
 
-## 2.1 Data Source
+### 2.1 Data Source
 
 *   [JFK flight delay and cancellation data between Nov 2020 and Jan 2021](https://www.transtats.bts.gov/ONTIME/) - The Bureau of Transportation Statistics (BTS) 
 *   [Weather condition data](https://www.ncdc.noaa.gov/cdo-web/datatools/lcd) - The National Oceanic and Atmospheric Administration (NOAA) 
@@ -96,7 +96,7 @@ Considering the availability and scale of the flight data, we focus on JFK Airpo
 
 &nbsp;
 
-## 2.2 Variable of Interest
+### 2.2 Variables of Interest
 
 **Outcome**
 
@@ -114,13 +114,13 @@ Considering the availability and scale of the flight data, we focus on JFK Airpo
 
 &nbsp;
 
-## 2.3 Data Cleaning
+### 2.3 Data Cleaning
 
 **Weather Condition**
 
 First, we imported the NOAA weather data. To align the time unit of weather with flight information, also considering data availability, we picked the weather at the 51th minute to represent the weather condition of the hour, and the weather at 23:59 to represent the weather condition of the day.
 
-```{r, message = FALSE, warning = FALSE}
+```{r}
 noaa = read_csv("data/weather.csv", na = c("","NA"))
 
 noaa_df = noaa %>%
@@ -177,7 +177,7 @@ daily_weather = noaa %>%
 
 **COVID**
 
-```{r, message = FALSE, warning = FALSE}
+```{r}
 covid = 
   GET("https://data.cityofnewyork.us/resource/rc75-m7u3.csv") %>% 
   content("parsed") 
@@ -194,7 +194,7 @@ covid_df = covid %>%
 
 **Delay**
 
-```{r, message = FALSE, warning = FALSE}
+```{r}
 read_csv_function = function(path) {
   
   df = read_csv(path, 
@@ -250,9 +250,9 @@ full_delay_df =
   relocate(delay_minutes, .after = actual_departure_time)
 ```
 
-**Cancelation**
+**Cancellation**
 
-```{r, message = FALSE, warning = FALSE}
+```{r}
 full_cancel_df = 
   delay_cancel %>% 
   filter(actual_elapsed_time_minutes == 0) %>% 
@@ -261,7 +261,7 @@ full_cancel_df =
 
 **Airport Info**
 
-```{r, message = FALSE, warning = FALSE}
+```{r}
 airport = read_csv("data/us-airports.csv") %>% 
   slice(-1) %>% 
   select(airport = iata_code, name, lat = latitude_deg, long = longitude_deg, region_name, local_region, municipality)
@@ -279,7 +279,7 @@ airport_info = left_join(airport_info, airport, by = "airport")
 
 **Export**
 
-```{r, message = FALSE, warning = FALSE}
+```{r}
 write_csv(noaa_df, "tidied_data/hourly_weather.csv")
 write_csv(daily_weather, "tidied_data/daily_weather.csv")
 write_csv(covid_df, "tidied_data/covid.csv")
@@ -288,37 +288,36 @@ write_csv(full_cancel_df, "tidied_data/cancel.csv")
 write_csv(airport_info, "tidied_data/airport.csv")
 ```
 
+&nbsp;
+
+## 3 Exploratory Analysis
+
+### 3.1 Visualization
 
 &nbsp;
 
-# 03 Exploratory Analysis
-
-## 3.1 Visualization
-
-&nbsp;
-
-## 3.2 Mapping
-
-&nbsp;
-
-
-# 04 Additional Anslysis
-
-## 4.1 Poisson Regression
-
-&nbsp;
-
-## 4.2 Predictive Model (Linear Regression)
+### 3.2 Mapping
 
 &nbsp;
 
 
-# 05 Discussion
+## 4 Additional Anslysis
 
-## 5.1 Findings
+### 4.1 Linear Regression
 
 &nbsp;
 
-## 5.2 Next Steps
+### 4.2 Poisson Regression
+
+&nbsp;
+
+
+## 5 Discussions
+
+### 5.1 Findings
+
+&nbsp;
+
+### 5.2 Next Steps
 
 &nbsp;
