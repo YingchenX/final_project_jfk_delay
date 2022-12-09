@@ -131,7 +131,7 @@ From the previous data exploration and visualization, we found some interesting 
 
 <br>
 
-### check distribution of the outcome (continuous)
+### distribution of outcome
 
 ```{r}
 delay_hist = raw_df %>% 
@@ -162,7 +162,7 @@ To address the two issues above, we can apply a Log transformation to normalize 
 
 <br>
 
-### data cleaning and log transformation
+### log transformation
 
 ```{r}
 log_df = raw_df %>% 
