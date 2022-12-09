@@ -1,5 +1,5 @@
 ---
-title: "Could Destination Airport Affect Delay and Cancelation?"
+title: "Could Destination Airport Affect Delay and Cancellation?"
 output: html_document
 
 ---
@@ -19,7 +19,17 @@ cancel = read_csv("tidied_data/cancel.csv")
 
 <br>
 
+
+**There are `r n_distinct(delay$destination_airport)` and `r n_distinct(cancel$destination_airport)` destination airports in the delay and cancellation datasets, respectively. For the efficiency purpose in statistical analysis, we do not include destination airport as a predictor in our models.** 
+**However, it is still an interesting factor to explore.**
+
+<br>
+
+
 ## Overall Trend 
+
+
+**First we would like to check if delay and cancellation counts differ in different destination airports.**
 
 <br>
 ```{r, echo = FALSE}
@@ -37,7 +47,15 @@ delay %>%
     xaxis = list(title = "Destination Airport"),
     yaxis = list(title = "Count"),
     title = "Distribution of Delay by Destination Airport")
-  
+```
+
+<br>
+
+Flights from JFK to `r delay %>% count(destination_airport) %>% slice(which.max(n)) %>% pull(destination_airport)` have the highest delay occurrences with a number of `r delay %>% count(destination_airport) %>% slice(which.max(n)) %>% pull(n)`.
+
+
+<br>
+```{r, echo = FALSE}
 cancel %>% 
   group_by(destination_airport) %>% 
   summarize(
@@ -51,13 +69,14 @@ cancel %>%
   layout(
     xaxis = list(title = "Destination Airport"),
     yaxis = list(title = "Count"),
-    title = "Distribution of Cancelation by Destination Airport")
-
-
+    title = "Distribution of Cancellation by Destination Airport")
 ```
 
+<br>
 
+Flights from JFK to `r cancel %>% count(destination_airport) %>% slice(which.max(n)) %>% pull(destination_airport)` have the highest cancellation occurrences with a number of `r cancel %>% count(destination_airport) %>% slice(which.max(n)) %>% pull(n)`.
 
+<br>
 ```{r, include = FALSE}
 delay_dest = function(dest){
   delay %>%
@@ -65,20 +84,19 @@ delay_dest = function(dest){
       airline_name == dest
     ) %>% 
     group_by(destination_airport) %>% 
-    mutate(
+    summarize(
       count = n()
       ) %>% 
-  ungroup() %>% 
   mutate(
     destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airline: ", airline_name, "\nCount: ", count)
+    text_label = str_c("Airport: ", destination_airport, "\nCount: ", count)
       ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text", 
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
+  plot_ly(x = ~destination_airport, y = ~count, text = ~text_label, hoverinfo = "text", 
+          color = "rgb(255, 65, 54)", type = "bar", alpha = .5) %>% 
   layout(
     xaxis = list(title = "Destination Airport"),
     yaxis = list(title = "Count"),
-    title = "Distribution of Delay ")
+    title = "Distribution of Delay by Destination Airport")
 }
 
 cancel_dest = function(dest){
@@ -87,26 +105,32 @@ cancel_dest = function(dest){
       airline_name == dest
     ) %>% 
     group_by(destination_airport) %>% 
-    mutate(
+    summarize(
       count = n()
       ) %>% 
-  ungroup() %>% 
-  mutate(
+    mutate(
     destination_airport = fct_reorder(destination_airport, count),
-    text_label = str_c("Airpline: ", airline_name, "\nCount: ", count)
+    text_label = str_c("Airport: ", destination_airport, "\nCount: ", count)
       ) %>% 
-  plot_ly(x = ~destination_airport, text = ~text_label, hoverinfo = "text",
-          color = "rgb(255, 65, 54)", type = "histogram", alpha = .5) %>% 
-  layout(
-    xaxis = list(title = "Destination Airport"),
-    yaxis = list(title = "Count"),
-    title = "Distribution of Cancelation")
+    plot_ly(x = ~destination_airport, y = ~count, text = ~text_label, hoverinfo = "text",
+          color = "rgb(255, 65, 54)", type = "bar", alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Destination Airport"),
+      yaxis = list(title = "Count"),
+      title = "Distribution of Cancellation by Destination Airport")
 }
 ```
 
 <br>
 
+
 ## Stratification by Airline {.tabset}
+
+
+**We can also take a look at whether different airlines could have different trends in delay and cancellation counts among all the destination airports.**
+
+<br>
+
 ### Alaska
 ```{r, echo = FALSE}
 delay_dest("Alaska Airlines")
