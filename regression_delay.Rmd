@@ -5,7 +5,7 @@ output: github_document
 
 
 ```{r setup, include=FALSE}
-# Step 0: Setup
+#Setup
 
 library(tidyverse)
 library(viridis)
@@ -14,6 +14,7 @@ library(mgcv)
 library(dplyr)
 library(tidyr)
 library(skimr)
+library(plotly)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -36,36 +37,24 @@ set.seed(1)
 ```
 
 
-# Step 1: Data Wrangling
-
-## Data import
-
-```{r}
+```{r data wrangling, include=FALSE}
+#Dataset
 delay = read.csv("./tidied_data/delay.csv") %>% 
   janitor::clean_names() %>% filter(delay_minutes > 0)
 
 h_weather = read.csv("./tidied_data/hourly_weather.csv") %>% 
   janitor::clean_names() 
-```
 
+#Check how many airlines
+unique(delay$airline_name) #_7_ -> ok, keep
+
+#Check how many destinations
+unique(delay$destination_airport) #_66_ -> too many, remove
+
+#Keep variables of interest and `date` for merge purpose (which will be removed later) 
 ## Clean dataset 'delay'
-
-Check how many airlines
-```{r}
-unique(delay$airline_name)
-```
-_7_ -> ok, keep
-
-Check how many destinations
-```{r}
-unique(delay$destination_airport)
-```
-_66_ -> too many, remove
-
-Keep variables of interest and `date` for merge purpose (which will be removed later) 
-```{r}
 delay = delay %>% 
-  mutate(
+  rename(
     airline = airline_name,
     hour = scheduled_hour,
     delay = delay_minutes,
@@ -74,82 +63,297 @@ delay = delay %>%
     nasd = delay_national_aviation_system_minutes,
     securityd = delay_security_minutes,
     latarrd = delay_late_aircraft_arrival_minutes) %>% 
-  mutate(hour = as.numeric(hour)) %>% 
-  mutate(month = month.abb[month]) %>% 
+  mutate(hour = as.numeric(hour),
+         month = as.factor(month.abb[month]),
+         airline = as.factor(airline)) %>% 
   select(airline, date, month, hour, delay, carrierd, extrmwd, nasd, securityd, latarrd)
-```
-
-check 'NA'
-```{r eval=FALSE}
-sum(is.na(delay))
-```
-_0_ -> good
-
+  
+#check 'NA'
+sum(is.na(delay)) #_0_ -> good
 
 ## Clean dataset 'h_weather'
-
-About the measure of temperature:
-Since the dry bulb temperature is the ambient air temperature measured by regular thermometers, that is, the temperature often mentioned in our general weather forecast. Thus, we decide to use the variable `hourly_dry_bulb_temperature` to represent temperature.
-
-```{r}
+### About the measure of temperature: Since the dry bulb temperature is the ambient air temperature measured by regular thermometers, that is, the temperature often mentioned in our general weather forecast. Thus, we decide to use the variable `hourly_dry_bulb_temperature` to represent temperature.
 h_weather = h_weather %>% 
-  mutate(
+  rename(
     temperature = hourly_dry_bulb_temperature,
     humidity = hourly_relative_humidity,
     visibility = hourly_visibility,
-    wind_s = hourly_wind_speed,
-    hour = as.numeric(hour)) %>%
-  mutate(month = month.abb[month]) %>% 
+    wind_s = hourly_wind_speed) %>% 
+  mutate(hour = as.numeric(hour),
+         month = as.factor(month.abb[month])) %>% 
   select(date, month, hour, temperature, humidity, visibility, wind_s)
-```
 
-check 'NA'
-```{r eval=FALSE}
-sum(is.na(h_weather))
-```
-_0_ -> good
-
+#check 'NA'
+sum(is.na(h_weather)) #_0_ -> good
 
 ## Merge datasets 'delay' and 'hourly_weather'
-```{r}
+
 raw_df = merge(x = delay, y = h_weather, by = c("date", "month", "hour"),
-               all.x = TRUE)
-```
+               all.x = TRUE) %>% 
+  mutate(hour_c = cut(hour, breaks = c(4, 8, 13, 17, 24),
+                      labels = c("morning","noon","afternoon","night"))) %>% 
+  mutate(hour_c = as.factor(hour_c)) %>% 
+  select(-hour)
 
-check 'NA'
-```{r eval=FALSE}
-sum(is.na(raw_df))
-```
-_0_ -> good
+#check 'NA'
+sum(is.na(raw_df)) #_0_ -> good
 
-To this step, we have our raw dataset for doing association analysis.
-Since the outcome variable `delay` is a continuous variable, we would do linear regression.
-However, there might be too many variables so far (ignoring `date` we still got 12 potential predictors), so next step will be fitting the model.
+###To this step, we have our raw dataset for doing association analysis. Since the outcome variable `delay` is a continuous variable, we would do linear regression. However, there might be too many variables so far (ignoring `date` we still got 12 potential predictors), so next step will be fitting the model.
 
-By intuition, I would set:
-
-`airline` -> categorical
-`month` -> categorical
-`hour` -> categorical (need further categorization)
-and for the rest -> continuous
+### By intuition, I would set: `airline` -> categorical `month` -> categorical `hour` -> categorical (need further categorization); and for the rest -> continuous
 
 ## Inspections into the dataset
 
-Let's first check how each variable is roughly distributed.
+# Let's first check how each variable is roughly distributed.
 
 ### Dependent variable / outcome (continuous)
-See if our dependent variable `delay` follows a normal distribution.
+###See if our dependent variable `delay` follows a normal distribution.
 
-```{r}
-hist(raw_df$delay)
+#his_plot = raw_df %>% 
+  #plot_ly(x = ~delay, 
+   #type = "histogram", marker = list(color = 'rgb(255, 156, 128)'))
+
+#his_plot %>% 
+         #layout(
+         #title = 'Distribution of hourly delay in time, 2021/11/1 to 2022/1/31',
+         #xaxis = list(title = "Hourly delay in minutes", tickangle = -45),
+         #yaxis = list(title = "Frequency"))
+
+### No, our dependent variable `delay` is not normally distributed, but we dont want to remove those outliers since they are important to our analysis. -> It is okay because for linear regression, dependent variable does not have to be normally distributed. On the other hand, the model's residuals, do have to be normally distributed. 
 ```
 
-No, our dependent variable `delay` is not normally distributed. 
+# Overview
 
--> It is okay because for linear regression, dependent variable does not have to be normally distributed. On the other hand, the model's residuals, do have to be normally distributed. 
+...
+
+# Data description
+
+...
+
+# Step 1: Data Exploration
+
+put it here OR put in the exploration page
+
+## Check distribution of the outcome (continuous)
+
+if not related to modeling, delete, or include it in the exploration page.
+
+```{r}
+his = raw_df %>% 
+  plot_ly(x = ~delay, 
+   type = "histogram", marker = list(color = 'rgb(255, 156, 128)'))
+
+his %>% 
+         layout(
+         title = 'Distribution of hourly delay in time, 2021/11/1 to 2022/1/31',
+         xaxis = list(title = "Hourly delay in minutes", tickangle = -45),
+         yaxis = list(title = "Frequency"))
+```
+
+## Explore the effect of potential predictors
+
+_Motivation:_
+
+To get a sense of the effect of each predictor.
+
+
+_Plan:_
+
+* For categorical variables:
+
+We first produce boxplots to visualize the distribution of delay time across each categorical group. Then, we perform ANOVA to see if each group have the same average delay time. For those significant, we perform pairwise t-tests using Bonferroni’s correction for the p-values to calculate pairwise differences between the delay time of each group.
+
+* For continuous variables:
+
+We first produce scatterplots to visualize the relationship between the continuous outcome and each continuous predictor to see if there is a linear relationship. We also calculate Pearson correlation coefficient between all continuous variables. For those linear, we use correlation coefficient to measure the associations.
+
+
+### Categorical predictors
+
+```{r function for boxplot, include=FALSE}
+box_cat = function(cat){
+  
+  box = raw_df %>% 
+  plot_ly(x = ~cat, y = ~delay, color = ~cat,
+          type = 'box', colors = "viridis") %>%  
+  layout(
+    yaxis = list(title = "Delay Time (minutes)"))
+
+}
+```
+
+
+Airlines
+
+```{r}
+#boxplot
+box_cat(raw_df$airline) %>% 
+  layout(xaxis = list(title = "Airline"))
+
+#One-way ANOVA
+aov(delay ~ airline, data = raw_df) %>% summary()
+
+#Pairwise t-tests (Bonferroni)
+pairwise.t.test(raw_df$delay, raw_df$airline, p.adjust.method = "bonferroni")
+```
+
+_Highlights:_
+
+* Since the overall p-value (<2e-16) is less than .05, this is an indication that each airline group does not have the same average delay time (in minutes).
+
+* The adjusted p-value for the mean difference in delay time between American Airlines _vs._ JetBlue Airways is 3.6e-06.
+
+* The adjusted p-value for the mean difference in delay time between Delta Air Lines _vs._ JetBlue Airways < 2e-16.
+
+
+Months
+
+```{r}
+#boxplot
+box_cat(raw_df$month) %>% 
+  layout(xaxis = list(title = "Month"))
+
+#One-way ANOVA
+aov(delay ~ month, data = raw_df) %>% summary()
+
+#Pairwise t-tests (Bonferroni)
+pairwise.t.test(raw_df$delay, raw_df$month, p.adjust.method = "bonferroni")
+```
+
+_Highlights:_
+
+* Since the overall p-value (<2e-16) is less than .05, this is an indication that each month group does not have the same average delay time.
+
+* The adjusted p-value for the mean difference in delay time between November, 2021 _vs._ December, 2021 is .0015.
+
+* The adjusted p-value for the mean difference in delay time between November, 2021 _vs._ January, 2022 and December, 2021 _vs._ January, 2022 both < 2e-16.
+
+
+Times of the day ("hour_c")
+
+```{r}
+#boxplot
+box_cat(raw_df$hour_c) %>% 
+  layout(xaxis = list(title = "Times of the day"))
+
+#One-way ANOVA
+aov(delay ~ hour_c, data = raw_df) %>% summary()
+
+#Pairwise t-tests (Bonferroni)
+pairwise.t.test(raw_df$delay, raw_df$hour_c, p.adjust.method = "bonferroni")
+```
+
+_Highlights:_
+
+* Since the overall p-value (0.000146) is less than .05, this is an indication that each hour group does not have the same average delay time.
+
+* The adjusted p-value for the mean difference in delay time between morning _vs._ night is 6.7e-05.
+
+* The adjusted p-value for the mean difference in delay time between noon _vs._ afternoon is 1.00.
+
+
+### Continuous predictors
+
+```{r function for scatterplot, include=FALSE}
+scat_con = function(con){
+  
+  scat = raw_df %>%
+  plot_ly(x = ~con, y = ~delay,
+          type = 'scatter', mode = 'markers', alpha = .5) %>% 
+    layout(
+      yaxis = list(title = "Delay Time (minutes)"))
+}
+```
+
+
+Carrier Delay
+
+```{r}
+scat_con(raw_df$carrierd) %>% 
+  layout(xaxis = list(title = "Carrier Delay (minutes)"))
+```
+
+
+Extreme Weather Delay
+
+```{r}
+scat_con(raw_df$extrmwd) %>% 
+  layout(xaxis = list(title = "Extreme Weather Delay (minutes)"))
+```
+
+
+Late Arrival Delay
+
+```{r}
+scat_con(raw_df$latarrd) %>% 
+  layout(xaxis = list(title = "Late Arrival Delay (minutes)"))
+```
+
+
+NAS Delay
+
+```{r}
+scat_con(raw_df$nasd) %>% 
+  layout(xaxis = list(title = "NAS Delay (minutes)"))
+```
+
+
+Security Delay
+
+```{r}
+scat_con(raw_df$securityd) %>% 
+  layout(xaxis = list(title = "Security Delay (minutes)"))
+```
+
+
+Temperature
+
+```{r}
+scat_con(raw_df$temperature) %>% 
+  layout(xaxis = list(title = "Temperature"))
+```
+
+
+Humidity
+
+```{r}
+scat_con(raw_df$humidity) %>% 
+  layout(xaxis = list(title = "Humidity"))
+```
+
+
+Visibility
+
+```{r}
+scat_con(raw_df$visibility) %>% 
+  layout(xaxis = list(title = "Visibility"))
+```
+
+
+Wind Speed
+
+```{r}
+scat_con(raw_df$wind_s) %>% 
+  layout(xaxis = list(title = "Wind Speed"))
+```
+
+
+Pearson correlation 
+
+```{r}
+raw_df %>% 
+  select(-date, -airline, -month, -hour_c) %>% 
+  cor(y = raw_df$delay, x = .)
+```
+
+_Highlights:_
+
+* A clear linear relationships is observed between delay time (the outcome) and Carrier Delay.
+ 
+* The Pearson correlation coefficients are greater than .50 for the relationships between delay time and 2 predictors (i.e., carrier delay and late arrival delay). Noticeably, the correlation coefficient for the relationship between delay time and carrier delay ~0.80, which is very high.
 
 ### Independent variables / predictors (categorical)
-```{r}
+
 cat_sum = raw_df %>% 
   select(airline, month, hour) %>% 
   mutate(
@@ -160,10 +364,9 @@ cat_sum = raw_df %>%
   summary(maxsum = 24)
 
 cat_sum
-```
 
 ### Independent variables / predictors (continuous)
-```{r}
+
 con_sum_df = raw_df %>% 
   select(-date, -airline, -month, -hour)
 
@@ -184,7 +387,7 @@ con_sum = skim(con_sum_df) %>%
   relocate(var, mean, min, q1, median, q3, max, sd, histogram)
 
 con_sum
-```
+
 
 Next, as mentioned above, we want to further categorize variable `hour`.
 
@@ -207,12 +410,7 @@ _afternoon_: 14-17
 _night_:18-23 
 
 Now, we can start categorize `hour`
-```{r}
-raw_df = raw_df %>% 
-  mutate(hour_c = cut(hour, breaks = c(4, 8, 13, 17, 24),
-                      labels = c("morning","noon","afternoon","night"))) %>% 
-  select(-hour)
-```
+
 
 As usual, check if it was done properly
 ```{r}
@@ -220,12 +418,12 @@ summary(as.factor(raw_df$hour_c))
 sum(is.na(raw_df))
 ```
 
+
 _0_ 'NA' and the distribution looks good.
 
 Now, since we are not yet able to decide the variable type of the rest of the predictors, we need further analysis.
 
-
-# Step 2: Check Assumptions for Regression
+## Step 2: Check Assumptions for Regression
 
 ## Assumption 1: Linearity
 
