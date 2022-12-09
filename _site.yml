@@ -17,8 +17,8 @@ navbar:
         href: delay_interaction_cont.html
     - text: "Analysis"
       menu:
-      - text: "Linear Regression"
-        href: xx.html
+      - text: "Predictive Modeling"
+        href: regression_delay.html
       - text: "Poisson Regression"
         href: web_poisson.html
     - text: "Report"

@@ -639,7 +639,7 @@ In this "Predictive Modeling" section, we fit a linear regression model with 5 p
 
 \ 4. Results seem unreliable, i.e., it is hard for us to agree on the suggested result showing weather will not affect the delay time.
 
-\ 5. Inefficient predictive modeling. Although we do not need to worry too much about the parsimony of the model when doing prediction, the number of parameters in model 1 is still too many compared to the usual predictive model. Meanwhile, even with 5 predictors, the R-square is still not strong, thus I doubt the efficiency of our final model.
+\ 5. Inefficient predictive modeling. Although we do not need to worry too much about the parsimony of model when doing prediction, the number of parameters in model 1 is still too many compared to general predictive model. Meanwhile, even with 5 predictors, the R-square is still not strong, thus I more doubt about the efficiency of our final model.
 
 To this end, we come up with some possible solutions:
 
