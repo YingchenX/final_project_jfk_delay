@@ -120,14 +120,6 @@ sum(is.na(raw_df)) #_0_ -> good
          #yaxis = list(title = "Frequency"))
 
 ### No, our dependent variable `delay` is not normally distributed, but we dont want to remove those outliers since they are important to our analysis. -> It is okay because for linear regression, dependent variable does not have to be normally distributed. On the other hand, the model's residuals, do have to be normally distributed. 
-
-# Given the above histogram, we dicide to break the outcome into 2 parts: (1) bearable delay and (2) extreme delay
-
-delay_bear = delay %>% filter(delay <= 100)
-hist(delay_bear$delay)
-
-delay_ext = delay %>% filter(delay > 100)
-hist(delay_ext$delay)
 ```
 
 # Overview
@@ -158,15 +150,25 @@ his %>%
          yaxis = list(title = "Frequency"))
 ```
 
-## Inspect into the effect of 3 hypothesized categorical predictors
+## Explore the effect of potential predictors
 
 _Motivation:_
 
 To get a sense of the effect of each predictor.
 
+
 _Plan:_
 
-We first produce boxplots to visualize the distribution of delay time across each group. Then, we perform ANOVA to see if each group have the same average delay time. For those significant, we perform pairwise t-tests using Bonferroni’s correction for the p-values to calculate pairwise differences between the delay time of each group.
+* For categorical variables:
+
+We first produce boxplots to visualize the distribution of delay time across each categorical group. Then, we perform ANOVA to see if each group have the same average delay time. For those significant, we perform pairwise t-tests using Bonferroni’s correction for the p-values to calculate pairwise differences between the delay time of each group.
+
+* For continuous variables:
+
+We first produce scatterplots to visualize the relationship between the continuous outcome and each continuous predictor to see if there is a linear relationship. We also calculate Pearson correlation coefficient between all continuous variables. For those linear, we use correlation coefficient to measure the associations.
+
+
+### Categorical predictors
 
 ```{r function for boxplot, include=FALSE}
 box_cat = function(cat){
@@ -180,7 +182,8 @@ box_cat = function(cat){
 }
 ```
 
-### Airlines
+
+Airlines
 
 ```{r}
 #boxplot
@@ -203,7 +206,7 @@ _Highlights:_
 * The adjusted p-value for the mean difference in delay time between Delta Air Lines _vs._ JetBlue Airways < 2e-16.
 
 
-### Months
+Months
 
 ```{r}
 #boxplot
@@ -219,14 +222,14 @@ pairwise.t.test(raw_df$delay, raw_df$month, p.adjust.method = "bonferroni")
 
 _Highlights:_
 
-* Since the overall p-value (<2e-16) is less than .05, this is an indication that each month group does not have the same average delay time (in minutes).
+* Since the overall p-value (<2e-16) is less than .05, this is an indication that each month group does not have the same average delay time.
 
 * The adjusted p-value for the mean difference in delay time between November, 2021 _vs._ December, 2021 is .0015.
 
 * The adjusted p-value for the mean difference in delay time between November, 2021 _vs._ January, 2022 and December, 2021 _vs._ January, 2022 both < 2e-16.
 
 
-### Times of the day ("hour_c")
+Times of the day ("hour_c")
 
 ```{r}
 #boxplot
@@ -242,12 +245,112 @@ pairwise.t.test(raw_df$delay, raw_df$hour_c, p.adjust.method = "bonferroni")
 
 _Highlights:_
 
-* Since the overall p-value (0.000146) is less than .05, this is an indication that each hour group does not have the same average delay time (in minutes).
+* Since the overall p-value (0.000146) is less than .05, this is an indication that each hour group does not have the same average delay time.
 
 * The adjusted p-value for the mean difference in delay time between morning _vs._ night is 6.7e-05.
 
 * The adjusted p-value for the mean difference in delay time between noon _vs._ afternoon is 1.00.
 
+
+### Continuous predictors
+
+```{r function for scatterplot, include=FALSE}
+scat_con = function(con){
+  
+  scat = raw_df %>%
+  plot_ly(x = ~con, y = ~delay,
+          type = 'scatter', mode = 'markers', alpha = .5) %>% 
+    layout(
+      yaxis = list(title = "Delay Time (minutes)"))
+}
+```
+
+
+Carrier Delay
+
+```{r}
+scat_con(raw_df$carrierd) %>% 
+  layout(xaxis = list(title = "Carrier Delay (minutes)"))
+```
+
+
+Extreme Weather Delay
+
+```{r}
+scat_con(raw_df$extrmwd) %>% 
+  layout(xaxis = list(title = "Extreme Weather Delay (minutes)"))
+```
+
+
+Late Arrival Delay
+
+```{r}
+scat_con(raw_df$latarrd) %>% 
+  layout(xaxis = list(title = "Late Arrival Delay (minutes)"))
+```
+
+
+NAS Delay
+
+```{r}
+scat_con(raw_df$nasd) %>% 
+  layout(xaxis = list(title = "NAS Delay (minutes)"))
+```
+
+
+Security Delay
+
+```{r}
+scat_con(raw_df$securityd) %>% 
+  layout(xaxis = list(title = "Security Delay (minutes)"))
+```
+
+
+Temperature
+
+```{r}
+scat_con(raw_df$temperature) %>% 
+  layout(xaxis = list(title = "Temperature"))
+```
+
+
+Humidity
+
+```{r}
+scat_con(raw_df$humidity) %>% 
+  layout(xaxis = list(title = "Humidity"))
+```
+
+
+Visibility
+
+```{r}
+scat_con(raw_df$visibility) %>% 
+  layout(xaxis = list(title = "Visibility"))
+```
+
+
+Wind Speed
+
+```{r}
+scat_con(raw_df$wind_s) %>% 
+  layout(xaxis = list(title = "Wind Speed"))
+```
+
+
+Pearson correlation 
+
+```{r}
+raw_df %>% 
+  select(-date, -airline, -month, -hour_c) %>% 
+  cor(y = raw_df$delay, x = .)
+```
+
+_Highlights:_
+
+* A clear linear relationships is observed between delay time (the outcome) and Carrier Delay.
+ 
+* The Pearson correlation coefficients are greater than .50 for the relationships between delay time and 2 predictors (i.e., carrier delay and late arrival delay). Noticeably, the correlation coefficient for the relationship between delay time and carrier delay ~0.80, which is very high.
 
 ### Independent variables / predictors (categorical)
 
