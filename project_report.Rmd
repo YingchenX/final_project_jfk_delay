@@ -338,7 +338,24 @@ As a result, these interaction terms in addition to other predictors would be fu
 
 ### 4.2 Poisson Regression
 
-&nbsp;
+#### Pre-analysis
+
+We wanted to investigate factors that are related to - and may be used to predict daily flight cancellation count since the effects of weather and COVID-19 were our primary research interests, but we did not have any precise hypothesis. For instance, there can be daily flight cancellations because of COVID breakouts or lockdowns. Due to the distribution of outcome, we recommend adopting the Poisson regression model.
+
+Along with predictors, we also include categorical and time-dependent stratification parameters in the model. We clearly discovered the difference between different months and different airlines based on the monthly flight cancellation count. Monthly flight cancellations were the highest in January 2022, followed by December and November 2021. Monthly cancellation rates fluctuate greatly amongst airlines as well. As a result, we used the month and the airline as stratification factors. We first used Poisson regression to predict the risk ratio for daily flight cancellations in order to test for these variations.
+
+From data exploration, we also found that the time trend of daily flight cancellations and COVID-19 cases did not coincide with one other. The rises of COVID-19 cases frequently took some time to affect our daily lives, including flight cancellations. Thus, we created new variables regarding COVID cases count with time lag. We used the lag selection criteria and Akaike's information criterion (AIC) to select 6 days as the optimal time lag. Then, we constructed a new variable named `covid_lag6`, equivalent to the value of COVID-19 cases with a 6-day time lag.
+
+#### Building the model
+
+Our final Poisson model was:
+
+```{r, echo = FALSE, out.width = "100%", fig.cap = "(Poisson Regression Model)", fig.align = 'center'}
+knitr::include_graphics("./pictures/poisson_model.png")
+```
+
+To test the model in different months and airlines, we also conducted a stratification analysis. We graphed these risk ratios for the coefficients (i.e., the exponentiated coefficient; exp(B)) that show the difference in daily flight cancellations in JFK airport by month and by airline for the purpose of illustration for both month and airline. Along with the p-value, we also provided 95% confidence intervals, which were calculated as the exponentiated coefficient plus or minus 1.96 times the standard error (exp(B+1.96*se)).
+
 
 
 ## 5 Discussions
@@ -346,8 +363,13 @@ As a result, these interaction terms in addition to other predictors would be fu
 ### 5.1 Findings
 
 &nbsp;
+### 5.2 Limitations
 
-### 5.2 Next Steps
+The daily cancellation flight dataset was extracted from the delay dataset, therefore we only evaluate one source of cancellation, flight cancellation due to delay. Furthermore, we hypothesized that just two factors, adverse weather and COVID-19 cases, affect daily flight cancellations. More elements that might influence real-life cancellation were not considered. As a result, we should note the constraint that this cancellation data does not include cancellations due to other factors, such as air traffic limitations. This restricted the information we could obtain from the cancellation dataset, preventing us from adjusting for variables we suspected were confounding the correlations.
+
+What's more, the association between COVID-19 cases and daily flight cancellations was not as strong as we expected.  One reason might be that the research window was too short to discover the association because COVID-19 cases had a time lag and we only counted 3-month cancellations and COVID-19 cases.
+
+### 5.3 Next Steps
 
 &nbsp;
 these interathese intera
