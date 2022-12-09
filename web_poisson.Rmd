@@ -195,6 +195,7 @@ knitr::include_graphics("./pictures/poisson_model.png")
 ```
 
 
+
 ```{r}
 poisson = glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6, 
               family = "poisson",
@@ -209,6 +210,8 @@ poisson %>%
   knitr::kable(digits = 3, col.names = c("Terms", "Estimate (log(OR))", "Estimated adjusted OR", "P-value"), caption = "Poisson model") %>% 
   kable_styling()
 ```
+
+
 The above is the outcome of Poisson regression. All predictor coefficients are statistically significant (associated with a p-value of 0.05), indicating that temperature, humidity, windspeed, and COVID-19 cases indeed impact the rate of daily flight cancellation.
 
 Exponentiating the Poisson regression coefficient provides the incidence rate ratio of daily flight cancellation. Take `temperature` as an example; its parameter estimate is -0.119, which means that increasing the temperature by one degree Fahrenheit should decrease the difference in the logs of predicted daily flight cancellations by 0.119 occurrences while holding the other variables in the model constant.
