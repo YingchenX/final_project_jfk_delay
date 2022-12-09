@@ -35,7 +35,7 @@ cancel = read_csv("tidied_data/cancel.csv")
 First we would like to check if delay and cancellation counts differ in different destination airports.
 
 <br>
-```{r}
+```{r, echo = F}
 delay %>% 
   group_by(destination_airport) %>% 
   summarize(
@@ -56,7 +56,7 @@ Flights from JFK to `r delay %>% count(destination_airport) %>% slice(which.max(
 
 
 <br>
-```{r}
+```{r, echo = F}
 cancel %>% 
   group_by(destination_airport) %>% 
   summarize(
@@ -93,7 +93,7 @@ delay_dest = function(dest){
     text_label = str_c("Airport: ", destination_airport, "\nCount: ", count)
       ) %>% 
   plot_ly(x = ~destination_airport, y = ~count, text = ~text_label, hoverinfo = "text", 
-          color = "rgb(255, 65, 54)", type = "bar", alpha = .5) %>% 
+          color = ~destination_airport, type = "bar", alpha = .5) %>% 
   layout(
     xaxis = list(title = "Destination Airport"),
     yaxis = list(title = "Count"),
@@ -114,7 +114,7 @@ cancel_dest = function(dest){
     text_label = str_c("Airport: ", destination_airport, "\nCount: ", count)
       ) %>% 
     plot_ly(x = ~destination_airport, y = ~count, text = ~text_label, hoverinfo = "text",
-          color = "rgb(255, 65, 54)", type = "bar", alpha = .5) %>% 
+          color = ~destination_airport, type = "bar", alpha = .5) %>% 
     layout(
       xaxis = list(title = "Destination Airport"),
       yaxis = list(title = "Count"),
@@ -177,11 +177,11 @@ cancel_dest("United Air Lines")
 <br>
 
 ## LAX and SFO {.tabset}
-We found that LAX and SFO have outstanding delay counts, so we decide to take a closer look at the underlying factors behind those delays.
+We found that LAX and SFO have outstanding delay and cancellation counts, so we decided to take a closer look at the underlying factors behind those delays and cancellations.
 
 <br>
 
-```{r}
+```{r, echo = F}
 delay %>% 
   filter(
     destination_airport %in% c("LAX", "SFO"), 
@@ -195,12 +195,12 @@ delay %>%
       title = "Distribution of Delay Time")
 ```
 
-We can clearly observe that the delay times are clustered before  minutes. For the following explorations, we filtered the delay minutes between 0 to 180 minutes. 
+We can clearly observe that the delay times are clustered before 180 minutes. For the following explorations, we filtered the delay minutes between 0 to 180 minutes. 
 
 <br>
 
 
-### Airline
+### Delay by Airline
 ```{r, echo = F}
 delay %>% 
   filter(
@@ -213,17 +213,22 @@ delay %>%
       boxmode = "group",
       xaxis = list(title = "Destination Airport"),
       yaxis = list(title = "Delay Time (minutes)"),
-      legend = list(title = list(text = '<b> Month </b>')))
-      
-  
+      legend = list(title = list(text = '<b> Airline </b>')))
 ```
+The airlines which departure from JFK to the two airports are different, and there is no distinct trend in delay time in minutes among different airlines between the two airports.  
 
-### Month
+
+### Delay by Month
 ```{r, echo = F}
 delay %>% 
   filter(
     destination_airport %in% c("LAX", "SFO"),
     delay_minutes %in% 0:180
+  ) %>% 
+  mutate(
+    month = recode(month, "11" = "Nov", "12" = "Dec", "1" = "Jan"),
+    month = as.factor(month),
+    month = fct_reorder(month, date)
   ) %>% 
   plot_ly(x = ~destination_airport, y = ~delay_minutes, color = ~month,
           type = 'box', alpha = .5) %>% 
@@ -232,8 +237,27 @@ delay %>%
       xaxis = list(title = "Destination Airport"),
       yaxis = list(title = "Delay Time (minutes)"),
       legend = list(title = list(text = '<b> Month </b>')))
-  
 ```
+Both airports show an increasing trend in delay minutes from November to January. There is no distinct difference in delay time in minutes in different months between the two airports. 
 
 
+### Cancellation by Hour
+```{r, echo = F}
 
+delay %>% 
+  filter(
+    destination_airport %in% c("LAX", "SFO")
+  ) %>% 
+  group_by(scheduled_hour, destination_airport) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  plot_ly(x = ~scheduled_hour, y = ~count, color = ~destination_airport,
+          type = 'bar', alpha = .5) %>% 
+    layout(
+      xaxis = list(title = "Scheduled Hour"),
+      yaxis = list(title = "Count"),
+      legend = list(title = list(text = '<b> Airport </b>')))
+
+```
+We can observe a distinct difference in cancellation counts in each scheduled hour between the two airports.
