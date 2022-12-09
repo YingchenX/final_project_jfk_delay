@@ -34,7 +34,7 @@ cancel_tidy = read_csv("tidied_data/cancel_tidy.csv")
 
 ```
 # Overview
-We wanted to investigate factors that are related to - and may be used to predict daily flight cancellation count since the effects of weather and COVID-19 were our primary research interests, but we did not have any precise hypothesis. For instance, there can be daily flight cancellations because of COVID breakouts or lockdowns. 
+We wanted to investigate factors that are related to - and may be used to predict daily flight cancellation count. Weather factors and COVID breakouts or lockdowns, for example, might play crucial roles in daily flight cancellations, we treated them as our primary research interests, although we did not have any precise hypothesis. 
 
 # Data description
 In this research, we look for a relationship between cancellation and a number of variables. The number of cancellations each day is therefore regarded as the result (dependent variable), and exposures of interest are regarded as the independent variables.
@@ -50,7 +50,7 @@ In this research, we look for a relationship between cancellation and a number o
  
 # Pre-analysis
 ## Check distribution
-Since our outcome, `daily_cancel`, is calculated using a count variable (number of cancellation) repeated over time, we’ll model it using a Poisson regression model.
+Since our outcome, `daily_cancel`, is calculated using a count variable (number of cancellation) repeated over time, we modelled it using a Poisson regression model.
 ```{r}
 # poisson distribution of counts
 cancel_tidy %>% 
@@ -64,7 +64,7 @@ cancel_tidy %>%
 ```
 
 ## Stratification factors
-Cancellation count per month show difference both by month and airline, therefore, using month and airline as stratification factors.
+We discovered that the cancellation count each month varies by month and airline. Monthly f light cancellations were highest in January 2022, followed by December and November 2021. Monthly cancellation rates fluctuate greatly amongst airlines as well. As a result, we used the month and the airline as stratification factors.
 ```{r}
 cancel_airline <- cancel_tidy  %>%
   group_by(year_month, airline_name) %>%
@@ -148,6 +148,11 @@ cancel_tidy$covid_lag6 <- lag(cancel_tidy$covid_case, 6)
 ```
 
 # Poisson model
+Poisson model:
+```{r, echo = FALSE, out.width = "50%", fig.cap = "(Generated via [Midjourney](https://midjourney.com/))", fig.align = 'center'}
+knitr::include_graphics("./pictures/poisson_model.png")
+```
+
 ```{r}
 poisson = glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6,family = "poisson",data=cancel_tidy)
 
@@ -192,7 +197,7 @@ poisson_by_month = cancel_tidy %>%
 
 poisson_by_month %>% 
   filter(term != "(Intercept)" ) %>% 
-  knitr::kable(digits = 3, align = "llccc", col.names = c("Month", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"))
+  knitr::kable(digits = 3, align = "llccc", col.names = c("Month", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"), caption = "Overview of estimated OR, 95% CI and P-value")
 ```
 
 ## Plot
@@ -206,7 +211,7 @@ poisson_by_month %>%
   geom_errorbar(aes(ymin = CI_lower, 
                     ymax = CI_upper)) +
   labs(
-    title = "Estimated OR with 95% CI in Cancellation Count Data by Month",
+    title = "Estimated OR with 95% CI in Daily Flight Cancellation by Month",
     x = "Month",
     y = "Estimated OR with CI"
   ) +
@@ -257,7 +262,7 @@ poisson_by_airline = cancel_tidy %>%
 
 poisson_by_airline %>% 
   filter(term != "(Intercept)" ) %>% 
-  knitr::kable(digits = 3, align = "llccc", col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"))
+  knitr::kable(digits = 3, align = "llccc", col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"), caption = "Overview of estimated OR, 95% CI and P-value")
 ```
 
 ## Plot
@@ -271,7 +276,7 @@ poisson_by_airline %>%
   geom_errorbar(aes(ymin = CI_lower, 
                     ymax = CI_upper)) +
   labs(
-    title = "Estimated OR with 95% CI in Cancellation Count Data by Airline",
+    title = "Estimated OR with 95% CI in Daily Flight Cancellation by Airline",
     x = "Airline",
     y = "Estimated OR with CI"
   ) +
