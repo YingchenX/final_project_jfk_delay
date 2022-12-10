@@ -332,11 +332,11 @@ As a result, these interaction terms in addition to other predictors would be fu
 
 &nbsp;
 
-## 4 Statistical Anslysis
+## 4 Statistical Analysis
 
-### 4.1 Predictive Modeling
+### 4.1 Predictive Model
 
-#### 4.1.1 Pre-analysis data exploration
+#### 4.1.1 Pre-analysis Data Exploration
 
 Since the outcome variable is delay time, a continuous variable, we want to fit a linear regression model. However, the scale of outcome data (from 0 to +∞) is a problem since it does not in consistent with the scale of linear function (from -∞ to +∞). To make them in agreement, we decided to normalize the outcome data with log transformation and scale it to -∞ to +∞. At the meanwhile, this log transformation also solved the terrible skewness observed in the distribution of delay time. After this step, our outcome variable change from delay time to log (delay time), in which still representing the delay time.
 
@@ -458,7 +458,7 @@ Unfortunately, the answer is **NO**.
 
 &nbsp;
 
-### 4.2 Poisson Regression
+### 4.2 Poisson Model
 
 #### 4.2.1 Pre-analysis
 

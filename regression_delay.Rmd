@@ -1,5 +1,5 @@
 ---
-title: "Predictive Modeling"
+title: "Predictive Model"
 output: 
   html_document:
     toc: true
@@ -661,7 +661,7 @@ log_df %>%
 
 # Conclusions and Discussions
 
-In this "Predictive Modeling" section, we fit a linear regression model with 5 predictors, they are: airlines, months, times of the day, carrier delay time, and late arrival delay time. This model is tested to be significant and without collinearity, however, there are still many problems with our current model:
+In this "Predictive Model" section, we fit a linear regression model with 5 predictors, they are: airlines, months, times of the day, carrier delay time, and late arrival delay time. This model is tested to be significant and without collinearity, however, there are still many problems with our current model:
 
 1.    Relatively small R-squared value.
 

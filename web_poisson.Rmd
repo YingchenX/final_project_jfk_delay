@@ -197,7 +197,7 @@ poisson %>%
     p.value = format(p.value, scientific = TRUE, digits = 3)
   ) %>% 
   dplyr::select(term, estimate, OR, p.value) %>% 
-  knitr::kable(digits = 3, col.names = c("Terms", "Estimate (log(OR))", "Estimated adjusted OR", "P-value")) %>% 
+  knitr::kable(digits = 3, col.names = c("Terms", "Estimate (log(OR))", "Estimated Adjusted OR", "P-value")) %>% 
   kable_styling(bootstrap_options = "hover")
 ```
 
@@ -327,7 +327,7 @@ poisson_by_airline %>%
   filter(term != "(Intercept)" ) %>% 
   knitr::kable(digits = 3, 
                align = "llccc", 
-               col.names = c("Airline Name", "Terms", "Estimated Adjusted OR", "CI Lower Bound", "CI Upper Bound", "P-value")) %>% 
+               col.names = c("Airline", "Terms", "Estimated Adjusted OR", "CI Lower Bound", "CI Upper Bound", "P-value")) %>% 
   kable_styling(bootstrap_options = "hover") %>% 
   scroll_box(width = "100%", height = "220px")
 ```
