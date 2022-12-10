@@ -255,7 +255,7 @@ We then created a [**Shiny App**](https://sn2ylh-siyue-gao.shinyapps.io/delay_ca
 Our exploration and visualization process hinted that between groups differences existed, and adding interaction terms between the categorical predictors could be one of the options for building the linear regression model. The following plots could hint that interactions between the categorical variables might exist, but we still need statistical analysis to prove our findings. In our analysis, we mainly focused on the interaction between **month and airline**. 
 
 
-```{r, out.height = "60%"}
+```{r, echo = F, out.height = "60%"}
 raw_df %>% 
   mutate(
     month = fct_reorder(month, date)) %>% 
@@ -301,7 +301,7 @@ We were also interested in whether our continuous predictors, including Carrier 
 
 *    Temperature * Month
 
-```{r, out.height = "60%"}
+```{r, echo = F, out.height = "60%"}
 raw_df %>% 
   mutate(
     text_label = str_c(airline, "\nCarrier Delay: ", carrierd, "\nDelay Time: ", delay)
@@ -477,7 +477,7 @@ cancel_airline <- cancel_tidy  %>%
   mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan"))
 ```
 
-```{r}
+```{r, echo = F}
 cancel_airline %>%
   arrange(airline_name) %>% 
   pivot_wider(

@@ -637,8 +637,6 @@ log_df %>%
 
 # Conclusions and Discussions
 
-<br>
-
 In this "Predictive Modeling" section, we fit a linear regression model with 5 predictors, they are: airlines, months, times of the day, carrier delay time, and late arrival delay time. This model is tested to be significant and without collinearity, however, there are still many problems with our current model:
 
 1.    Relatively small R-squared value.
@@ -653,9 +651,7 @@ In this "Predictive Modeling" section, we fit a linear regression model with 5 p
 
 <br>
 
-# Next Step
-
-<br>
+# Next Steps
 
 To this end, we come up with some possible solutions:
 

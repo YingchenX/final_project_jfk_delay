@@ -28,12 +28,7 @@ h1.title {
 knitr::include_graphics("./pictures/Jialu_Cheng_a_colorful_the_united_states_flight_route_map.png")
 ```
 
-<br>
-&nbsp;
-
-
 ## Website Overview
-<br>
 
 Where are you heading to during the holiday season? 
 
@@ -44,8 +39,6 @@ Our analysis focuses on the flight delay data from [the Bureau of Transportation
 &nbsp;
 
 ## Key Questions We Care About
-
-<br>
 
 **1. What are the key trends of the flights at JFK during last holiday season?**
 
