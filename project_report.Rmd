@@ -10,7 +10,10 @@ output:
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
-  warning = FALSE)
+  warning = FALSE,
+  fig.width = 8,
+  out.width = "90%",
+	dpi = 300)
 
 library(tidyverse)
 library(readxl)
@@ -18,6 +21,8 @@ library(plotly)
 library(modelr)
 library(magrittr)
 library(kableExtra)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
 delay = read_csv("tidied_data/delay.csv")
 cancel = read_csv("tidied_data/cancel.csv")
@@ -57,7 +62,7 @@ Using JFK departed flights as an example, we’re interested in exploring the fa
 Commercial aviation is a complex distributed transportation system. The typical operation of a commercial flight can take place at terminal boundaries, airports, runways, and airspace, being susceptible to different kinds of delays. Some examples include mechanical problems, weather conditions, ground delays, air traffic control, runway queues and capacity constraints.
 
 
-```{r, echo = FALSE, out.width = "100%", fig.cap = "Common reasons for delay in the US, 2022", fig.align = 'center'}
+```{r, echo = FALSE, out.width = "80%", fig.cap = "Common reasons for delay in the US, 2022", fig.align = 'center'}
 knitr::include_graphics("./pictures/delay-reason.jpg")
 ```
 
@@ -69,7 +74,7 @@ Source: [transtats.bts.gov](https://www.transtats.bts.gov/OT_Delay/OT_DelayCause
 
 The following scheme is repeated several times throughout the day for each flight in the system: 
 
-```{r, echo = FALSE, out.width = "100%", fig.cap = "A typical operation of a commercial flight", fig.align = 'center'}
+```{r, echo = FALSE, out.width = "80%", fig.cap = "A typical operation of a commercial flight", fig.align = 'center'}
 knitr::include_graphics("./pictures/operation-flow.png")
 ```
 
@@ -85,15 +90,15 @@ As in the draft project proposal, we would like to do some reviews on the three 
 
 However, considering the availability and scale of the accessible and available data, we switched our main topic to focus on JFK Airport's delay and cancellation data from 11/1/2021 to 1/31/2022. And the weather and COVID cases data within that time range were accordingly. Based on these information, our final questions are below:
 
-* What were the key trends of the flights at JFK during last holiday season?
-* What were the potential factors that might contribute to the flight delay/cancellation at JFK during last holiday season?
-* Were there significant associations of multiple factors with JFK flight delays during last holiday season?
+* What are the key trends of the flights at JFK during last holiday season?
+* What are the potential factors that contribute to the flight delay or cancellation in JFK during last holiday season?
+* Are there significant associations of multiple factors with JFK flight delays and cancellations during last holiday season?
 
 &nbsp;
 
 ## 2 Data Sources and Cleaning
 
-We used three primary datasets for statistical analysis, and an additional supplemental dataset for interactive mapping.
+We used three primary datasets for exploration, visualization, and statistical analysis, and an additional supplemental dataset for interactive mapping.
 
 ### 2.1 Delay and Cancellation
 
@@ -103,7 +108,7 @@ We used three primary datasets for statistical analysis, and an additional suppl
 
 ### 2.2 Weather
 
-[Hourly and daily weather information](https://www.ncdc.noaa.gov/cdo-web/datatools/lcd) from 11/1/2021 to 1/31/2022 was obtained from the National Oceanic and Atmospheric Administration (NOAA). We selected the specific zip code for JFK and downloaded the raw data thereof. To align the time unit of weather with flight information, considering data availability, we picked the weather at the 51th minute to represent the weather of the hour, and the weather at 23:59 to represent the weather condition of the day. Only date and hourly/daily weather condition of interest were kept in the resulted tidied dataset.
+[Hourly and daily weather information](https://www.ncdc.noaa.gov/cdo-web/datatools/lcd) from 11/1/2021 to 1/31/2022 was obtained from the National Oceanic and Atmospheric Administration (NOAA). We selected the specific zip code for JFK and requested the raw data thereof. To align the time unit of weather with flight information, considering data availability, we picked the weather at the 51th minute to represent the weather of the hour, and the weather at 23:59 to represent the weather condition of the day. Only date and hourly/daily weather condition of interest were kept in the resulted tidied dataset.
 
 <br>
 
@@ -132,7 +137,7 @@ An additional source for the interactive map was [U.S. domestic airport location
 
 Categorical Variables
 
-  *   *Periods of Time*: Morning, Noon, Afternoon, Night
+  *   *Times of the Day*: Morning, Noon, Afternoon, Night
   *   *Months*: November, 2021; December, 2021; January, 2022
   *   *Airlines*: Alaska Airlines, American Airlines, Delta Air Lines, Endeavor Air, JetBlue Airways, Republic Airways, United Air Lines
   *   *Destination Airports*: 66 destination airports with records of delay/cancellation
@@ -144,10 +149,10 @@ Continuous Variables
   *   *Late Arrival Delay*: Late arrival delay in minutes
   *   *NAS Delay*: National Aviation System (NAS) delay in minutes
   *   *Security Delay*: Security delay in minutes
-  *   *Temperature*: Hourly dry bulb temperature (°F)
-  *   *Humidity*: Hourly relative humidity (%)
-  *   *Visibility*: Hourly visibility
-  *   *Wind Speed*: Hourly wind speed (mph)
+  *   *Temperature*: Dry bulb temperature (°F)
+  *   *Humidity*: Relative humidity (%)
+  *   *Visibility*: Visibility
+  *   *Wind Speed*: Wind speed (mph)
   *   *COVID Cases Count*: New daily cases of COVID; and, daily cases of COVID with 6 days' lag in time
 
 &nbsp;
@@ -156,7 +161,7 @@ Continuous Variables
 
 ### 3.1 Destination Airports
 
-There are 66 and 65 destination airports in the delay and cancellation datasets, respectively. For the efficiency purpose in statistical analysis, we do not include destination airport as a predictor in our models, but we still kept it as one of the predictor to explore.  
+There are 66 and 65 destination airports in the delay and cancellation datasets, respectively. For the efficiency purpose in statistical analysis, we did not include destination airport as a predictor in our models, but we still kept it as one of the predictor to explore.  
 First, we checked if delay and cancellation counts differ in different destination airports. Flights from JFK to LAX have the highest delay occurrences with a number of 2293 and flights to BGR have the highest delay occurrences with a number of 6. Flights from JFK to SFO have the highest cancellation occurrences with a number of 76 and flights to BZN have the highest cancellation occurrences with a number of 1. We also took a look at whether different airlines could have different trends in delay and cancellation counts among all the destination airports, but there is no significant findings.  
 We found that LAX and SFO have outstanding delay and cancellation counts, so we decided to take a closer look at the underlying factors behind those delays and cancellations. Some interesting findings are: 
 
@@ -235,21 +240,17 @@ subplot(Delay, cancel_hour, nrows = 2, margin = 0.09) %>%
  
 ```
 
-
-
 &nbsp;
 
 ### 3.2 Cancellation and Delay
 
-We then created a **Shiny App** for the audience to engage in our data exploration process. The audience could select which airline and which month they concern and get the user-selected outputs. In the **Cancellation** tab, they could observe the number of cancellations and the number of COVID cases in each day of a month. In the **Delay** tab, they could observe the number of delays and the average delay time in minutes in each day of a month.
-
+We then created a [**Shiny App**](https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/) for the audience to engage in our data exploration process. The audience could select which airline and which month they concern and get the user-selected outputs. In the **Cancellation** tab, you could observe the number of cancellations and the number of COVID cases on each day of a month. In the **Delay** tab, you could observe the number of delays and the average delay time in minutes on each day of a month.
 
 &nbsp;
 
-
 ### 3.3 Categorical Predictors
 
-**Delay time** in minutes is one of our outcome of interests and we decided to conduct a **linear regression model**. Besides the main effects, we would like to check if there are any significant effect modifiers in our model. In this part, we investigated the interaction between the categorical predictors, including Periods of Time， Months，and Airlines.  
+**Delay time** in minutes is one of our outcome of interests and we decided to conduct a **linear regression model**. Besides the main effects, we would like to check if there are any significant effect modifiers in our model. In this part, we investigated the interaction between the categorical predictors, including Times of the Day, Months，and Airlines.  
 Our exploration and visualization process hinted that between groups differences existed, and adding interaction terms between the categorical predictors could be one of the options for building the linear regression model. The following plots could hint that interactions between the categorical variables might exist, but we still need statistical analysis to prove our findings. In our analysis, we mainly focused on the interaction between **month and airline**. 
 
 
@@ -261,9 +262,9 @@ raw_df %>%
           type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       boxmode = "group",
-      xaxis = list(title = "Period of Time"),
+      xaxis = list(title = "Time of the Day"),
       yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)),
-      title = "Period and Airline Interaction")
+      title = "Time and Airline Interaction")
 
 raw_df %>% 
   mutate(
@@ -283,12 +284,11 @@ raw_df %>%
           type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       boxmode = "group",
-      xaxis = list(title = "Period of Time"),
+      xaxis = list(title = "Time of the Day"),
       yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)),
-      title = "Period and Month Interaction")
+      title = "Tiime and Month Interaction")
 
 ```
-
 
 &nbsp;
 
@@ -328,7 +328,6 @@ raw_df %>%
     title = "Temperature vs Delay Time by Month")
 ```
 
-
 As a result, these interaction terms in addition to other predictors would be further analyzed using statistical testing. Some possible analysis we would consider could be models cross validation, ANOVA test, Type III analysis.
 
 &nbsp;
@@ -339,10 +338,9 @@ As a result, these interaction terms in addition to other predictors would be fu
 
 #### 4.1.1 Pre-analysis data exploration
 
-<br>
+Since the outcome variable is delay time, a continuous variable, we want to fit a linear regression model. However, the scale of outcome data (from 0 to +∞) is a problem since it does not in consistent with the scale of linear function (from -∞ to +∞). To make them in agreement, we decided to normalize the outcome data with log transformation and scale it to -∞ to +∞. At the meanwhile, this log transformation also solved the terrible skewness observed in the distribution of delay time. After this step, our outcome variable change from delay time to log (delay time), in which still representing the delay time.
 
-Since the outcome variable is delay in time, a continuous variable, we want to fit a linear regression model. However, the scale of outcome data (from 0 to +∞) is a problem since it does not in consistent with the scale of linear function (from -∞ to +∞). To make them in agreement, we decided to normalize the outcome data with log transformation and scale it to -∞ to +∞. At the meanwhile, this log transformation also solved the terrible skewness observed in the distribution of delay time. After this step, our outcome variable change from delay time to log (delay time), in which still representing the delay time.
-_NOTE:_ we do have plenty of outliers with extreme long delay time, however, considering these extreme observations could be indicative to the underlying relationship, we chose not to exclude them. After log transformation, the outlier issues were no longer too scary.
+_NOTE:_ We do have plenty of outliers with extreme long delay time, however, considering these extreme observations could be indicative to the underlying relationship, we chose not to exclude them. After log transformation, the outlier issues were no longer too scary.
 
 What we did next is to check if there are any associations existing between the independent variables and the dependent variable (i.e., log (delay time)). 
 
@@ -356,7 +354,8 @@ What we did next is to check if there are any associations existing between the 
 
 From the previous data exploration and visualization, we found some interesting trends that we all think worthy further inspection and can be the potential independent variables for the prediction of delay in time. 
 
-Given the above information, we came up 2 rationales for building the linear regression model:
+Given the above information, we came up 2 rationales for building the linear regression model:  
+
 \ 1. Based on observed relationship only: 
 _Include the 5 variables we identified above_
 
@@ -371,20 +370,23 @@ log_df = raw_df %>%
 ```{r, echo = FALSE}
 lm_1 = lm(delay ~ airline + month + hour_c + carrierd + latarrd, data = log_df)
 broom::glance(lm_1) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16')) %>% 
-  knitr::kable()
+  knitr::kable() %>% 
+  kable_styling()
 ```
 
 <br>
 
-\ 2. Based on both common sense and observed relationship:
-_Except for the 5 variables identified above, we also hypothesize the rest of variables (i.e., extreme weather delay time, NAS delay time, security delay time, temperature, humidity, visibility, wind speed) would affect the delay time based on our common sense and experience.
+\ 2. Based on both common sense and observed relationship:  
+
+Except for the 5 variables identified above, we also hypothesize the rest of variables (i.e., extreme weather delay time, NAS delay time, security delay time, temperature, humidity, visibility, wind speed) would affect the delay time based on our common sense and experience.
 
 Model 2: delay ~ airline + month + time of the day + carrier delay time + late arrival delay time + extreme weather delay time + NAS delay time + security delay time + temperature + humidity + visibility + wind speed
 
 ```{r, echo = FALSE}
 lm_2 = lm(delay ~ ., data = log_df)
 broom::glance(lm_2) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16')) %>% 
-  knitr::kable()
+  knitr::kable() %>% 
+  kable_styling()
 ```
 
 <br>
@@ -422,7 +424,7 @@ cv_df %>%
     names_prefix = "rmse_") %>% 
   mutate(model = fct_inorder(model)) %>% 
   ggplot(aes(x = model, y = rmse, fill = model)) + 
-  geom_violin() +
+  geom_violin(alpha = .5) +
   labs(x = "Model", y = "Root Mean Square Error (RMSE)",
        title = "Model Comparison of the Cross-Validated Prediction Error") +
   scale_x_discrete(labels = c("Model 1", "Model 2", "Model 3", "Model 4"))
@@ -446,16 +448,13 @@ log_df %>%
 
 Unfortunately, the answer is **NO**.
 
-
 &nbsp;
 
 ### 4.2 Poisson Regression
 
 #### 4.2.1 Pre-analysis
 
-We wanted to investigate factors that are related to - and may be used to predict daily flight cancellation count since the effects of weather and COVID-19 were our primary research interests, but we did not have any precise hypothesis. For instance, there can be daily flight cancellations because of COVID breakouts or lockdowns. Due to the distribution of outcome, we recommend adopting the Poisson regression model.
-
-Along with predictors, we also include categorical and time-dependent stratification parameters in the model. We clearly discovered the difference between different months and different airlines based on the monthly flight cancellation count. Monthly flight cancellations were the highest in January 2022, followed by December and November 2021. Monthly cancellation rates fluctuate greatly amongst airlines as well. As a result, we used the month and the airline as stratification factors. We first used Poisson regression to predict the risk ratio for daily flight cancellations in order to test for these variations.
+We wanted to investigate factors that are related to - and may be used to predict daily flight cancellation count since the effects of weather and COVID-19 were our primary research interests. Along with these predictors, we include categorical and time-dependent stratification parameters in the model. We clearly discovered the difference between different months and different airlines based on the monthly flight cancellation count. Monthly flight cancellations were the highest in January 2022, followed by December and November 2021. Monthly cancellation rates fluctuate greatly amongst airlines as well. As a result, we used the month and the airline as stratification factors. We first used Poisson regression to predict the risk ratio for daily flight cancellations in order to test for these variations.
 
 ```{r, include = FALSE}
 cancel_airline = read_csv("tidied_data/cancel_airline.csv")
@@ -470,7 +469,7 @@ cancel_airline <- cancel_tidy  %>%
   mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan"))
 ```
 
-```{r, include = FALSE}
+```{r}
 cancel_airline %>%
   arrange(airline_name) %>% 
   pivot_wider(
@@ -482,12 +481,11 @@ cancel_airline %>%
   kableExtra::kable_styling(bootstrap_options = "hover")
 ```
 
-From data exploration, we also found that the time trend of daily flight cancellations and COVID-19 cases did not coincide with one other. The rises of COVID-19 cases frequently took some time to affect our daily lives, including flight cancellations. Thus, we created new variables regarding COVID cases count with time lag. We used the lag selection criteria and Akaike's information criterion (AIC) to select 6 days as the optimal time lag. Then, we constructed a new variable named `covid_lag6`, equivalent to the value of COVID-19 cases with a 6-day time lag.
+From data exploration, we also found that the time trend of daily flight cancellations and COVID-19 cases did not coincide with one other. The rises of COVID-19 cases frequently took some time to affect our daily lives, including flight cancellations. Thus, we created new variables regarding COVID cases count with time lag. We used the lag selection criteria and Akaike information criterion (AIC) to select 6 days as the optimal time lag. Then, we constructed a new variable named `covid_lag6`, equivalent to the value of COVID-19 cases with a 6-day time lag.
 
 <br>
 
 #### 4.2.2 Model Fitting
-
 
 Our final Poisson model was:
 
@@ -512,7 +510,6 @@ poisson %>%
   kable_styling()
 ```
 
-
 To test the model in different months and airlines, we also conducted a stratification analysis. We graphed these risk ratios for the coefficients (i.e., the exponentiated coefficient; exp(B)) that show the difference in daily flight cancellations in JFK airport by month and by airline for the purpose of illustration for both month and airline. Along with the p-value, we also provided 95% confidence intervals, which were calculated as the exponentiated coefficient plus or minus 1.96 times the standard error (exp(B+1.96*se)).
 
 ```{r, include = FALSE}
@@ -532,6 +529,23 @@ poisson_by_month = cancel_tidy %>%
   ) %>% 
   dplyr::select(month, term, OR, CI_lower,CI_upper, p.value) 
 
+poisson_by_month %>%
+  filter(term != "(Intercept)") %>%
+  mutate(month = fct_relevel(month, "November", "December", "January")) %>% 
+  ggplot(aes(x = month, y = OR, color = term)) + 
+  geom_point(show.legend = FALSE, aes()) +
+  geom_errorbar(aes(ymin = CI_lower, 
+                    ymax = CI_upper)) +
+  labs(
+    title = "Estimated OR with 95% CI in Daily Flight Cancellation by Month",
+    x = "Month",
+    y = "Estimated OR with CI"
+  ) +
+  theme(legend.position = "right", legend.title = element_blank(),
+        text = element_text(size = 10),
+        axis.text.x = element_text(angle = 60, hjust = 1, size = 8)) + 
+  facet_grid(. ~ term)
+
 poisson_by_airline = cancel_tidy %>%
   nest(data = -airline_name) %>% 
   mutate(
@@ -546,12 +560,14 @@ poisson_by_airline = cancel_tidy %>%
     CI_upper = exp(estimate + 1.96 * std.error),
     p.value = format(p.value, scientific = TRUE, digits = 3)
   ) %>% 
-  dplyr::select(airline_name, term, OR, CI_lower,CI_upper, p.value) 
+  dplyr::select(airline_name, term, OR, CI_lower,CI_upper, p.value)
 ```
+
 
 ```{r, echo = FALSE}
 poisson_by_month %>%
   filter(term != "(Intercept)") %>%
+  mutate(month = fct_relevel(month, "November", "December", "January")) %>% 
   ggplot(aes(x = month, y = OR, color = term)) + 
   geom_point(show.legend = FALSE, aes()) +
   geom_errorbar(aes(ymin = CI_lower, 
@@ -585,31 +601,27 @@ poisson_by_airline %>%
 
 <br>
 
-## 5 Main discussions
+## 5 Main Discussions
 
 ### 5.1 Predictive Model
 
-\ 1. The data source does not serve as a good prediction data for the delay time, probably it is due to the lack of interval of data collection. Our dataset was collection between November 2021 to January 2022, which only 3 months in involved and they have similar weather within these 3 months. This could explain why we observe a non-commonsense result showing no association between delay time and weather specific independent variables. 
+1.    The data source does not serve as a good prediction data for the delay time, probably it is due to the lack of interval of data collection. Our dataset was collection between November 2021 to January 2022, which only 3 months in involved and they have similar weather within these 3 months. This could explain why we observe a non-commonsense result showing no association between delay time and weather specific independent variables. 
 
-\ 2. Linear model might not be an ideal model for this data, we could later try to categorize the outcome and fit in a multinomial logistic regression to see if that works better. 
+2.    Linear model might not be an ideal model for this data, we could later try to categorize the outcome and fit in a multinomial logistic regression to see if that works better. 
 
-\ 3. The efficiency of our model is very low, that our model only explains 42% of the variability observed in the delay time given 5 predictors in the model. Again, this may be due to limitations of our source data. 
+3.    The efficiency of our model is very low, that our model only explains 42% of the variability observed in the delay time given 5 predictors in the model. Again, this may be due to limitations of our source data. 
 
 <br>
 
 ### 5.2 Poisson Model
 
-\ 1. We hypothesized that just two factors, adverse weather and COVID-19 cases, affect daily flight cancellations. I More elements that might influence real-life cancellation were not considered. As a result, we should note the constraint that this cancellation data does not include cancellations due to other factors, such as air traffic limitations. This restricted the information we could obtain from the cancellation dataset, preventing us from adjusting for variables we suspected were confounding the correlations.
+1.    We hypothesized that just two factors, adverse weather and COVID-19 cases, affect daily flight cancellations. I More elements that might influence real-life cancellation were not considered. As a result, we should note the constraint that this cancellation data does not include cancellations due to other factors, such as air traffic limitations. This restricted the information we could obtain from the cancellation dataset, preventing us from adjusting for variables we suspected were confounding the correlations.
 
-\ 2. The association between COVID-19 cases and daily flight cancellations was not as strong as we expected.  One reason might be that the research window was too short to discover the association because COVID-19 cases had a time lag and we only counted 3-month cancellations and COVID-19 cases.
-
-
-<br>
-
-
-## 6 Future directions
+2.    The association between COVID-19 cases and daily flight cancellations was not as strong as we expected.  One reason might be that the research window was too short to discover the association because COVID-19 cases had a time lag and we only counted 3-month cancellations and COVID-19 cases.
 
 <br>
+
+## 6 Future Directions
 
 ### 6.1 Predictive Model
 

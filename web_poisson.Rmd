@@ -266,11 +266,10 @@ poisson_by_month %>%
 
 #### Plot
 
-
 ```{r}
 poisson_by_month %>%
   filter(term != "(Intercept)") %>%
-    mutate(month = fct_relevel(month, "November", "December", "January")) %>% 
+  mutate(month = fct_relevel(month, "November", "December", "January")) %>% 
   ggplot(aes(x = month, y = OR, color = term)) + 
   geom_point(show.legend = FALSE, aes()) +
   geom_errorbar(aes(ymin = CI_lower, 
@@ -332,7 +331,7 @@ poisson_by_airline %>%
   filter(term != "(Intercept)" ) %>% 
   knitr::kable(digits = 3, 
                align = "llccc", 
-               col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"))%>% 
+               col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value")) %>% 
   kable_styling()
 ```
 
@@ -357,8 +356,6 @@ poisson_by_airline %>%
         text = element_text(size = 10),
         axis.text.x = element_text(angle = 60, hjust = 1, size = 8)) + 
   facet_grid(. ~ term)
-
-
 ```
 
 <br>
