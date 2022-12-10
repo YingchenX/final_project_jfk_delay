@@ -106,7 +106,7 @@ cancel_airline %>%
 
 
 ```{r}
-plot1 <- cancel_airline %>% 
+cancel_airline %>% 
   mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan")) %>%
   ggplot(aes(x = year_month, y = Total_number_of_cancellation, fill = airline_name)) +
   geom_col(position = "dodge", alpha = .7) +
@@ -122,7 +122,7 @@ plot1 <- cancel_airline %>%
     subtitle = "Nov, 2021 to Jan, 2022"
   )
 
-plot2 <- cancel_airline %>% 
+cancel_airline %>% 
   mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan")) %>% 
   ggplot(aes(x = airline_name, y = Total_number_of_cancellation, fill = year_month)) +
   geom_col(position = "dodge", alpha = .7) +
@@ -138,7 +138,6 @@ plot2 <- cancel_airline %>%
     subtitle = "Nov, 2021 to Jan, 2022"
   )
 
-plot1 + plot2
 ```
 
 
