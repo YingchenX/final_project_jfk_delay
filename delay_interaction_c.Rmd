@@ -348,5 +348,8 @@ hour_month_air("United Air Lines")
 
 ## Interpretation
 
-We observed that between-group differences existed, and adding interaction terms between the categorical predictors could be one of the options for building the linear regression model. In our further analysis, we would mainly focus on the interaction between month and airline. 
+Based on the graphs, we observed that between-group differences existed, and adding interaction terms between the categorical predictors could be one of the options for building the linear regression model.
 
+We found that there could be a significant interaction between:
+
+*   Month * Airline
