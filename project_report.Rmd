@@ -16,6 +16,8 @@ library(tidyverse)
 library(readxl)
 library(plotly)
 library(modelr)
+library(magrittr)
+library(kableExtra)
 
 delay = read_csv("tidied_data/delay.csv")
 cancel = read_csv("tidied_data/cancel.csv")
@@ -459,7 +461,7 @@ From data exploration, we also found that the time trend of daily flight cancell
 
 <br>
 
-#### 4.2.2 Building the model
+#### 4.2.2 Model Fitting
 
 
 Our final Poisson model was:
@@ -468,7 +470,97 @@ Our final Poisson model was:
 knitr::include_graphics("./pictures/poisson_model.png")
 ```
 
+```{r include=FALSE}
+cancel_airline = read_csv("tidied_data/cancel_airline.csv")
+cancel_tidy = read_csv("tidied_data/cancel_tidy.csv")
+cancel_tidy$covid_lag6 = lag(cancel_tidy$covid_case, 6)
+```
+
+```{r echo=FALSE}
+poisson = glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6, 
+              family = "poisson",
+              data = cancel_tidy)
+
+poisson %>% 
+  broom::tidy() %>% 
+  mutate(OR = exp(estimate),
+    p.value = format(p.value, scientific = TRUE, digits = 3)
+  ) %>% 
+  dplyr::select(term, estimate, OR, p.value) %>% 
+  knitr::kable(digits = 3, col.names = c("Terms", "Estimate (log(OR))", "Estimated adjusted OR", "P-value"), caption = "Poisson model") %>% 
+  kable_styling()
+```
+
+
 To test the model in different months and airlines, we also conducted a stratification analysis. We graphed these risk ratios for the coefficients (i.e., the exponentiated coefficient; exp(B)) that show the difference in daily flight cancellations in JFK airport by month and by airline for the purpose of illustration for both month and airline. Along with the p-value, we also provided 95% confidence intervals, which were calculated as the exponentiated coefficient plus or minus 1.96 times the standard error (exp(B+1.96*se)).
+
+```{r include=FALSE}
+poisson_by_month = cancel_tidy %>%
+  nest(data = -month) %>% 
+  mutate(
+    models = map(.x = data, ~glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6, family = "poisson", data = .x)),
+    results = map(models, broom::tidy)
+    ) %>% 
+  dplyr::select(month, results) %>% 
+  unnest(results) %>% 
+  mutate(
+    OR = exp(estimate),
+    CI_lower = exp(estimate - 1.96 * std.error),
+    CI_upper = exp(estimate + 1.96 * std.error),
+    p.value = format(p.value, scientific = TRUE, digits = 3)
+  ) %>% 
+  dplyr::select(month, term, OR, CI_lower,CI_upper, p.value) 
+
+poisson_by_airline = cancel_tidy %>%
+  nest(data = -airline_name) %>% 
+  mutate(
+    models = map(.x = data, ~glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6, family = "poisson", data = .x)),
+    results = map(models, broom::tidy)
+    ) %>% 
+  dplyr::select(airline_name, results) %>% 
+  unnest(results) %>% 
+  mutate(
+    OR = exp(estimate),
+    CI_lower = exp(estimate - 1.96 * std.error),
+    CI_upper = exp(estimate + 1.96 * std.error),
+    p.value = format(p.value, scientific = TRUE, digits = 3)
+  ) %>% 
+  dplyr::select(airline_name, term, OR, CI_lower,CI_upper, p.value) 
+```
+
+```{r echo=FALSE}
+poisson_by_month %>%
+  filter(term != "(Intercept)") %>%
+  ggplot(aes(x = month, y = OR, color = term)) + 
+  geom_point(show.legend = FALSE, aes()) +
+  geom_errorbar(aes(ymin = CI_lower, 
+                    ymax = CI_upper)) +
+  labs(
+    title = "Estimated OR with 95% CI in Daily Flight Cancellation by Month",
+    x = "Month",
+    y = "Estimated OR with CI"
+  ) +
+  theme(legend.position = "right", legend.title = element_blank(),
+        text = element_text(size = 10),
+        axis.text.x = element_text(angle = 60, hjust = 1, size = 8)) + 
+  facet_grid(. ~ term)
+
+poisson_by_airline %>%
+  filter(term != "(Intercept)") %>%
+  ggplot(aes(x = airline_name, y = OR, color = term)) + 
+  geom_point(show.legend = FALSE, aes()) +
+  geom_errorbar(aes(ymin = CI_lower, 
+                    ymax = CI_upper)) +
+  labs(
+    title = "Estimated OR with 95% CI in Daily Flight Cancellation by Airline",
+    x = "Airline",
+    y = "Estimated OR with CI"
+  ) +
+  theme(legend.position = "right", legend.title = element_blank(),
+        text = element_text(size = 10),
+        axis.text.x = element_text(angle = 60, hjust = 1, size = 8)) + 
+  facet_grid(. ~ term)
+```
 
 <br>
 
@@ -488,7 +580,7 @@ To test the model in different months and airlines, we also conducted a stratifi
 
 \ 1. The daily cancellation flight dataset was extracted from the delay dataset, therefore we only evaluate one source of cancellation, flight cancellation due to delay. Furthermore, we hypothesized that just two factors, adverse weather and COVID-19 cases, affect daily flight cancellations. More elements that might influence real-life cancellation were not considered. As a result, we should note the constraint that this cancellation data does not include cancellations due to other factors, such as air traffic limitations. This restricted the information we could obtain from the cancellation dataset, preventing us from adjusting for variables we suspected were confounding the correlations.
 
-\ 2. What's more, the association between COVID-19 cases and daily flight cancellations was not as strong as we expected.  One reason might be that the research window was too short to discover the association because COVID-19 cases had a time lag and we only counted 3-month cancellations and COVID-19 cases.
+\ 2. The association between COVID-19 cases and daily flight cancellations was not as strong as we expected.  One reason might be that the research window was too short to discover the association because COVID-19 cases had a time lag and we only counted 3-month cancellations and COVID-19 cases.
 
 
 <br>
@@ -506,3 +598,6 @@ In order to better predict the delay time, we need to collect a larger dataset w
 
 ### 6.2 Poisson Model
 
+In order to find the association between COVID-19 cases and daily flight cancellation counts, we could further follow-up this model with longer period of study. Also, it can be improved by adding more different sources of cancellation counts into the model, and add types of cancellation into this model.
+
+<br>
