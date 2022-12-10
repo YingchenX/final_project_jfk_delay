@@ -323,7 +323,7 @@ raw_df %>%
           text = ~text_label, hoverinfo = "text",
           type = "scatter", mode = "markers", alpha = .5) %>% 
   layout(
-    xaxis = list(title = "Carrier Delay (minutes)"),
+    xaxis = list(title = "Temperature (°F)"),
     yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)),
     title = "Temperature vs Delay Time by Month")
 ```
