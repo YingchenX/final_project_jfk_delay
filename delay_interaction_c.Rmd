@@ -16,21 +16,21 @@ raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 
 <br>
 
-**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some categorical predictors including periods of time, months, and airlines, were significantly associated with the total delay time in minutes. To achieve it, we did some visualizations. For tidiness of visualizations, we have adjusted the range of axis.**
+**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some categorical predictors including times of the day, months, and airlines, are significantly associated with the total delay time in minutes. To achieve it, we did some visualizations. For the tidiness of visualizations, we have adjusted the range of axis.**
 
 <br>
 
-The categorical predictors included are:
+Categorical predictors are:
 
-*   **Periods of Time** (no scheduled hour for flight falls within 0 - 4 in the raw dataset)
+*   **Times of the Day** (no scheduled hour for flight falls within 0:00 - 4:59 in the raw dataset)
 
-    *   Morning: if scheduled hour for flight falls within 5 - 8
+    *   Morning: if scheduled hour for flight falls within 5:00 - 8:59 
   
-    *   Noon: if scheduled hour for flight falls within 9 - 13
+    *   Noon: if scheduled hour for flight falls within 9:00 - 13:59
   
-    *   Afternoon: if scheduled hour for flight falls within 14 - 17
+    *   Afternoon: if scheduled hour for flight falls within 14:00 - 17:59
   
-    *   Night: if scheduled hour for flight falls within 18 - 23
+    *   Night: if scheduled hour for flight falls within 18:00 - 23:59
     
 *   **Months**
 
@@ -70,7 +70,7 @@ hour_air = function(air){
   plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
           type = "box", mode = "markers", alpha = .5) %>% 
     layout(
-      xaxis = list(title = "Period of Time"),
+      xaxis = list(title = "Time of the Day"),
       yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 }
 
@@ -98,7 +98,7 @@ raw_df %>%
   plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
           type = "box", mode = "markers", alpha = .5) %>% 
     layout(
-      xaxis = list(title = "Period of Time"),
+      xaxis = list(title = "Time of the Day"),
       yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 }
 
@@ -112,7 +112,7 @@ hour_month_air = function(air){
             type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       boxmode = "group",
-      xaxis = list(title = "Period of Time"),
+      xaxis = list(title = "Time of the Day"),
       yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 }
 
@@ -121,7 +121,7 @@ hour_month_air = function(air){
 
 ## Interaction between Categorical Predictors {.tabset}
 
-### Period*Airline 
+### Time*Airline 
 
 #### Before Stratification by Airline
 
@@ -134,7 +134,7 @@ raw_df %>%
   plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
           type = "box", mode = "markers", alpha = .5) %>% 
     layout(
-      xaxis = list(title = "Period of Time"),
+      xaxis = list(title = "Time of the Day"),
       yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 ```
 
@@ -247,7 +247,7 @@ month_air("United Air Lines")
 ```
 
 
-### Month*Period
+### Month*Time
 
 #### Before Stratification by Month
 
@@ -259,7 +259,7 @@ raw_df %>%
   plot_ly(x = ~hour_c, y = ~delay, color = ~hour_c,
           type = "box", mode = "markers", alpha = .5) %>% 
     layout(
-      xaxis = list(title = "Period of Time"),
+      xaxis = list(title = "Time of the Day"),
       yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 
 ```
@@ -296,7 +296,7 @@ raw_df %>%
           type = "box", mode = "markers", alpha = .5) %>% 
     layout(
       boxmode = "group",
-      xaxis = list(title = "Period of Time"),
+      xaxis = list(title = "Time of the Day"),
       yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)))
 ```
 
@@ -348,5 +348,8 @@ hour_month_air("United Air Lines")
 
 ## Interpretation
 
-We observed that between groups differences existed, and adding interaction terms between the categorical predictors could be one of the options for building the linear regression model. In our further analysis, we would mainly focus on the interaction between month and airline. 
+Based on the graphs, we observed that between-group differences existed, and adding interaction terms between the categorical predictors could be one of the options for building the linear regression model.
 
+We found that there could be a significant interaction between:
+
+*   Month * Airline

@@ -18,6 +18,8 @@ library(tidyr)
 library(plotly)
 library(corrplot)
 library(ggfortify)
+library(rstatix)
+
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -105,21 +107,20 @@ sum(is.na(raw_df)) #_0_ -> good
 
 <br>
 
-# Overview
 
-From the previous data exploration and visualization, we found some interesting trend worthy of further analysis and some independent variables could be good in predicting the possible outcome. Thus, we decided to imply the concept of linear regression model here to build a predictive model for delay time since the outcome is continuous.
+**From the previous data exploration and visualization, we found some interesting trend worthy of further analysis and some independent variables could be ideal in predicting the possible outcome. Thus, we decided to imply the concept of linear regression model here to build a predictive model for delay time since the outcome is continuous.**
 
 <br>
 
 # Variable Description
 
-* Dependent variable of interest: hourly delay time (in minutes)
+* Outcomes of interest: delay time (in minutes)
 
-* Independent variables of interest: 
+* Predictors of interest: 
 
-  * Categorical: airlines, months, time of the day
+  * Categorical: airlines, months, times of the day
 
-  * Continuous: carrier delay time, extreme weather delay time, late arrival delay time, NAS delay time, security delay time, temperature, humidity, visibility, wind speed
+  * Continuous: carrier delay, extreme weather delay, late arrival delay, NAS delay, security delay, temperature, humidity, visibility, wind speed
 
 <br>
 
@@ -127,22 +128,22 @@ From the previous data exploration and visualization, we found some interesting 
 
 <br>
 
-## Data normalization
+## Data Normalization
 
 <br>
 
-### distribution of outcome
+### Distribution of Outcome
 
-```{r}
+```{r out.height = "70%"}
 delay_hist = raw_df %>% 
   ggplot(aes(x = delay)) +
   geom_histogram(fill = "Orange", color = "Orange", bins = 50) +
   geom_vline(aes(xintercept = mean(delay)), color = "blue",
              linetype = "dashed") +
-  labs(title = "Distribution of hourly delay in time, 2021/11/1 to 2022/1/31",
-       x = "Hourly delay in minutes", 
+  labs(title = "Distribution of Delay Time, 11/1/2021 to 1/31/2022",
+       x = "Delay Time (minutes)", 
        y = "Count") +
-  theme_classic()
+  theme_classic() 
 
 delay_hist
 
@@ -162,11 +163,12 @@ To address the two issues above, we can apply a Log transformation to normalize 
 
 <br>
 
-### log transformation
+### Log Transformation
 
-```{r}
+```{r out.height = "70%"}
 log_df = raw_df %>% 
   mutate(log(as.data.frame(delay))) %>% 
+  mutate(month = fct_relevel(month, "Nov", "Dec", "Jan")) %>% 
   select(-date)
 
 logdelay_hist = log_df %>% 
@@ -174,8 +176,8 @@ logdelay_hist = log_df %>%
   geom_histogram(fill = "Orange", color = "Orange", bins = 15) +
   geom_vline(aes(xintercept = mean(delay)), color = "blue",
              linetype = "dashed") +
-  labs(title = "Distribution of Log delay time, 2021/11/1 to 2022/1/31",
-       x = "Log(delay time)", 
+  labs(title = "Distribution of Log Delay Time, 11/1/2021 to 1/31/2022",
+       x = "Log(Delay Time)", 
        y = "Count") +
   theme_classic()
 
@@ -188,7 +190,7 @@ logdelay_hist
 
 <br>
 
-## Effect of potential predictors
+## Effect of Potential Predictors
 
 
 **Motivation:**
@@ -200,7 +202,7 @@ To get a sense of the effect of each predictor.
 
 * For categorical variables:
 
-We first produce boxplots to visualize the distribution of delay time across each categorical group. Then, we perform ANOVA to see if each group have the same average delay time. For those significant, we perform pairwise t-tests using Bonferroni’s correction for the p-values to calculate pairwise differences between the delay time of each group.
+We first produce boxplots to visualize the distribution of delay time across each categorical group. Then, we perform ANOVA to see if each group has the same average delay time. For those significant, we perform pairwise t-tests using Bonferroni’s correction for the p-values to calculate pairwise differences between the delay time of each group.
 
 * For continuous variables:
 
@@ -216,9 +218,9 @@ We first produce scatterplots to visualize the relationship between the continuo
 box_cat = function(cat){
   
   box = log_df %>% 
-  plot_ly(x = ~cat, y = ~delay, color = ~cat,
+    plot_ly(x = ~cat, y = ~delay, color = ~cat,
           type = 'box', colors = "viridis") %>%  
-  layout(
+    layout(
     yaxis = list(title = "Log(Delay Time)"))
 
 }
@@ -228,21 +230,25 @@ box_cat = function(cat){
 
 *Airlines*
 
-```{r}
+```{r echo=FALSE}
+
 #boxplot
 box_cat(log_df$airline) %>% 
   layout(xaxis = list(title = "Airline"))
 
 #One-way ANOVA
-aov(delay ~ airline, data = log_df) %>% summary()
+res.anova <- Anova(lm(delay ~ airline, data = log_df))
+
+anova_summary(res.anova, detailed = TRUE, effect.size = "ges") %>% mutate(p = format(p, scientific = TRUE, digits = 3)) %>% knitr::kable()
 
 #Pairwise t-tests (Bonferroni)
-pairwise.t.test(log_df$delay, log_df$airline, p.adjust.method = "bonferroni")
+pairwise.t.test(log_df$delay, log_df$airline, p.adjust.method = "bonferroni") %>% broom::tidy() %>% mutate(p.value = format(p.value, scientific = TRUE, digits = 3))%>% knitr::kable()
 ```
+
 
 **Highlights:**
 
-* Since the overall p-value (<2e-16) is less than .05, this is an indication that each airline group does not have the same average delay time (in minutes).
+* Since the overall p-value (9.5e-81) is less than .05, this is an indication that each airline group does not have the same average delay time (in minutes).
 
 * The adjusted p-value for the mean difference in delay time between JetBlue Airways _vs._ American Airlines and Delta Air Lines both are <2e-16, which suggests highly different.
 
@@ -252,11 +258,12 @@ pairwise.t.test(log_df$delay, log_df$airline, p.adjust.method = "bonferroni")
 
 *Months*
 
-```{r}
-#boxplot
-box_cat(log_df$month) %>% 
-  layout(xaxis = list(title = "Month"))
+```{r echo=FALSE}
 
+#boxplot
+box_cat(log_df$month) %>%
+  layout(xaxis = list(title = "Month")) 
+  
 #One-way ANOVA
 aov(delay ~ month, data = log_df) %>% summary()
 
@@ -276,7 +283,7 @@ pairwise.t.test(log_df$delay, log_df$month, p.adjust.method = "bonferroni")
 
 *Times of the day ("hour_c")*
 
-```{r}
+```{r echo=FALSE}
 #boxplot
 box_cat(log_df$hour_c) %>% 
   layout(xaxis = list(title = "Times of the day"))
@@ -301,7 +308,7 @@ pairwise.t.test(log_df$delay, log_df$hour_c, p.adjust.method = "bonferroni")
 <br>
 
 
-### continuous predictors
+### Continuous Predictors
 
 ```{r function for scatterplot}
 
@@ -397,7 +404,7 @@ Weather_delay_scatter
 
 <br>
 
-#### Pearson correlation 
+#### Pearson Correlation 
 
 ```{r}
 
@@ -438,13 +445,13 @@ According to the result from Step 1, along with our common senses and previous e
 
 <br>
 
-## Fitting model 1
+## Fitting Model 1
 
 Before fitting the linear model with these 5 predictors, let's check their independence using correlation to filter out highly correlated variables.
 
 <br>
 
-### check collinearity
+### Check Collinearity
 
 ```{r}
 
@@ -487,7 +494,7 @@ As we see above, independence assumption is met and thus we can add all these 5 
 
 <br>
 
-### model 1, without interaction
+### Model 1, Without Interaction
 
 ```{r}
 lm_1 = lm(delay ~ airline + month + hour_c + carrierd + latarrd, data = log_df)
@@ -504,11 +511,11 @@ broom::glance(lm_1) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.v
 <br>
 
 
-## Fitting model 2
+## Fitting Model 2
 
 <br>
 
-### model 2, without interaction
+### Model 2, Without Interaction
 
 ```{r}
 lm_2 = lm(delay ~ ., data = log_df)
@@ -530,7 +537,7 @@ From the previous exploration steps focusing on interactions, we further hypothe
 
 <br>
 
-## Model comparison
+## Model Comparison
 
 To examine if the addition of interaction terms is necessary, we have 4 linear models to be compared, they are:
 
@@ -544,7 +551,7 @@ To examine if the addition of interaction terms is necessary, we have 4 linear m
 
 <br>
 
-### cross-validation
+### Cross-validation
 
 ```{r}
 set.seed(123)
@@ -601,7 +608,7 @@ We generated a diagnostic plot of residuals against fitted values to examine the
 
 <br>
 
-## Residuals vs. fits
+## Residuals vs. Fits
 
 ```{r}
 log_df %>% 
@@ -625,11 +632,11 @@ log_df %>%
 <br>
 
 
-# Conclusion and Discussion
+# Conclusions and Discussions
 
 <br>
 
-In this "Predictive Modeling" section, we fit a linear regression model with 5 predictors, they are: airlines, months, time of the day, carrier delay time, and late arrival delay time. This model is tested to be significant and without collinearity, however, there are still many problems with our current model:
+In this "Predictive Modeling" section, we fit a linear regression model with 5 predictors, they are: airlines, months, times of the day, carrier delay time, and late arrival delay time. This model is tested to be significant and without collinearity, however, there are still many problems with our current model:
 
 \ 1. Relatively small R-square value.
 
@@ -639,7 +646,7 @@ In this "Predictive Modeling" section, we fit a linear regression model with 5 p
 
 \ 4. Results seem unreliable, i.e., it is hard for us to agree on the suggested result showing weather will not affect the delay time.
 
-\ 5. Inefficient predictive modeling. Although we do not need to worry too much about the parsimony of model when doing prediction, the number of parameters in model 1 is still too many compared to general predictive model. Meanwhile, even with 5 predictors, the R-square is still not strong, thus I more doubt about the efficiency of our final model.
+\ 5. Inefficient predictive modeling. Although the parsimony of model is not the first priority when doing prediction, the number of parameters in model 1 is still too many compared to general predictive model. Meanwhile, even with 5 predictors, the R-square is still not strong, thus I more doubt about the efficiency of our final model.
 
 To this end, we come up with some possible solutions:
 
@@ -655,3 +662,4 @@ To this end, we come up with some possible solutions:
 We hope we can solve the above problems later with more effort!
 
 
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>

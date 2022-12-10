@@ -15,6 +15,7 @@ library(vars)
 library(magrittr)
 library(kableExtra)
 
+
 knitr::opts_chunk$set(
 	echo = TRUE,
 	warning = FALSE,
@@ -38,9 +39,9 @@ cancel_tidy = read_csv("tidied_data/cancel_tidy.csv")
 
 ## Data Description
 
-We would like to explore the relationship between cancellation and some predictors. The number of cancellations each day is therefore regarded as the result (dependent variable), and exposures of interest are regarded as the independent variables.
+We would like to explore the relationship between cancellation counts and some predictors. The number of cancellations each day is therefore regarded as the result (dependent variable), and exposures of interest are regarded as the independent variables.
 
-* `daily_cancel`: daily flight cancellation count in JFK airport
+* `daily_cancel`: daily flight cancellation counts in JFK airport
 * `airline_name`: domestic airline 
 * `year_month`: the date format in "Year Month"
 * `temperature`: daily average dry bulb temperature (°F)
@@ -53,7 +54,7 @@ We would like to explore the relationship between cancellation and some predicto
  
 <br>
 
-### Distribution of Daily Flight Cancellations
+### Distribution of Daily Flight Cancellations Counts
 
 ```{r, out.width = "80%"}
 cancel_tidy %>% 
@@ -62,7 +63,7 @@ cancel_tidy %>%
   labs(
     x = "Number of Daily Flight Cancellations",
     y = "Count",
-    title = "Distribution of Daily Flight Cancellations",
+    title = "Distribution of Daily Flight Cancellations Counts",
     subtitle = "11/1/2021 to 1/31/2022"
   ) +
   scale_x_continuous(
@@ -104,7 +105,7 @@ cancel_airline %>%
 ```
 
 
-```{r, fig.height = 7, out.width = "80%"}
+```{r}
 cancel_airline %>% 
   mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan")) %>%
   ggplot(aes(x = year_month, y = Total_number_of_cancellation, fill = airline_name)) +
@@ -121,10 +122,6 @@ cancel_airline %>%
     subtitle = "Nov, 2021 to Jan, 2022"
   )
 
-```
-
-
-```{r, fig.height = 7, out.width = "80%"}
 cancel_airline %>% 
   mutate(year_month = fct_relevel(year_month, "2021-Nov", "2021-Dec", "2022-Jan")) %>% 
   ggplot(aes(x = airline_name, y = Total_number_of_cancellation, fill = year_month)) +
@@ -140,7 +137,10 @@ cancel_airline %>%
     title = "Flight Cancellations by Month",
     subtitle = "Nov, 2021 to Jan, 2022"
   )
+
 ```
+
+
 
 <br>
 
@@ -176,7 +176,7 @@ scatter_plot <- subplot(cancel_plot, covid_plot, nrows = 2, shareX = TRUE) %>%
 scatter_plot
 ```
 
-We used the lag selection criteria and Akaike's information criterion (AIC) to select 6 days as the optimal time lag. Then, we constructed a new variable named `covid_lag6`, equivalent to the value of COVID-19 cases with a 6-day time lag.
+We used the lag selection criteria and Akaike information criterion (AIC) to select 6 days as the optimal time lag. Then, we constructed a new variable named `covid_lag6`, equivalent to the value of COVID-19 cases with a 6-day time lag.
 
 ```{r, include = FALSE}
 VARselect(data.frame(cancel_covid$daily_cancel, cancel_covid$covid_case))
@@ -207,7 +207,7 @@ poisson %>%
     p.value = format(p.value, scientific = TRUE, digits = 3)
   ) %>% 
   dplyr::select(term, estimate, OR, p.value) %>% 
-  knitr::kable(digits = 3, col.names = c("Terms", "Estimate (log(OR))", "Estimated adjusted OR", "P-value"), caption = "Poisson model") %>% 
+  knitr::kable(digits = 3, col.names = c("Terms", "Estimate (log(OR))", "Estimated adjusted OR", "P-value")) %>% 
   kable_styling()
 ```
 
@@ -235,7 +235,7 @@ cancel_tidy %>%
   pivot_wider(
     names_from = term, 
     values_from = estimate) %>% 
-  knitr::kable(digits = 6, caption = "Poisson model nested by month")%>% 
+  knitr::kable(digits = 6)%>% 
   kable_styling()
 ```
 
@@ -264,7 +264,7 @@ poisson_by_month = cancel_tidy %>%
 
 poisson_by_month %>% 
   filter(term != "(Intercept)" ) %>% 
-  knitr::kable(digits = 3, align = "llccc", col.names = c("Month", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"), caption = "Overview of estimated OR, 95% CI and P-value") %>% 
+  knitr::kable(digits = 3, align = "llccc", col.names = c("Month", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value")) %>% 
   kable_styling()
 ```
 
@@ -272,11 +272,11 @@ poisson_by_month %>%
 
 #### Plot
 
-Create a plot showing the estimated ORs and CIs for each month
 
 ```{r}
 poisson_by_month %>%
   filter(term != "(Intercept)") %>%
+    mutate(month = fct_relevel(month, "November", "December", "January")) %>% 
   ggplot(aes(x = month, y = OR, color = term)) + 
   geom_point(show.legend = FALSE, aes()) +
   geom_errorbar(aes(ymin = CI_lower, 
@@ -309,7 +309,7 @@ cancel_tidy %>%
   pivot_wider(
     names_from = term, 
     values_from = estimate) %>% 
-  knitr::kable(digits = 6, caption = "Poisson model nested by airline") %>% 
+  knitr::kable(digits = 6) %>% 
   kable_styling()
 ```
 
@@ -338,8 +338,7 @@ poisson_by_airline %>%
   filter(term != "(Intercept)" ) %>% 
   knitr::kable(digits = 3, 
                align = "llccc", 
-               col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"), 
-               caption = "Overview of estimated OR, 95% CI and P-value")%>% 
+               col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value"))%>% 
   kable_styling()
 ```
 
@@ -347,7 +346,6 @@ poisson_by_airline %>%
 
 #### Plot
 
-Create a plot showing the estimated ORs and CIs for each airline
 
 ```{r}
 poisson_by_airline %>%
@@ -373,10 +371,14 @@ poisson_by_airline %>%
 
 ## Summary
 
-Our Poisson regression model indicates that all our main effects (weather-related factors and COVID-19 cases) are statistically significant, as we proposed. Since the data exploration and pre-analysis indicated that there indeed are differences by month and airline, we then stratified our Poisson model by these two factors. An interesting finding is that although the regression output shows that daily COVID-19 cases have a statistically significant effect on daily flight cancellation, after stratifying month and airline, there is no obvious trend between daily COVID-19 cases and daily flight cancellation based on graph. 
+Our Poisson regression model indicates that all our main effects (weather-related factors and COVID-19 cases) are statistically significant, as we proposed. Since the data exploration and pre-analysis indicated that there indeed are differences by month and airline, we then stratified our Poisson model by these two factors. An interesting finding is that although the regression output shows that daily COVID-19 cases have a statistically significant effect on daily flight cancellation, after stratified by month and airline, there is no obvious trend between daily COVID-19 cases and daily flight cancellation based on graph. 
+
+<br>
 
 ## Discussion
 
-The daily cancellation flight dataset was extracted from the delay dataset, therefore we only evaluate one source of cancellation, flight cancellation due to delay. Furthermore, we hypothesized that just two factors, adverse weather and COVID-19 cases, affect daily flight cancellations. More elements that might influence real-life cancellation were not considered. As a result, we should note the constraint that this cancellation data does not include cancellations due to other factors, such as air traffic limitations. This restricted the information we could obtain from the cancellation dataset, preventing us from adjusting for variables we suspected were confounding the correlations.
+We hypothesized that just two factors, adverse weather and COVID-19 cases, affect daily flight cancellations. I More elements that might influence real-life cancellation were not considered. As a result, we should note the constraint that this cancellation data does not include cancellations due to other factors, such as air traffic limitations. This restricted the information we could obtain from the cancellation dataset, preventing us from adjusting for variables we suspected were confounding the correlations.
 
 What's more, the association between COVID-19 cases and daily flight cancellations was not as strong as we expected.  One reason might be that the research window was too short to discover the association because COVID-19 cases had a time lag and we only counted 3-month cancellations and COVID-19 cases.
+
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>

@@ -359,7 +359,7 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="xx.html">Linear Regression</a>
+      <a href="regression_delay.html">Predictive Modeling</a>
     </li>
     <li>
       <a href="web_poisson.html">Poisson Regression</a>
@@ -427,9 +427,9 @@ from NYC is booming. However, trip planning is always accompanied by the
 issue of potential flight delay, especially in busy metropolitan
 airports like JFK. Using JFK departed flights as an example, we’re
 interested in exploring the factors that are potentially related with
-flight delay (e.g., airlines, weather, and COVID conditions), in order
-to give the holiday travelers a better sense of what to expect regarding
-flight delay for this holiday season.</p>
+flight delay or cancellation (e.g., airlines, weather, and COVID
+conditions), in order to give the holiday travelers a better sense of
+what to expect regarding flight schedules for this holiday season.</p>
 <p>Our analysis focuses on the flight delay data from <a
 href="https://www.transtats.bts.gov/ONTIME/">the Bureau of
 Transportation Statistics (BTS)</a>, with the most popular airlines’
@@ -446,7 +446,7 @@ NYC Department of Health and Mental Hygiene (DOHMH)</a>.</p>
 <div id="key-questions-we-care-about" class="section level2">
 <h2>Key Questions We Care About</h2>
 <p><br></p>
-<p><strong>1. What are the key trends of the flights in JFK during last
+<p><strong>1. What are the key trends of the flights at JFK during last
 holiday season?</strong></p>
 <ul>
 <li>Which flight route from JFK, or which carrier had a record of delay
@@ -454,10 +454,10 @@ or cancellation?
 <ul>
 <li>Let’s map it!</li>
 </ul></li>
-<li>How’s the pattern of delay or cancellation looks like? Is there any
-similarity with those pattern of covid cases?
+<li>How does the pattern of delay or cancellation look like? Are there
+any similarities with those pattern of COVID cases?
 <ul>
-<li>Piles of plots generated here, for each carrier, in each day of the
+<li>Piles of plots generated here - for each carrier, in each day of the
 months!</li>
 </ul></li>
 </ul>
@@ -465,19 +465,17 @@ months!</li>
 flight delay or cancellation in JFK during last holiday
 season?</strong></p>
 <ul>
-<li>Could categorical variables like the departure periods in a day, the
-month of departure, or type of carriers affect the minute of flight
-delay?
+<li>Could categorical variables and continuous variables affect flight
+delay time?
 <ul>
-<li>Before we put them in a linear model, let’s do some stratified
-analysis first!</li>
+<li>Before we put them in any model, let’s do some interaction check
+first!</li>
 </ul></li>
-<li>Could continuous variables like types of delay, or weather specific
-indexes (temperature, humidity, visibility, wind speed, etc.) affect the
-minute of flight delay?
+<li>Could categorical variables and continuous variables affect
+cancellation?
 <ul>
-<li>Before we put them in a linear model, let’s do some interaction
-check first!</li>
+<li>Before we put them in any model, let’s do some stratified analysis
+first!</li>
 </ul></li>
 </ul>
 <p><strong>3. Are there significant associations of multiple factors
@@ -490,8 +488,8 @@ season?</strong></p>
 <li>Poisson regression for cancellations (count)</li>
 </ul></li>
 </ul>
-<p><strong>4. How to spend my time in JFK during the flight
-delay?</strong></p>
+<p><strong>4. How to bear my time in JFK waiting for the
+flight?</strong></p>
 <ul>
 <li>A guidance to spend your time in JFK to wait for the delayed
 flights, and we also generated a bunch of pictures via AI as well (just
