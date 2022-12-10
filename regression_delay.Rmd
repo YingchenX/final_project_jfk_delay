@@ -210,7 +210,7 @@ We first produce scatterplots to visualize the relationship between the continuo
 
 <br>
 
-### categorical predictors
+### Categorical Predictors
 
 ```{r function for boxplot}
 
@@ -237,20 +237,20 @@ box_cat(log_df$airline) %>%
   layout(xaxis = list(title = "Airline"))
 
 #One-way ANOVA
-res.anova <- Anova(lm(delay ~ airline, data = log_df))
+air.anova <- Anova(lm(delay ~ airline, data = log_df))
 
-anova_summary(res.anova, detailed = TRUE, effect.size = "ges") %>% mutate(p = format(p, scientific = TRUE, digits = 3)) %>% knitr::kable()
+anova_summary(air.anova, detailed = TRUE, effect.size = "ges") %>% mutate(p = format(p, scientific = TRUE, digits = 3)) %>% knitr::kable()
 
 #Pairwise t-tests (Bonferroni)
-pairwise.t.test(log_df$delay, log_df$airline, p.adjust.method = "bonferroni") %>% broom::tidy() %>% mutate(p.value = format(p.value, scientific = TRUE, digits = 3))%>% knitr::kable()
+pairwise.t.test(log_df$delay, log_df$airline, p.adjust.method = "bonferroni") %>% broom::tidy() %>% mutate(p.value = format(p.value, scientific = TRUE, digits = 3)) %>% knitr::kable()
 ```
 
 
 **Highlights:**
 
-* Since the overall p-value (9.5e-81) is less than .05, this is an indication that each airline group does not have the same average delay time (in minutes).
+* Since the overall p-value (9.5e-81) is less than .05, this is an indication that each airline group does not have the same average delay time.
 
-* The adjusted p-value for the mean difference in delay time between JetBlue Airways _vs._ American Airlines and Delta Air Lines both are <2e-16, which suggests highly different.
+* The adjusted p-value for the mean difference in delay time between JetBlue Airways _vs._ American Airlines and Delta Air Lines both are <4.0e-46, which suggests highly different.
 
 * The adjusted p-value for the mean difference in delay time between American Airlines _vs._ Republic Airways is 7.3e-08, which also suggests highly different.
 
@@ -263,12 +263,14 @@ pairwise.t.test(log_df$delay, log_df$airline, p.adjust.method = "bonferroni") %>
 #boxplot
 box_cat(log_df$month) %>%
   layout(xaxis = list(title = "Month")) 
-  
+
 #One-way ANOVA
-aov(delay ~ month, data = log_df) %>% summary()
+mon.anova <- Anova(lm(delay ~ month, data = log_df))
+
+anova_summary(mon.anova, detailed = TRUE, effect.size = "ges") %>% mutate(p = format(p, scientific = TRUE, digits = 3)) %>% knitr::kable()
 
 #Pairwise t-tests (Bonferroni)
-pairwise.t.test(log_df$delay, log_df$month, p.adjust.method = "bonferroni")
+pairwise.t.test(log_df$delay, log_df$month, p.adjust.method = "bonferroni") %>% broom::tidy() %>% mutate(p.value = format(p.value, scientific = TRUE, digits = 3)) %>% knitr::kable()
 ```
 
 **Highlights:**
@@ -281,20 +283,20 @@ pairwise.t.test(log_df$delay, log_df$month, p.adjust.method = "bonferroni")
 
 <br>
 
-*Times of the day ("hour_c")*
+*Times of the Day*
 
 ```{r echo=FALSE}
 #boxplot
 box_cat(log_df$hour_c) %>% 
-  layout(xaxis = list(title = "Times of the day"))
+  layout(xaxis = list(title = "Time of the Day"))
 
 #One-way ANOVA
-aov(delay ~ hour_c, data = log_df) %>% 
-  summary() 
-  
+tim.anova <- Anova(lm(delay ~ hour_c, data = log_df))
+
+anova_summary(tim.anova, detailed = TRUE, effect.size = "ges") %>% mutate(p = format(p, scientific = TRUE, digits = 3)) %>% knitr::kable()
 
 #Pairwise t-tests (Bonferroni)
-pairwise.t.test(log_df$delay, log_df$hour_c, p.adjust.method = "bonferroni")
+pairwise.t.test(log_df$delay, log_df$hour_c, p.adjust.method = "bonferroni") %>% broom::tidy() %>% mutate(p.value = format(p.value, scientific = TRUE, digits = 3)) %>% knitr::kable()
 ```
 
 **Highlights:**
@@ -327,7 +329,7 @@ scat_con = function(con){
 
 <br>
 
-*Types of delay*
+*Types of Delay*
 
 ```{r}
 # Carrier Delay
@@ -351,7 +353,7 @@ SD_s = scat_con(log_df$securityd) %>%
   layout(xaxis = list(title = "Security Delay"))
 
 Type_delay_scatter = subplot(CD_s, EDW_s, LAD_s, NASD_s, SD_s, nrows = 2, titleY = TRUE, titleX = TRUE, margin = 0.1) %>% 
-  layout(showlegend = FALSE, title = 'Relationships between log(delay) and 5 types of delay',
+  layout(showlegend = FALSE, title = 'Relationships between Log(delay) and 5 Types of Delay',
          plot_bgcolor = '#e5ecf6', 
          xaxis = list( 
            zerolinecolor = '#ffff', 
@@ -368,7 +370,7 @@ Type_delay_scatter
 
 <br>
 
-*Weather specific delay*
+*Weather Specific Delay*
 
 ```{r}
 # Temperature
@@ -388,7 +390,7 @@ WS_s = scat_con(log_df$wind_s) %>%
   layout(xaxis = list(title = "Wind Speed"))
 
 Weather_delay_scatter = subplot(T_s, H_s, V_s, WS_s, nrows = 2, titleY = TRUE, titleX = TRUE, margin = 0.1) %>% 
-  layout(showlegend = FALSE, title = 'Relationships between log(delay) and 4 types of weather specific delay',
+  layout(showlegend = FALSE, title = 'Relationships between Log(delay) and 4 Types of Weather Specific Delay',
          plot_bgcolor = '#e5ecf6', 
          xaxis = list( 
            zerolinecolor = '#ffff', 
@@ -453,7 +455,7 @@ Before fitting the linear model with these 5 predictors, let's check their indep
 
 ### Check Collinearity
 
-```{r}
+```{r out.height = "70%"}
 
 CM_1 = log_df %>% 
   select(airline, month, hour_c, carrierd, latarrd) %>% 
@@ -506,7 +508,7 @@ broom::glance(lm_1) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.v
 
 * The F-value is 603 (very large) with p-value < 2.2e-16 (very small), which suggests that this regression model is statistically significant.
 
-* However, the r-square value is only 0.422, which means only 42% of the variability observed in the delay time is explained by the regression model. Again, this may be due to limitations of our source data.
+* However, the r-squared value is only 0.422, which means only 42% of the variability observed in the delay time is explained by the regression model. Again, this may be due to limitations of our source data.
 
 <br>
 
@@ -527,7 +529,7 @@ broom::glance(lm_2) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.v
 
 * The F-value is 443 (very large) with p-value < 2.2e-16 (very small), which suggests that this regression model is also statistically significant.
 
-* Same as model 1, the r-square value is only 0.452, which is still not sufficient for good prediction purpose. The difference in r-square values from model 1 and model 2 also implies that the additional predictors added into model 2 are not necessary.
+* Same as model 1, the r-squared value is only 0.452, which is still not sufficient for good prediction purpose. The difference in r-squared values from model 1 and model 2 also implies that the additional predictors added into model 2 are not necessary.
 
 <br>
 
@@ -543,9 +545,11 @@ To examine if the addition of interaction terms is necessary, we have 4 linear m
 
 \ Model 1. delay ~ airline + month + hour_c + carrierd + latarrd
 
-\ Model 2. delay ~ .
+\ Model 2. delay ~ . 
+_NOTE:_ . stands for all predictors.
 
-\ Model 3. delay ~ airline + month + hour_c + carrierd + latarrd + temperature + temperature * month + carrierd * airline + month * airline, by assuming an interaction between temperature and month, we need to include both variable into the model as well.
+\ Model 3. delay ~ airline + month + hour_c + carrierd + latarrd + temperature + temperature * month + carrierd * airline + month * airline
+_NOTE:_ By assuming an interaction between temperature and month, we need to include both variable into the model as well.
 
 \ Model 4. delay ~ . + temperature * month + carrierd * airline + month * airline
 
@@ -592,10 +596,9 @@ cv_df %>%
 
 * On the RMSE scale, there is not much difference between the 4 models, so we will **choose model 1 for parsimony**.
 
+<br>
 
 # Step 3: Model Diagnostics
-
-<br>
 
 **Motivation:**
 
@@ -638,25 +641,27 @@ log_df %>%
 
 In this "Predictive Modeling" section, we fit a linear regression model with 5 predictors, they are: airlines, months, times of the day, carrier delay time, and late arrival delay time. This model is tested to be significant and without collinearity, however, there are still many problems with our current model:
 
-\ 1. Relatively small R-square value.
+1.    Relatively small R-squared value.
 
-\ 2. The bad fit of residuals versus fits plot.
+2.    The bad fit of residuals versus fits plot.
 
-\ 3. Unclear linearity between the outcome variable and each predictor.
+3.    Unclear linearity between the outcome variable and each predictor.
 
-\ 4. Results seem unreliable, i.e., it is hard for us to agree on the suggested result showing weather will not affect the delay time.
+4.    Results seem unreliable, i.e., it is hard for us to agree on the suggested result showing weather will not affect the delay time.
 
-\ 5. Inefficient predictive modeling. Although the parsimony of model is not the first priority when doing prediction, the number of parameters in model 1 is still too many compared to general predictive model. Meanwhile, even with 5 predictors, the R-square is still not strong, thus I more doubt about the efficiency of our final model.
+5.    Inefficient predictive modeling. Although the parsimony of model is not the first priority when doing prediction, the number of parameters in model 1 is still too many compared to general predictive model. Meanwhile, even with 5 predictors, the R-square is still not strong, thus I more doubt about the efficiency of our final model.
+
+# Next Step
 
 To this end, we come up with some possible solutions:
 
-\ 1. Try to apply a different model (other than linear regression) for the outcome data.
+1.    Try to apply a different model (other than linear regression) for the outcome data.
 
-\ 2. Collect a dataset with longer time intervals, currently, our data were collected between November 2021 to January 2022 which is a very short period to observe a predictable trend. Meanwhile, the weather of these 3 months will be very similar in New York City, this could be the explanation of the non-commonsense finding about weather-specific variables. A larger dataset with data collected on longer time intervals is needed to solve the problem.
+2.    Collect a dataset with longer time intervals, currently, our data were collected between November 2021 to January 2022 which is a very short period to observe a predictable trend. Meanwhile, the weather of these 3 months will be very similar in New York City, this could be the explanation of the non-commonsense finding about weather-specific variables. A larger dataset with data collected on longer time intervals is needed to solve the problem.
 
-\ 3. Modify the dependent variables, e.g., create delay time categories into "short", "bearable", "extreme", probably with multiple levels.
+3.    Modify the dependent variables, e.g., create delay time categories into "short", "bearable", "extreme", probably with multiple levels.
 
-\ 4. Modify the independent variables, e.g., humidity, which was observed a non-linear relationship with delay time, can be coded as a ordinal variable.
+4.    Modify the independent variables, e.g., humidity, which was observed a non-linear relationship with delay time, can be coded as a ordinal variable.
 
 
 We hope we can solve the above problems later with more effort!
