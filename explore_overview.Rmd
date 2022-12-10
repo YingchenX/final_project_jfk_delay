@@ -73,23 +73,23 @@ all %>%
   addPopups(-73.77932, 40.63945, content, options = popupOptions(closeButton = TRUE))
 ```
 
-Here is an interactive map showing 66 destination airports which were departed from JFK with records of delay/cancellation from Nov, 2021 to Jan, 2022. <br>
-To keep our models parsimonious, we did not include destination airport as a predictor. However, it is still an interesting factor to explore. We investigated the distribution of delay and cancellation counts by each destination airports, and check if the distribution differs by different airlines. Moreover, we found that LAX and SFO have outstanding counts of delay and cancellation and we took a closer look at the underlying factors behind those delays and cancellations.  
+Here is an interactive map showing 66 destination airports which were departed from JFK with records of delay and/or cancellation from Nov, 2021 to Jan, 2022. <br>
+To keep our models parsimonious, we did not include destination airport as a predictor. However, it is still an interesting factor to explore. We investigated the distribution of delay and cancellation counts by each destination airports, and checked if the distribution differs by different airlines. Moreover, we found that LAX and SFO have outstanding counts of delay and cancellation and we took a closer look at the underlying factors behind those delays and cancellations.  
 
 <br>
 
 
 ## [Cancellation and Delay](https://sn2ylh-siyue-gao.shinyapps.io/delay_cancelation/)
 
-We then created a **Shiny App** for the audience to engage in our data exploration process. The audience could select which airline and which month they concern and get the user-selected outputs. In the **Cancellation** tab, they could observe the number of cancellations and the number of COVID cases in each day of a month. In the **Delay** tab, they could observe the number of delays and the average delay time in minutes in each day of a month.
+We then created a **Shiny App** for the audience to engage in our data exploration process. The audience could select which airline and which month they concern and get the user-selected outputs. In the **Cancellation** tab, you could observe the number of cancellations and the number of COVID cases on each day of a month. In the **Delay** tab, you could observe the number of delays and the average delay time (in minutes) on each day of a month.
 
 <br>
 
 ## [Categorical Predictors](delay_interaction_c.html)
 
-**Delay time** in minutes is one of our outcome of interests and we decided to conduct a **linear regression model**. Besides the main effects, we would like to check if there are any significant effect modifiers in our model. In this part, we investigated the interaction between the categorical predictors, including:
+**Delay time** is one of our outcome of interests and we decided to conduct a **linear regression model**. Besides the main effects, we would like to check if there are any significant effect modifiers in our model. In this part, we investigated the interaction between the categorical predictors, including:
 
-*   Periods of Time
+*   Times of the Day
 *   Months
 *   Airlines
 
@@ -110,4 +110,4 @@ In our drafted **linear regression model**, there are a few continuous predictor
 *   Visibility
 *   Wind Speed
 
-We were also interested in whether our continuous predictors could have different effects on different levels of periods of time, months, or airlines. Through the plots with different strata, there could be a few trends to explore.
+We were also interested in whether our continuous predictors could have different effects on different levels of times of the day, months, or airlines. Through the plots with different strata, there could be a few trends to explore.
