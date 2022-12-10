@@ -92,7 +92,7 @@ As in the draft project proposal, we would like to do some reviews on the three 
 However, considering the availability and scale of the accessible and available data, we switched our main topic to focus on JFK Airport's delay and cancellation data from 11/1/2021 to 1/31/2022. And the weather and COVID cases data within that time range were accordingly. Based on these information, our final questions are below:
 
 * What are the key trends of the flights at JFK during last holiday season?
-* What are the potential factors that contribute to the flight delay or cancellation in JFK during last holiday season?
+* What are the potential factors that contribute to the flight delay or cancellation at JFK during last holiday season?
 * Are there significant associations of multiple factors with JFK flight delays and cancellations during last holiday season?
 
 &nbsp;
@@ -517,7 +517,7 @@ poisson %>%
   kable_styling()
 ```
 
-To test the model in different months and airlines, we also conducted a stratification analysis. We graphed these risk ratios for the coefficients (i.e., the exponentiated coefficien) that show the difference in daily flight cancellations in JFK airport by month and by airline for the purpose of illustration for both month and airline. Along with the p-value, we also provided 95% confidence intervals, which were calculated as the exponentiated coefficient plus or minus 1.96 times the standard error.
+To test the model in different months and airlines, we also conducted a stratification analysis. We graphed these risk ratios for the coefficients (i.e., the exponentiated coefficien) that show the difference in daily flight cancellations at JFK airport by month and by airline for the purpose of illustration for both month and airline. Along with the p-value, we also provided 95% confidence intervals, which were calculated as the exponentiated coefficient plus or minus 1.96 times the standard error.
 
 ```{r, include = FALSE}
 poisson_by_month = cancel_tidy %>%

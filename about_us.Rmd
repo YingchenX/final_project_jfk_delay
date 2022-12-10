@@ -24,7 +24,7 @@ h1.title {
 
 We're a group of graduate students at Columbia University Mailman School of Public Health. 
 
-The mutual interest about travel and the shared experience of waiting for delayed flights in JFK united us together to do this project. 
+The mutual interest about travel and the shared experience of waiting for delayed flights at JFK united us together to do this project. 
 
 Our technical skill sets of coding in R would thank to [P8105 Data Science I](https://p8105.com/index.html) taught by Prof. Jeff Goldsmith in fall 2022.
 
