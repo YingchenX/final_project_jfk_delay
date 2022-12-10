@@ -45,7 +45,7 @@ Our analysis focuses on the flight delay data from [the Bureau of Transportation
   * Which flight route from JFK, or which carrier had a record of delay or cancellation? 
       *  Let's map it!
   * How does the pattern of delay or cancellation look like? Are there any similarities with those pattern of COVID cases? 
-      *  Piles of plots generated here - for each carrier, in each day of the months!
+      *  Piles of plots generated here - for each carrier, on each day of the months!
   
   
 **2. What are the potential factors that contribute to the flight delay or cancellation at JFK during last holiday season?**

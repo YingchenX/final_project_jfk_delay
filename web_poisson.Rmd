@@ -41,7 +41,7 @@ cancel_tidy = read_csv("tidied_data/cancel_tidy.csv")
 
 We would like to explore the relationship between cancellation counts and some predictors. The number of cancellations each day is therefore regarded as the result (dependent variable), and exposures of interest are regarded as the independent variables.
 
-* `daily_cancel`: daily flight cancellation counts in JFK airport
+* `daily_cancel`: daily flight cancellation counts at JFK airport
 * `airline_name`: domestic airline 
 * `year_month`: the date format in "Year Month"
 * `temperature`: daily average dry bulb temperature (°F)
