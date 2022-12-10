@@ -11,17 +11,16 @@ knitr::opts_chunk$set(echo = TRUE,
 library(tidyverse)
 library(plotly)
 
-
 raw_df = read_csv("Reg_data_exp/raw_for_exp.csv")
 ```
 
 <br>
 
-**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some continuous predictors and airlines, months, periods of time, respectively, were significantly associated with the total delay time in minutes. To achieve it, we did some visualizations. For tidiness of visualizations, we have adjusted the range of axis.**
+**We would like to conduct a linear regression on delay time in minutes. In this case, we would need to check if the interactions between some continuous predictors and airlines, months, times of the day, respectively, are significantly associated with the delay time. To achieve it, we did some visualizations. For the tidiness of visualizations, we have adjusted the range of axis.**
 
 <br>
 
-The continuous predictors included:
+Continuous predictors are:
 
 *   **Types of Delay** (in minutes; five categories in total, determined by the U.S. Department of Transportation, reported by [the Bureau of Transportation](https://www.bts.gov/explore-topics-and-geography/topics/airline-time-performance-and-causes-flight-delays))
 
@@ -72,7 +71,7 @@ cont_month = function(cont){
 cont_hour = function(cont){
   hour = raw_df %>% 
     mutate(
-      text_label = str_c("Period: ", hour_c)) %>% 
+      text_label = str_c("Time: ", hour_c)) %>% 
         plot_ly(x = ~cont, y = ~delay, color = ~hour_c,
           text = ~text_label, hoverinfo = "text",
           type = "scatter", mode = "markers", alpha = .5)
@@ -262,16 +261,14 @@ cont_hour(raw_df$wind_s) %>%
     yaxis = list(title = "Delay Time (minutes)", range = c(0, 400)))
 ```
 
-
-
 <br>
 
 ### Interpretation
 
-Based on the graphs, we found that there could be significant interactions between:
+Based on the graphs, we found that there could be two additional significant interactions between:
 
-1.    Carrier Delay * Airline
+*   Carrier Delay * Airline
 
-2.    Temperature * Month
+*   Temperature * Month
 
 For the following statistical analysis, we would focus on these interaction terms to see if they are necessary to be included in our linear regression model.
