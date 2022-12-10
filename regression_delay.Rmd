@@ -126,11 +126,7 @@ sum(is.na(raw_df)) #_0_ -> good
 
 # Step 1: Data Exploration
 
-<br>
-
 ## Data Normalization
-
-<br>
 
 ### Distribution of Outcome
 
@@ -308,7 +304,6 @@ pairwise.t.test(log_df$delay, log_df$hour_c, p.adjust.method = "bonferroni") %>%
 * The adjusted p-value for the mean difference in delay time between noon _vs._ night is 2.22e-07, which also suggests highly different.
 
 <br>
-
 
 ### Continuous Predictors
 
@@ -512,10 +507,7 @@ broom::glance(lm_1) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.v
 
 <br>
 
-
 ## Fitting Model 2
-
-<br>
 
 ### Model 2, Without Interaction
 
@@ -543,15 +535,17 @@ From the previous exploration steps focusing on interactions, we further hypothe
 
 To examine if the addition of interaction terms is necessary, we have 4 linear models to be compared, they are:
 
-\ Model 1. delay ~ airline + month + hour_c + carrierd + latarrd
+\ **Model 1.** delay ~ airline + month + hour_c + carrierd + latarrd
 
-\ Model 2. delay ~ . 
+\ **Model 2.** delay ~ .  
+
 _NOTE:_ . stands for all predictors.
 
-\ Model 3. delay ~ airline + month + hour_c + carrierd + latarrd + temperature + temperature * month + carrierd * airline + month * airline
+\ **Model 3.** delay ~ airline + month + hour_c + carrierd + latarrd + temperature + temperature * month + carrierd * airline + month * airline
+
 _NOTE:_ By assuming an interaction between temperature and month, we need to include both variable into the model as well.
 
-\ Model 4. delay ~ . + temperature * month + carrierd * airline + month * airline
+\ **Model 4.** delay ~ . + temperature * month + carrierd * airline + month * airline
 
 <br>
 
@@ -584,7 +578,7 @@ cv_df %>%
     names_prefix = "rmse_") %>% 
   mutate(model = fct_inorder(model)) %>% 
   ggplot(aes(x = model, y = rmse, fill = model)) + 
-  geom_violin() +
+  geom_violin(alpha = .7) +
   labs(x = "Model", y = "Root Mean Square Error (RMSE)",
        title = "Model Comparison of the Cross-Validated Prediction Error") +
   scale_x_discrete(labels = c("Model 1", "Model 2", "Model 3", "Model 4"))
@@ -603,7 +597,6 @@ cv_df %>%
 **Motivation:**
 
 After we choosing model 1 as the final model, we would like to look further into the model itself, i.e., model performance.
-
 
 **Plan:**
 
@@ -625,15 +618,13 @@ log_df %>%
 
 * From the residuals versus fits plot, we observe a decreasing linear relationship between residuals and fitted values, which is not a good sign for model performance. This plot suggests the following 3 issues with model 1 that need our further inspection:
 
-\ 1. Relationship is NOT LINEAR.
+  1.    Relationship is NOT LINEAR.
 
-\ 2. Variances of the error terms are NOT EQUAL.
+  2.    Variances of the error terms are NOT EQUAL.
 
-\ 3. Outliers EXIST.
-
+  3.    Outliers EXIST.
 
 <br>
-
 
 # Conclusions and Discussions
 
