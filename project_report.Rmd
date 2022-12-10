@@ -248,7 +248,7 @@ We then created a **Shiny App** for the audience to engage in our data explorati
 ### 3.3 Categorical Predictors
 
 **Delay time** in minutes is one of our outcome of interests and we decided to conduct a **linear regression model**. Besides the main effects, we would like to check if there are any significant effect modifiers in our model. In this part, we investigated the interaction between the categorical predictors, including Periods of Time， Months，and Airlines.  
-Our exploration and visualization process hinted that between groups differences are existed, and adding interaction terms between the categorical predictors could be one of the options for building the linear regression model. The following plots could hint that interactions between the categorical variables might exist, but we still need statistical analysis to prove our findings. In our analysis, we mainly focus on the interaction between **month and airline**. 
+Our exploration and visualization process hinted that between groups differences existed, and adding interaction terms between the categorical predictors could be one of the options for building the linear regression model. The following plots could hint that interactions between the categorical variables might exist, but we still need statistical analysis to prove our findings. In our analysis, we mainly focused on the interaction between **month and airline**. 
 
 
 ```{r, out.height = "60%"}
