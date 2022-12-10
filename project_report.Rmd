@@ -544,9 +544,9 @@ poisson_by_month %>%
   geom_errorbar(aes(ymin = CI_lower, 
                     ymax = CI_upper)) +
   labs(
-    title = "Estimated OR with 95% CI in Daily Flight Cancellation by Month",
+    title = "Estimated OR with 95% CI in Daily Flight Cancellations by Month",
     x = "Month",
-    y = "Estimated OR with CI"
+    y = "Estimated OR with 95% CI"
   ) +
   theme(legend.position = "right", legend.title = element_blank(),
         text = element_text(size = 10),
@@ -580,9 +580,9 @@ poisson_by_month %>%
   geom_errorbar(aes(ymin = CI_lower, 
                     ymax = CI_upper)) +
   labs(
-    title = "Estimated OR with 95% CI in Daily Flight Cancellation by Month",
+    title = "Estimated OR with 95% CI in Daily Flight Cancellations by Month",
     x = "Month",
-    y = "Estimated OR with CI"
+    y = "Estimated OR with 95% CI"
   ) +
   theme(legend.position = "right", legend.title = element_blank(),
         text = element_text(size = 10),
@@ -596,9 +596,9 @@ poisson_by_airline %>%
   geom_errorbar(aes(ymin = CI_lower, 
                     ymax = CI_upper)) +
   labs(
-    title = "Estimated OR with 95% CI in Daily Flight Cancellation by Airline",
+    title = "Estimated OR with 95% CI in Daily Flight Cancellations by Airline",
     x = "Airline",
-    y = "Estimated OR with CI"
+    y = "Estimated OR with 95% CI"
   ) +
   theme(legend.position = "right", legend.title = element_blank(),
         text = element_text(size = 10),
