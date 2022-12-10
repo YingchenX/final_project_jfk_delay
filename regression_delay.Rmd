@@ -478,7 +478,7 @@ Before fitting the linear model with these 5 predictors, let's check their indep
 
 ### Check Collinearity
 
-```{r out.height = "70%"}
+```{r out.height = "36%"}
 
 CM_1 = log_df %>% 
   select(airline, month, hour_c, carrierd, latarrd) %>% 
@@ -535,7 +535,7 @@ broom::glance(lm_1) %>%
 
 * The F-value is 603 (very large) with p-value < 2.2e-16 (very small), which suggests that this regression model is statistically significant.
 
-* However, the r-squared value is only 0.422, which means only 42% of the variability observed in the delay time is explained by the regression model. Again, this may be due to limitations of our source data.
+* However, the R-squared value is only 0.422, which means only 42% of the variability observed in the delay time is explained by the regression model. Again, this may be due to limitations of our source data.
 
 <br>
 
@@ -554,7 +554,7 @@ broom::glance(lm_2) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.v
 
 * The F-value is 443 (very large) with p-value < 2.2e-16 (very small), which suggests that this regression model is also statistically significant.
 
-* Same as model 1, the r-squared value is only 0.452, which is still not sufficient for good prediction purpose. The difference in r-squared values from model 1 and model 2 also implies that the additional predictors added into model 2 are not necessary.
+* Same as model 1, the R-squared value is only 0.452, which is still not sufficient for good prediction purpose. The difference in R-squared values from model 1 and model 2 also implies that the additional predictors added into model 2 are not necessary.
 
 <br>
 
@@ -671,7 +671,7 @@ In this "Predictive Model" section, we fit a linear regression model with 5 pred
 
 4.    Results seem unreliable, i.e., it is hard for us to agree on the suggested result showing weather will not affect the delay time.
 
-5.    Inefficient predictive modeling. Although the parsimony of model is not the first priority when doing prediction, the number of parameters in model 1 is still too many compared to general predictive model. Meanwhile, even with 5 predictors, the R-square is still not strong, thus I more doubt about the efficiency of our final model.
+5.    Inefficient predictive modeling. Although the parsimony of model is not the first priority when doing prediction, the number of parameters in model 1 is still too many compared to general predictive model. Meanwhile, even with 5 predictors, the R-squared is still not strong, thus I more doubt about the efficiency of our final model.
 
 <br>
 
