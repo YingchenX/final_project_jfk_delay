@@ -180,7 +180,7 @@ cancel_tidy$covid_lag6 = lag(cancel_tidy$covid_case, 6)
 
 <br>
 
-```{r, echo = FALSE, out.width = "100%", fig.align = 'center'}
+```{r, echo = FALSE, out.width = "80%", fig.align = 'center'}
 knitr::include_graphics("./pictures/poisson_model.png")
 ```
 
@@ -198,7 +198,7 @@ poisson %>%
   ) %>% 
   dplyr::select(term, estimate, OR, p.value) %>% 
   knitr::kable(digits = 3, col.names = c("Terms", "Estimate (log(OR))", "Estimated adjusted OR", "P-value")) %>% 
-  kable_styling()
+  kable_styling(bootstrap_options = "hover")
 ```
 
 The above is the outcome of Poisson regression. All predictor coefficients are statistically significant (associated with a p-value of 0.05), indicating that temperature, humidity, windspeed, and COVID-19 cases indeed impact the rate of daily flight cancellation.
@@ -225,7 +225,7 @@ cancel_tidy %>%
     names_from = term, 
     values_from = estimate) %>% 
   knitr::kable(digits = 6) %>% 
-  kable_styling()
+  kable_styling(bootstrap_options = "hover")
 ```
 
 <br>
@@ -253,8 +253,9 @@ poisson_by_month = cancel_tidy %>%
 
 poisson_by_month %>% 
   filter(term != "(Intercept)" ) %>% 
-  knitr::kable(digits = 3, align = "llccc", col.names = c("Month", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value")) %>% 
-  kable_styling()
+  knitr::kable(digits = 3, align = "llccc", col.names = c("Month", "Terms", "Estimated Adjusted OR", "CI Lower Bound", "CI Upper Bound", "P-value")) %>% 
+  kable_styling(bootstrap_options = "hover") %>% 
+  scroll_box(width = "100%", height = "220px")
 ```
 
 <br>
@@ -270,9 +271,9 @@ poisson_by_month %>%
   geom_errorbar(aes(ymin = CI_lower, 
                     ymax = CI_upper)) +
   labs(
-    title = "Estimated OR with 95% CI in Daily Flight Cancellation by Month",
+    title = "Estimated OR with 95% CI in Daily Flight Cancellations by Month",
     x = "Month",
-    y = "Estimated OR with CI"
+    y = "Estimated OR with 95% CI"
   ) +
   theme(legend.position = "right", legend.title = element_blank(),
         text = element_text(size = 10),
@@ -298,7 +299,7 @@ cancel_tidy %>%
     names_from = term, 
     values_from = estimate) %>% 
   knitr::kable(digits = 6) %>% 
-  kable_styling()
+  kable_styling(bootstrap_options = "hover")
 ```
 
 <br>
@@ -326,8 +327,9 @@ poisson_by_airline %>%
   filter(term != "(Intercept)" ) %>% 
   knitr::kable(digits = 3, 
                align = "llccc", 
-               col.names = c("Airline Name", "Terms", "Estimated adjusted OR", "CI lower bound", "CI upper bound", "P-value")) %>% 
-  kable_styling()
+               col.names = c("Airline Name", "Terms", "Estimated Adjusted OR", "CI Lower Bound", "CI Upper Bound", "P-value")) %>% 
+  kable_styling(bootstrap_options = "hover") %>% 
+  scroll_box(width = "100%", height = "220px")
 ```
 
 <br>
@@ -342,9 +344,9 @@ poisson_by_airline %>%
   geom_errorbar(aes(ymin = CI_lower, 
                     ymax = CI_upper)) +
   labs(
-    title = "Estimated OR with 95% CI in Daily Flight Cancellation by Airline",
+    title = "Estimated OR with 95% CI in Daily Flight Cancellations by Airline",
     x = "Airline",
-    y = "Estimated OR with CI"
+    y = "Estimated OR with 95% CI"
   ) +
   theme(legend.position = "right", legend.title = element_blank(),
         text = element_text(size = 10),

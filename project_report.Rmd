@@ -376,7 +376,7 @@ broom::glance(lm_1) %>%
   select(r.squared, statistic, p.value, df) %>% 
   mutate(p.value = recode(p.value, '0' = '<2.2e-16')) %>% 
   knitr::kable() %>% 
-  kable_styling()
+  kable_styling(bootstrap_options = "hover")
 ```
 
 <br>
@@ -394,7 +394,7 @@ broom::glance(lm_2) %>%
   select(r.squared, statistic, p.value, df) %>% 
   mutate(p.value = recode(p.value, '0' = '<2.2e-16')) %>% 
   knitr::kable() %>% 
-  kable_styling()
+  kable_styling(bootstrap_options = "hover")
 ```
 
 <br>
@@ -486,7 +486,7 @@ cancel_airline %>%
   knitr::kable(
     col.names = c("Year, Month", "Alaska Airlines", "American Airlines", "Delta Air Lines", "Endeavor Air",
                   "JetBlue Airways", "Republic Airways", "United Air Lines")) %>% 
-  kableExtra::kable_styling(bootstrap_options = "hover")
+  kable_styling(bootstrap_options = "hover")
 ```
 
 From data exploration, we also found that the time trend of daily flight cancellations and COVID-19 cases did not coincide with one other. The rises of COVID-19 cases frequently took some time to affect our daily lives, including flight cancellations. Thus, we created new variables regarding COVID cases count with time lag. We used the lag selection criteria and Akaike information criterion (AIC) to select 6 days as the optimal time lag. Then, we constructed a new variable named `covid_lag6`, equivalent to the value of COVID-19 cases with a 6-day time lag.
@@ -513,8 +513,8 @@ poisson %>%
     p.value = format(p.value, scientific = TRUE, digits = 3)
   ) %>% 
   dplyr::select(term, estimate, OR, p.value) %>% 
-  knitr::kable(digits = 3, col.names = c("Terms", "Estimate (log(OR))", "Estimated adjusted OR", "P-value")) %>% 
-  kable_styling()
+  knitr::kable(digits = 3, col.names = c("Terms", "Estimate (log(OR))", "Estimated Adjusted OR", "P-value")) %>% 
+  kable_styling(bootstrap_options = "hover")
 ```
 
 To test the model in different months and airlines, we also conducted a stratification analysis. We graphed these risk ratios for the coefficients (i.e., the exponentiated coefficien) that show the difference in daily flight cancellations at JFK airport by month and by airline for the purpose of illustration for both month and airline. Along with the p-value, we also provided 95% confidence intervals, which were calculated as the exponentiated coefficient plus or minus 1.96 times the standard error.

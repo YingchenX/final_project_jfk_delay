@@ -19,6 +19,7 @@ library(plotly)
 library(corrplot)
 library(ggfortify)
 library(rstatix)
+library(kableExtra)
 
 
 knitr::opts_chunk$set(
@@ -235,12 +236,21 @@ box_cat(log_df$airline) %>%
 #One-way ANOVA
 air.anova <- Anova(lm(delay ~ airline, data = log_df))
 
-anova_summary(air.anova, detailed = TRUE, effect.size = "ges") %>% mutate(p = format(p, scientific = TRUE, digits = 3)) %>% knitr::kable()
+anova_summary(air.anova, detailed = TRUE, effect.size = "ges") %>% 
+  mutate(p = format(p, scientific = TRUE, digits = 3)) %>% 
+  knitr::kable() %>%  
+  kable_styling(bootstrap_options = "hover")
 
 #Pairwise t-tests (Bonferroni)
-pairwise.t.test(log_df$delay, log_df$airline, p.adjust.method = "bonferroni") %>% broom::tidy() %>% mutate(p.value = format(p.value, scientific = TRUE, digits = 3)) %>% knitr::kable()
+pairwise.t.test(log_df$delay, log_df$airline, p.adjust.method = "bonferroni") %>% 
+  broom::tidy() %>% 
+  mutate(p.value = format(p.value, scientific = TRUE, digits = 3)) %>% 
+  knitr::kable() %>% 
+  kable_styling(bootstrap_options = "hover") %>% 
+  scroll_box(width = "100%", height = "220px")
 ```
 
+<br>
 
 **Highlights:**
 
@@ -263,10 +273,17 @@ box_cat(log_df$month) %>%
 #One-way ANOVA
 mon.anova <- Anova(lm(delay ~ month, data = log_df))
 
-anova_summary(mon.anova, detailed = TRUE, effect.size = "ges") %>% mutate(p = format(p, scientific = TRUE, digits = 3)) %>% knitr::kable()
+anova_summary(mon.anova, detailed = TRUE, effect.size = "ges") %>% 
+  mutate(p = format(p, scientific = TRUE, digits = 3)) %>% 
+  knitr::kable() %>% 
+  kable_styling(bootstrap_options = "hover")
 
 #Pairwise t-tests (Bonferroni)
-pairwise.t.test(log_df$delay, log_df$month, p.adjust.method = "bonferroni") %>% broom::tidy() %>% mutate(p.value = format(p.value, scientific = TRUE, digits = 3)) %>% knitr::kable()
+pairwise.t.test(log_df$delay, log_df$month, p.adjust.method = "bonferroni") %>% 
+  broom::tidy() %>% 
+  mutate(p.value = format(p.value, scientific = TRUE, digits = 3)) %>% 
+  knitr::kable() %>% 
+  kable_styling(bootstrap_options = "hover")
 ```
 
 **Highlights:**
@@ -289,10 +306,17 @@ box_cat(log_df$hour_c) %>%
 #One-way ANOVA
 tim.anova <- Anova(lm(delay ~ hour_c, data = log_df))
 
-anova_summary(tim.anova, detailed = TRUE, effect.size = "ges") %>% mutate(p = format(p, scientific = TRUE, digits = 3)) %>% knitr::kable()
+anova_summary(tim.anova, detailed = TRUE, effect.size = "ges") %>% 
+  mutate(p = format(p, scientific = TRUE, digits = 3)) %>% 
+  knitr::kable() %>% 
+  kable_styling(bootstrap_options = "hover")
 
 #Pairwise t-tests (Bonferroni)
-pairwise.t.test(log_df$delay, log_df$hour_c, p.adjust.method = "bonferroni") %>% broom::tidy() %>% mutate(p.value = format(p.value, scientific = TRUE, digits = 3)) %>% knitr::kable()
+pairwise.t.test(log_df$delay, log_df$hour_c, p.adjust.method = "bonferroni") %>% 
+  broom::tidy() %>% 
+  mutate(p.value = format(p.value, scientific = TRUE, digits = 3)) %>% 
+  knitr::kable() %>% 
+  kable_styling(bootstrap_options = "hover")
 ```
 
 **Highlights:**
@@ -410,9 +434,13 @@ cor_po = log_df %>%
   cor(y = log_df$delay, x = ., method = c("pearson")) 
 
 round(cor_po, 2) %>% 
-  knitr::kable()
+  knitr::kable() %>% 
+  kable_styling(bootstrap_options = "hover") %>% 
+  scroll_box(width = "100%", height = "220px")
 
 ```
+
+<br>
 
 **Highlights:**
  
@@ -495,8 +523,12 @@ As we see above, independence assumption is met and thus we can add all these 5 
 
 ```{r}
 lm_1 = lm(delay ~ airline + month + hour_c + carrierd + latarrd, data = log_df)
-broom::glance(lm_1) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16')) %>% 
-  knitr::kable()
+
+broom::glance(lm_1) %>% 
+  select(r.squared, statistic, p.value, df) %>% 
+  mutate(p.value = recode(p.value, '0' = '<2.2e-16')) %>% 
+  knitr::kable() %>% 
+  kable_styling(bootstrap_options = "hover")
 ```
 
 **Highlights:** 
@@ -514,7 +546,8 @@ broom::glance(lm_1) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.v
 ```{r}
 lm_2 = lm(delay ~ ., data = log_df)
 broom::glance(lm_2) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16')) %>% 
-  knitr::kable()
+  knitr::kable() %>% 
+  kable_styling(bootstrap_options = "hover")
 ```
 
 **Highlights:** 
