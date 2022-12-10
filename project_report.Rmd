@@ -4,6 +4,7 @@ output:
   html_document:
     toc: true
     toc_float: true
+    code_folding: null
 ---
 
 ```{r setup, include = FALSE}
@@ -300,7 +301,6 @@ We were also interested in whether our continuous predictors, including Carrier 
 
 *    Temperature * Month
 
-
 ```{r, out.height = "60%"}
 raw_df %>% 
   mutate(
@@ -340,7 +340,7 @@ As a result, these interaction terms in addition to other predictors would be fu
 
 Since the outcome variable is delay time, a continuous variable, we want to fit a linear regression model. However, the scale of outcome data (from 0 to +∞) is a problem since it does not in consistent with the scale of linear function (from -∞ to +∞). To make them in agreement, we decided to normalize the outcome data with log transformation and scale it to -∞ to +∞. At the meanwhile, this log transformation also solved the terrible skewness observed in the distribution of delay time. After this step, our outcome variable change from delay time to log (delay time), in which still representing the delay time.
 
-_NOTE:_ We do have plenty of outliers with extreme long delay time, however, considering these extreme observations could be indicative to the underlying relationship, we chose not to exclude them. After log transformation, the outlier issues were no longer too scary.
+**_NOTE_**: We do have plenty of outliers with extreme long delay time, however, considering these extreme observations could be indicative to the underlying relationship, we chose not to exclude them. After log transformation, the outlier issues were no longer too scary.
 
 What we did next is to check if there are any associations existing between the independent variables and the dependent variable (i.e., log (delay time)). 
 
@@ -356,8 +356,9 @@ From the previous data exploration and visualization, we found some interesting 
 
 Given the above information, we came up 2 rationales for building the linear regression model:  
 
-\ 1. Based on observed relationship only: 
-_Include the 5 variables we identified above_
+1.    Based on observed relationship only:  
+
+_Include the 5 variables we identified above._
 
 Model 1: delay ~ airline + month + time of the day + carrier delay time + late arrival delay time
 
@@ -367,24 +368,31 @@ log_df = raw_df %>%
   select(-c(1:2))
 ```
 
+
 ```{r, echo = FALSE}
 lm_1 = lm(delay ~ airline + month + hour_c + carrierd + latarrd, data = log_df)
-broom::glance(lm_1) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16')) %>% 
+
+broom::glance(lm_1) %>% 
+  select(r.squared, statistic, p.value, df) %>% 
+  mutate(p.value = recode(p.value, '0' = '<2.2e-16')) %>% 
   knitr::kable() %>% 
   kable_styling()
 ```
 
 <br>
 
-\ 2. Based on both common sense and observed relationship:  
+2.    Based on both common sense and observed relationship:  
 
-Except for the 5 variables identified above, we also hypothesize the rest of variables (i.e., extreme weather delay time, NAS delay time, security delay time, temperature, humidity, visibility, wind speed) would affect the delay time based on our common sense and experience.
+_Except for the 5 variables identified above, we also hypothesize the rest of variables (i.e., extreme weather delay time, NAS delay time, security delay time, temperature, humidity, visibility, wind speed) would affect the delay time based on our common sense and experience._
 
 Model 2: delay ~ airline + month + time of the day + carrier delay time + late arrival delay time + extreme weather delay time + NAS delay time + security delay time + temperature + humidity + visibility + wind speed
 
 ```{r, echo = FALSE}
 lm_2 = lm(delay ~ ., data = log_df)
-broom::glance(lm_2) %>% select(r.squared, statistic, p.value, df) %>% mutate(p.value = recode(p.value, '0' = '<2.2e-16')) %>% 
+
+broom::glance(lm_2) %>% 
+  select(r.squared, statistic, p.value, df) %>% 
+  mutate(p.value = recode(p.value, '0' = '<2.2e-16')) %>% 
   knitr::kable() %>% 
   kable_styling()
 ```
@@ -489,10 +497,9 @@ From data exploration, we also found that the time trend of daily flight cancell
 
 Our final Poisson model was:
 
-```{r, echo = FALSE, out.width = "100%", fig.cap = "(Poisson Regression Model)", fig.align = 'center'}
+```{r, echo = FALSE, out.width = "80%", fig.align = 'center'}
 knitr::include_graphics("./pictures/poisson_model.png")
 ```
-
 
 
 ```{r, echo = FALSE}
@@ -506,11 +513,11 @@ poisson %>%
     p.value = format(p.value, scientific = TRUE, digits = 3)
   ) %>% 
   dplyr::select(term, estimate, OR, p.value) %>% 
-  knitr::kable(digits = 3, col.names = c("Terms", "Estimate (log(OR))", "Estimated adjusted OR", "P-value"), caption = "Poisson model") %>% 
+  knitr::kable(digits = 3, col.names = c("Terms", "Estimate (log(OR))", "Estimated adjusted OR", "P-value")) %>% 
   kable_styling()
 ```
 
-To test the model in different months and airlines, we also conducted a stratification analysis. We graphed these risk ratios for the coefficients (i.e., the exponentiated coefficient; exp(B)) that show the difference in daily flight cancellations in JFK airport by month and by airline for the purpose of illustration for both month and airline. Along with the p-value, we also provided 95% confidence intervals, which were calculated as the exponentiated coefficient plus or minus 1.96 times the standard error (exp(B+1.96*se)).
+To test the model in different months and airlines, we also conducted a stratification analysis. We graphed these risk ratios for the coefficients (i.e., the exponentiated coefficien) that show the difference in daily flight cancellations in JFK airport by month and by airline for the purpose of illustration for both month and airline. Along with the p-value, we also provided 95% confidence intervals, which were calculated as the exponentiated coefficient plus or minus 1.96 times the standard error.
 
 ```{r, include = FALSE}
 poisson_by_month = cancel_tidy %>%
@@ -633,4 +640,4 @@ In order to better predict the delay time, we need to collect a larger dataset w
 
 In order to find the association between COVID-19 cases and daily flight cancellation counts, we could further follow-up this model with longer period of study. Also, it can be improved by adding more different sources of cancellation counts into the model, and add types of cancellation into this model.
 
-<br>
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>

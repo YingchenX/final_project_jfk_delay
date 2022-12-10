@@ -50,8 +50,6 @@ We would like to explore the relationship between cancellation counts and some p
 * `covid_case`: new daily cases of COVID-19
 * `covid_lag6`: daily cases of COVID-19 with 6 days time lag
 
-
- 
 <br>
 
 ### Distribution of Daily Flight Cancellations Counts
@@ -134,8 +132,6 @@ cancel_airline %>%
 
 ```
 
-
-
 <br>
 
 ### Lagging COVID Cases
@@ -184,7 +180,7 @@ cancel_tidy$covid_lag6 = lag(cancel_tidy$covid_case, 6)
 
 <br>
 
-```{r, echo = FALSE, out.width = "100%", fig.cap = "(Poisson Regression Model)", fig.align = 'center'}
+```{r, echo = FALSE, out.width = "100%", fig.align = 'center'}
 knitr::include_graphics("./pictures/poisson_model.png")
 ```
 
@@ -205,7 +201,6 @@ poisson %>%
   kable_styling()
 ```
 
-
 The above is the outcome of Poisson regression. All predictor coefficients are statistically significant (associated with a p-value of 0.05), indicating that temperature, humidity, windspeed, and COVID-19 cases indeed impact the rate of daily flight cancellation.
 
 Exponentiating the Poisson regression coefficient provides the incidence rate ratio of daily flight cancellation. Take `temperature` as an example; its parameter estimate is -0.119, which means that increasing the temperature by one degree Fahrenheit should decrease the difference in the logs of predicted daily flight cancellations by 0.119 occurrences while holding the other variables in the model constant.
@@ -214,7 +209,7 @@ We obtained an estimated adjusted OR after exponentiating all of the coefficient
 
 <br>
 
-### Nested by Month
+### Stratified by Month
 
 ```{r, out.width = "100%"}
 cancel_tidy %>% 
@@ -229,7 +224,7 @@ cancel_tidy %>%
   pivot_wider(
     names_from = term, 
     values_from = estimate) %>% 
-  knitr::kable(digits = 6)%>% 
+  knitr::kable(digits = 6) %>% 
   kable_styling()
 ```
 
@@ -287,7 +282,7 @@ poisson_by_month %>%
 
 <br>
 
-### Nested by Airline
+### Stratified by Airline
 
 ```{r}
 cancel_tidy %>% 
@@ -338,7 +333,6 @@ poisson_by_airline %>%
 <br>
 
 #### Plot
-
 
 ```{r}
 poisson_by_airline %>%
