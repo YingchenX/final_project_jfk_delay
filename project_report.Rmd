@@ -93,36 +93,36 @@ However, considering the availability and scale of the accessible and available 
 
 We used three primary datasets for statistical analysis, and an additional supplemental dataset for interactive mapping.
 
-### Delay and Cancellation
+### 2.1 Delay and Cancellation
 
 [Flight delay and cancellation data for JFK departures](https://www.transtats.bts.gov/ONTIME/) was obtained from the Bureau of Transportation Statistics (BTS). We first wrote a function to iterate on the reading-in process for each airline of interest from November 2021 to January 2022. Some new variable were created for subsequent analysis use, including scheduled hours for flight's departures, year, month, day, etc. Delay minutes were manually calculated as the time difference in actual departure time and scheduled departure time. Flights with actual elapsed time minutes equal to 0 were treated as cancellation. Air carriers were recoded as airline names to be more clear.
 
 <br>
 
-### Weather
+### 2.2 Weather
 
 [Hourly and daily weather information](https://www.ncdc.noaa.gov/cdo-web/datatools/lcd) from 11/1/2021 to 1/31/2022 was obtained from the National Oceanic and Atmospheric Administration (NOAA). We selected the specific zip code for JFK and downloaded the raw data thereof. To align the time unit of weather with flight information, considering data availability, we picked the weather at the 51th minute to represent the weather of the hour, and the weather at 23:59 to represent the weather condition of the day. Only date and hourly/daily weather condition of interest were kept in the resulted tidied dataset.
 
 <br>
 
-### COVID Cases
+### 2.3 COVID Cases
 
 [Daily COVID cases count](https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3) from 11/1/2021 to 1/31/2022 was obtained, by API, from NYC OpenData, provided by the NYC Department of Health and Mental Hygiene (DOHMH). The resulted dataset included date, year, month, day, and daily case counts.
 
 <br>
 
-### Airport Location
+### 2.4 Airport Locations
 
-An additional source for the interactive map was [U.S. domestic airport location information](https://data.humdata.org/dataset/ourairports-usa) from The Humanitarian Data Exchange, where we extracted the latitude and longitute for those airports with delay and/or cancellation records.
+An additional source for the interactive map was [U.S. domestic airport location information](https://data.humdata.org/dataset/ourairports-usa) from the Humanitarian Data Exchange, where we extracted the latitude and longitude for those airports with delay and/or cancellation records.
 
 &nbsp;
 
-### Summary of Variables of Interest
+### 2.5 Summary of Variables of Interest
 
-**Outcome**
+**Outcomes**
 
   * *Delay Time*: Delay time in minutes
-  * *Flgiht Cancellation Count*: Daily flight cancellation counts at JFK airport
+  * *Cancellation Count*: Daily flight cancellation counts at JFK airport
 
 <br>
 
@@ -152,7 +152,7 @@ Continuous Variables
 
 ## 3 Explore
 
-### 3.1 Desination Airport
+### 3.1 Destination Airports
 
 There are 66 and 65 destination airports in the delay and cancellation datasets, respectively. For the efficiency purpose in statistical analysis, we do not include destination airport as a predictor in our models, but we still kept it as one of the predictor to explore.  
 First, we checked if delay and cancellation counts differ in different destination airports. Flights from JFK to LAX have the highest delay occurrences with a number of 2293 and flights to BGR have the highest delay occurrences with a number of 6. Flights from JFK to SFO have the highest cancellation occurrences with a number of 76 and flights to BZN have the highest cancellation occurrences with a number of 1. We also took a look at whether different airlines could have different trends in delay and cancellation counts among all the destination airports, but there is no significant findings.  
@@ -248,10 +248,10 @@ We then created a **Shiny App** for the audience to engage in our data explorati
 ### 3.3 Categorical Predictors
 
 **Delay time** in minutes is one of our outcome of interests and we decided to conduct a **linear regression model**. Besides the main effects, we would like to check if there are any significant effect modifiers in our model. In this part, we investigated the interaction between the categorical predictors, including Periods of Time， Months，and Airlines.  
-We could clearly observe that between groups differences are existed, and adding interaction terms between the categorical predictors could be one of the options for building the linear regression model. The following plots could hint that interactions between the categorical variables might exist, but we still need statistical analysis to prove our findings.
+Our exploration and visualization process hinted that between groups differences are existed, and adding interaction terms between the categorical predictors could be one of the options for building the linear regression model. The following plots could hint that interactions between the categorical variables might exist, but we still need statistical analysis to prove our findings. In our analysis, we mainly focus on the interaction between **month and airline**. 
 
 
-```{r}
+```{r, out.height = "60%"}
 raw_df %>% 
   mutate(
     month = fct_reorder(month, date)) %>% 
@@ -283,7 +283,7 @@ raw_df %>%
       boxmode = "group",
       xaxis = list(title = "Period of Time"),
       yaxis = list(title = "Delay Time (minutes)", range = c(0, 180)),
-      title = "Hour and Month Interaction")
+      title = "Period and Month Interaction")
 
 ```
 
@@ -299,7 +299,7 @@ We were also interested in whether our continuous predictors, including Carrier 
 *    Temperature * Month
 
 
-```{r}
+```{r, out.height = "60%"}
 raw_df %>% 
   mutate(
     text_label = str_c(airline, "\nCarrier Delay: ", carrierd, "\nDelay Time: ", delay)
