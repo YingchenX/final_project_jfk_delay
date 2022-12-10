@@ -250,7 +250,7 @@ pairwise.t.test(log_df$delay, log_df$airline, p.adjust.method = "bonferroni") %>
 
 * Since the overall p-value (9.5e-81) is less than .05, this is an indication that each airline group does not have the same average delay time.
 
-* The adjusted p-value for the mean difference in delay time between JetBlue Airways _vs._ American Airlines and Delta Air Lines both are <4.0e-46, which suggests highly different.
+* The adjusted p-value for the mean difference in delay time between JetBlue Airways _vs._ American Airlines and Delta Air Lines both are <4.1e-46, which suggests highly different.
 
 * The adjusted p-value for the mean difference in delay time between American Airlines _vs._ Republic Airways is 7.3e-08, which also suggests highly different.
 
@@ -275,11 +275,11 @@ pairwise.t.test(log_df$delay, log_df$month, p.adjust.method = "bonferroni") %>% 
 
 **Highlights:**
 
-* Since the overall p-value (<2e-16) is less than .05, this is an indication that each month group does not have the same average delay time.
+* Since the overall p-value (4.06e-52) is less than .05, this is an indication that each month group does not have the same average delay time.
 
 * The adjusted p-value for the mean difference in delay time between November, 2021 _vs._ December, 2021 is 3e-08, which suggests significantly different.
 
-* The adjusted p-value for the mean difference in delay time between January, 2022 _vs._ November, 2021 and December, 2021 are both <2e-16, which suggests highly different.
+* The adjusted p-value for the mean difference in delay time between January, 2022 _vs._ November, 2021 and December, 2021 are both <3.8e-22, which suggests highly different.
 
 <br>
 
@@ -301,11 +301,11 @@ pairwise.t.test(log_df$delay, log_df$hour_c, p.adjust.method = "bonferroni") %>%
 
 **Highlights:**
 
-* Since the overall p-value (<2e-16) is less than .05, this is an indication that each hour group does not have the same average delay time.
+* Since the overall p-value (2.55e-18) is less than .05, this is an indication that each hour group does not have the same average delay time.
 
-* The adjusted p-value for the mean difference in delay time between morning _vs._ night is <2e-16, which suggests highly different.
+* The adjusted p-value for the mean difference in delay time between morning _vs._ night is 6.84e-18, which suggests highly different.
 
-* The adjusted p-value for the mean difference in delay time between noon _vs._ night is 2.2e-07, which also suggests highly different.
+* The adjusted p-value for the mean difference in delay time between noon _vs._ night is 2.22e-07, which also suggests highly different.
 
 <br>
 
@@ -651,7 +651,11 @@ In this "Predictive Modeling" section, we fit a linear regression model with 5 p
 
 5.    Inefficient predictive modeling. Although the parsimony of model is not the first priority when doing prediction, the number of parameters in model 1 is still too many compared to general predictive model. Meanwhile, even with 5 predictors, the R-square is still not strong, thus I more doubt about the efficiency of our final model.
 
+<br>
+
 # Next Step
+
+<br>
 
 To this end, we come up with some possible solutions:
 
