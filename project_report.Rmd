@@ -457,6 +457,24 @@ We wanted to investigate factors that are related to - and may be used to predic
 
 Along with predictors, we also include categorical and time-dependent stratification parameters in the model. We clearly discovered the difference between different months and different airlines based on the monthly flight cancellation count. Monthly flight cancellations were the highest in January 2022, followed by December and November 2021. Monthly cancellation rates fluctuate greatly amongst airlines as well. As a result, we used the month and the airline as stratification factors. We first used Poisson regression to predict the risk ratio for daily flight cancellations in order to test for these variations.
 
+```{r include=FALSE}
+cancel_airline = read_csv("tidied_data/cancel_airline.csv")
+cancel_tidy = read_csv("tidied_data/cancel_tidy.csv")
+cancel_tidy$covid_lag6 = lag(cancel_tidy$covid_case, 6)
+```
+
+```{r  include=FALSE}
+cancel_airline %>%
+  arrange(airline_name) %>% 
+  pivot_wider(
+  names_from = airline_name, 
+  values_from = Total_number_of_cancellation) %>%
+  knitr::kable(
+    col.names = c("Year, Month", "Alaska Airlines", "American Airlines", "Delta Air Lines", "Endeavor Air",
+                  "JetBlue Airways", "Republic Airways", "United Air Lines")) %>% 
+  kableExtra::kable_styling(bootstrap_options = "hover")
+```
+
 From data exploration, we also found that the time trend of daily flight cancellations and COVID-19 cases did not coincide with one other. The rises of COVID-19 cases frequently took some time to affect our daily lives, including flight cancellations. Thus, we created new variables regarding COVID cases count with time lag. We used the lag selection criteria and Akaike's information criterion (AIC) to select 6 days as the optimal time lag. Then, we constructed a new variable named `covid_lag6`, equivalent to the value of COVID-19 cases with a 6-day time lag.
 
 <br>
@@ -470,11 +488,7 @@ Our final Poisson model was:
 knitr::include_graphics("./pictures/poisson_model.png")
 ```
 
-```{r include=FALSE}
-cancel_airline = read_csv("tidied_data/cancel_airline.csv")
-cancel_tidy = read_csv("tidied_data/cancel_tidy.csv")
-cancel_tidy$covid_lag6 = lag(cancel_tidy$covid_case, 6)
-```
+
 
 ```{r echo=FALSE}
 poisson = glm(daily_cancel ~ temperature + humidity + windspeed + covid_lag6, 
@@ -578,7 +592,7 @@ poisson_by_airline %>%
 
 ### 5.2 Poisson Model
 
-\ 1. The daily cancellation flight dataset was extracted from the delay dataset, therefore we only evaluate one source of cancellation, flight cancellation due to delay. Furthermore, we hypothesized that just two factors, adverse weather and COVID-19 cases, affect daily flight cancellations. More elements that might influence real-life cancellation were not considered. As a result, we should note the constraint that this cancellation data does not include cancellations due to other factors, such as air traffic limitations. This restricted the information we could obtain from the cancellation dataset, preventing us from adjusting for variables we suspected were confounding the correlations.
+\ 1. We hypothesized that just two factors, adverse weather and COVID-19 cases, affect daily flight cancellations. I More elements that might influence real-life cancellation were not considered. As a result, we should note the constraint that this cancellation data does not include cancellations due to other factors, such as air traffic limitations. This restricted the information we could obtain from the cancellation dataset, preventing us from adjusting for variables we suspected were confounding the correlations.
 
 \ 2. The association between COVID-19 cases and daily flight cancellations was not as strong as we expected.  One reason might be that the research window was too short to discover the association because COVID-19 cases had a time lag and we only counted 3-month cancellations and COVID-19 cases.
 
