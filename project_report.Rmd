@@ -150,7 +150,7 @@ Continuous Variables
 
 &nbsp;
 
-## 3 Explore
+## 3 Exploration and Visualization
 
 ### 3.1 Destination Airports
 
@@ -333,31 +333,9 @@ As a result, these interaction terms in addition to other predictors would be fu
 
 ## 4 Statistical Anslysis
 
-### 4.1 Linear Regression
+### 4.1 Predictive Modeling
 
-&nbsp;
-
-### 4.2 Poisson Regression
-
-#### Pre-analysis
-
-We wanted to investigate factors that are related to - and may be used to predict daily flight cancellation count since the effects of weather and COVID-19 were our primary research interests, but we did not have any precise hypothesis. For instance, there can be daily flight cancellations because of COVID breakouts or lockdowns. Due to the distribution of outcome, we recommend adopting the Poisson regression model.
-
-Along with predictors, we also include categorical and time-dependent stratification parameters in the model. We clearly discovered the difference between different months and different airlines based on the monthly flight cancellation count. Monthly flight cancellations were the highest in January 2022, followed by December and November 2021. Monthly cancellation rates fluctuate greatly amongst airlines as well. As a result, we used the month and the airline as stratification factors. We first used Poisson regression to predict the risk ratio for daily flight cancellations in order to test for these variations.
-
-From data exploration, we also found that the time trend of daily flight cancellations and COVID-19 cases did not coincide with one other. The rises of COVID-19 cases frequently took some time to affect our daily lives, including flight cancellations. Thus, we created new variables regarding COVID cases count with time lag. We used the lag selection criteria and Akaike's information criterion (AIC) to select 6 days as the optimal time lag. Then, we constructed a new variable named `covid_lag6`, equivalent to the value of COVID-19 cases with a 6-day time lag.
-
-<br>
-
-#### Building the model
-
-<br>
-
-_Predictive modeling (linear regression)_
-
-<br>
-
-**Pre-analysis data exploration:**
+#### 4.1.1 Pre-analysis data exploration
 
 <br>
 
@@ -372,7 +350,7 @@ What we did next is to check if there are any associations existing between the 
 
 <br>
 
-**Model fitting:**
+#### 4.1.2 Model Fitting
 
 From the previous data exploration and visualization, we found some interesting trends that we all think worthy further inspection and can be the potential independent variables for the prediction of delay in time. 
 
@@ -452,6 +430,7 @@ It turns out that Model 1 is the best model, with similar RMSE value with the ot
 
 <br>
 
+#### 4.1.2 Model Diagnostics
 
 The last step about building predictive model will be the model diagnostics, where we plot residuals against fitted value to see if our model has a good fit and prediction power.
 
@@ -466,10 +445,22 @@ log_df %>%
 Unfortunately, the answer is **NO**.
 
 
+&nbsp;
+
+### 4.2 Poisson Regression
+
+#### 4.2.1 Pre-analysis
+
+We wanted to investigate factors that are related to - and may be used to predict daily flight cancellation count since the effects of weather and COVID-19 were our primary research interests, but we did not have any precise hypothesis. For instance, there can be daily flight cancellations because of COVID breakouts or lockdowns. Due to the distribution of outcome, we recommend adopting the Poisson regression model.
+
+Along with predictors, we also include categorical and time-dependent stratification parameters in the model. We clearly discovered the difference between different months and different airlines based on the monthly flight cancellation count. Monthly flight cancellations were the highest in January 2022, followed by December and November 2021. Monthly cancellation rates fluctuate greatly amongst airlines as well. As a result, we used the month and the airline as stratification factors. We first used Poisson regression to predict the risk ratio for daily flight cancellations in order to test for these variations.
+
+From data exploration, we also found that the time trend of daily flight cancellations and COVID-19 cases did not coincide with one other. The rises of COVID-19 cases frequently took some time to affect our daily lives, including flight cancellations. Thus, we created new variables regarding COVID cases count with time lag. We used the lag selection criteria and Akaike's information criterion (AIC) to select 6 days as the optimal time lag. Then, we constructed a new variable named `covid_lag6`, equivalent to the value of COVID-19 cases with a 6-day time lag.
+
 <br>
 
+#### 4.2.2 Building the model
 
-_Poisson regression_
 
 Our final Poisson model was:
 
@@ -481,9 +472,9 @@ To test the model in different months and airlines, we also conducted a stratifi
 
 <br>
 
-## 5.2 Main discussions
+## 5 Main discussions
 
-### Predictive Model
+### 5.1 Predictive Model
 
 \ 1. The data source does not serve as a good prediction data for the delay time, probably it is due to the lack of interval of data collection. Our dataset was collection between November 2021 to January 2022, which only 3 months in involved and they have similar weather within these 3 months. This could explain why we observe a non-commonsense result showing no association between delay time and weather specific independent variables. 
 
@@ -493,7 +484,7 @@ To test the model in different months and airlines, we also conducted a stratifi
 
 <br>
 
-### Poisson Model
+### 5.2 Poisson Model
 
 \ 1. The daily cancellation flight dataset was extracted from the delay dataset, therefore we only evaluate one source of cancellation, flight cancellation due to delay. Furthermore, we hypothesized that just two factors, adverse weather and COVID-19 cases, affect daily flight cancellations. More elements that might influence real-life cancellation were not considered. As a result, we should note the constraint that this cancellation data does not include cancellations due to other factors, such as air traffic limitations. This restricted the information we could obtain from the cancellation dataset, preventing us from adjusting for variables we suspected were confounding the correlations.
 
@@ -503,15 +494,15 @@ To test the model in different months and airlines, we also conducted a stratifi
 <br>
 
 
-## 5.3 Future directions
+## 6 Future directions
 
 <br>
 
-### Predictive Model
+### 6.1 Predictive Model
 
 In order to better predict the delay time, we need to collect a larger dataset with data collected on longer time intervals is needed to solve the problem. To achieve this, we could collect data from more airports in the US and make our prediction more generalizable. Meanwhile, of course we need to try other modeling design to find the one that fit our data the best.
 
 <br>
 
-### Poisson Model
+### 6.2 Poisson Model
 
